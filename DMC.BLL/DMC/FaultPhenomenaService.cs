@@ -15,7 +15,7 @@ namespace DMC.BLL
         /// <summary>
         /// 搜索
         /// </summary>
-        /// <param name="pageSize"></param>
+        /// <param name="pageSize"></param> 
         /// <param name="pageIndex"></param>
         /// <param name="pageCount"></param>
         /// <param name="total"></param>
