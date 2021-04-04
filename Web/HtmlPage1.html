@@ -1,0 +1,170 @@
+﻿ 
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Echarts</title>
+
+</head>
+<body>
+    <h1>Echarts 3</h1>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 600px; height: 400px;"></div>
+
+    <!-- 引入 echarts.js -->
+    <script src="../JSPage/echarts.min.js"></script>
+
+    <script type="text/javascript">
+        var myChart = echarts.init(document.getElementById('main'));
+        // 指定图表的配置项和数据
+        var datas = [ {
+            "name" : "衬衫",
+            "number" : 100,
+            "price" : 69,
+            "tax" : 43
+
+        }, {
+            "name" : "羊毛衫",
+            "number" : 80,
+            "price" : 369,
+            "tax" : 36
+        }, {
+            "name" : "雪纺衫",
+            "number" : 60,
+            "price" : 129,
+            "tax" : 9
+        }, {
+            "name" : "裤子",
+            "number" : 200,
+            "price" : 89,
+            "tax" : 27
+        }, {
+            "name" : "高跟鞋",
+            "number" : 30,
+            "price" : 500,
+            "tax" : 25
+        }, {
+            "name" : "袜子",
+            "number" : 200,
+            "price" : 19,
+            "tax" : 30
+        } ];
+        var dt = [];
+        var dt2 = [];
+        var dt3 = [];
+        var len = datas.length;
+
+        var option = {
+            title : {
+                text : ' single selected '
+            },
+            tooltip : {},
+            legend : {
+                data : [ '数量', '单价', '交税','all' ],
+                selected : {
+                    '单价' : false,
+                    '交税': false,
+                    'all':false
+                },
+                selectedMode : 'single'
+
+            },
+
+            yAxis : [ {
+
+            } ],
+            xAxis : [ {
+                type : 'category',
+                splitLine : {
+                    show : false
+                },
+                data : dt
+            } ],
+            series : [ {
+                name : '数量',
+                type : 'bar',
+                data : (function() {
+                    var data = [];
+                    datas.sort(function(a, b) {
+                        if (a.number > b.number)
+                            return -1; //降序
+                        else
+                            return 1;
+
+                    });
+
+                    datas.forEach(function(item) {
+                        console.log(1);
+                        data.push(item.number);
+                        dt.push(item.name);
+                    });
+                    return data;
+                })()
+            }, {
+                name : '单价',
+                type : 'bar',
+                data : (function() {
+                    var data = [];
+                    datas.sort(function(a, b) {
+                        if (a.price > b.price)
+                            return -1; //降序
+                        else
+                            return 1;
+
+                    });
+
+                    datas.forEach(function(item) {
+                        console.log(2);
+                        data.push(item.price);
+                        dt2.push(item.name);
+                    })
+                    return data;
+                })()
+            }, {
+                name : '交税',
+                type : 'bar',
+                data : (function() {
+                    var data = [];
+                    datas.sort(function(a, b) {
+                        if (a.tax > b.tax)
+                            return -1; //降序
+                        else
+                            return 1;
+
+                    });
+
+                    datas.forEach(function(item) {
+                        console.log(3);
+                        data.push(item.tax);
+                        dt3.push(item.name);
+                    });
+                    return data;
+                })()
+            } ]
+        };
+
+        myChart.on('legendselectchanged', function(params) {
+            var name = params.name;
+            if (name == '单价') {
+                var opt = myChart.getOption();
+                opt.xAxis[0]["data"] = dt2;
+
+                myChart.setOption(opt);
+            }
+            if (name == '数量') {
+                var opt = myChart.getOption();
+                opt.xAxis[0]["data"] = dt;
+                myChart.setOption(opt);
+            }
+             
+            if (name == '交税') {
+                var opt = myChart.getOption();
+                opt.legend.selectedMode = 'multiple';
+
+                myChart.setOption(opt);
+            }
+            console.log(name);
+        });
+        myChart.setOption(option);
+    </script>
+</body>
+</html>

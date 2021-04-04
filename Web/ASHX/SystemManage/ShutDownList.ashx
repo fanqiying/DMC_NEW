@@ -1,0 +1,1 @@
+﻿<%@ WebHandler Language="C#" CodeBehind="ShutDownList.ashx.cs" Class="Web.ASHX.ShutDownList" %>

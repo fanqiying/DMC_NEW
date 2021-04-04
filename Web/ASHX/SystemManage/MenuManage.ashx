@@ -1,0 +1,1 @@
+﻿<%@ WebHandler Language="C#" CodeBehind="MenuManage.ashx.cs" Class="Web.ASHX.MenuManage" %>

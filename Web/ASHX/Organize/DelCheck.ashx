@@ -1,0 +1,1 @@
+﻿<%@ WebHandler Language="C#" CodeBehind="DelCheck.ashx.cs" Class="Web.ASHX.DelCheck" %>

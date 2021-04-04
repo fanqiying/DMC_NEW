@@ -1,0 +1,1 @@
+﻿<%@ WebHandler Language="C#" CodeBehind="RoseManage.ashx.cs" Class="Web.ASHX.RoseManage" %>

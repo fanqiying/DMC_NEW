@@ -1,0 +1,1 @@
+﻿<%@ WebHandler Language="C#" CodeBehind="UserRightManage.ashx.cs" Class="Web.ASHX.UserRightManage" %>

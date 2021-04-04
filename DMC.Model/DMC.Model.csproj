@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{47605332-9EF3-4A04-8928-4B69F3250671}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DMC.Model</RootNamespace>
+    <AssemblyName>DMC.Model</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\References\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="All\t_Company.cs" />
+    <Compile Include="All\t_Dept.cs" />
+    <Compile Include="All\t_Domain_Server.cs" />
+    <Compile Include="All\t_Employee.cs" />
+    <Compile Include="All\t_Language_Resources.cs" />
+    <Compile Include="All\t_Language_Type.cs" />
+    <Compile Include="All\t_Language_Value.cs" />
+    <Compile Include="All\t_Menu.cs" />
+    <Compile Include="All\t_ProgFunc.cs" />
+    <Compile Include="All\t_Program.cs" />
+    <Compile Include="All\t_ProgRefMenu.cs" />
+    <Compile Include="All\t_Right_Rdata.cs" />
+    <Compile Include="All\t_Right_Rose.cs" />
+    <Compile Include="All\t_Right_RPAction.cs" />
+    <Compile Include="All\t_Right_Rprogram.cs" />
+    <Compile Include="All\t_Right_Rsupply.cs" />
+    <Compile Include="All\t_Right_Ucompany.cs" />
+    <Compile Include="All\t_Right_UPAction.cs" />
+    <Compile Include="All\t_Right_UPData.cs" />
+    <Compile Include="All\t_Right_Uprogram.cs" />
+    <Compile Include="All\t_Right_Urole.cs" />
+    <Compile Include="All\t_Right_Usupply.cs" />
+    <Compile Include="All\t_Supply.cs" />
+    <Compile Include="All\t_SysLog.cs" />
+    <Compile Include="All\t_SysParaSetting.cs" />
+    <Compile Include="All\t_SysSwitch.cs" />
+    <Compile Include="All\t_SystemNo.cs" />
+    <Compile Include="All\t_SystemNo_T.cs" />
+    <Compile Include="All\t_User.cs" />
+    <Compile Include="All\t_Workflow_Type.cs" />
+    <Compile Include="DMC\DeviceCategoryEntity.cs" />
+    <Compile Include="DMC\DeviceEntity.cs" />
+    <Compile Include="DMC\FaultPhenomenaEntity.cs" />
+    <Compile Include="DMC\FaultPositionEntity.cs" />
+    <Compile Include="DMC\RepairAssignLogEntity.cs" />
+    <Compile Include="DMC\RepairFormEntity.cs" />
+    <Compile Include="DMC\RepairmanEntity.cs" />
+    <Compile Include="DMC\RepairRecordEntity.cs" />
+    <Compile Include="Language\LangResource.cs" />
+    <Compile Include="Language\LangType.cs" />
+    <Compile Include="Language\LanguageKeyValue.cs" />
+    <Compile Include="Language\LangValue.cs" />
+    <Compile Include="OptResultModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Right\ActionInfo.cs" />
+    <Compile Include="Right\Rose\RoseInfo.cs" />
+    <Compile Include="SysParaSettingModel.cs" />
+    <Compile Include="UserInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

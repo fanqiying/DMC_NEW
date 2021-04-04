@@ -1,0 +1,23 @@
+body{margin:0; padding:0; font-size:9pt; background-color:#e0ecff;}
+#login{margin:auto; width:975px; height:368px; margin-top:120px; background-color :White;}
+#top_left{width:621px; height:89px; float:left;}
+#top_left img {margin-left:33px;}
+#top_center{width:248px; height:89px; background:url(../images/k1_login_05.png); float:left;}
+
+#center_left{width:621px; height:190px; background:url(../images/login_09.png); float:left;}
+#center_middle{width:248px; height:190px; float:left; background:url(../images/login_13.gif) repeat-y;}
+#center_right{width:106px; height:190px; float:right; background:url(../images/k_login_11.png);}
+
+#down_left{width:621px; height:89px; float:left; margin-top:15px;}
+#down_center{width:248px; height:89px; background:url(../images/k_login_16.png); float:left;}
+#inf{width:621px; height:38px; background:url(../images/k_login_18.png) no-repeat; }
+.inf_text{display:block; width:100px; height:20px; font-size:16px; font-weight:bolder; color:#fff; margin-left:17px; margin-top:12px; float:left;}
+.copyright{display:block; float:left; margin-left:17px; margin-top:15px;}
+
+#user{ margin-left:40px; margin-top:12px; height:25px;}
+#copNname{margin-left:40px; margin-top:12px; height:25px;}
+#laguage{margin-left:40px; margin-top:4px; height:25px;}
+#password{margin-left:40px; margin-top:12px; height:25px;}
+input{width:120px; height:18px; border:solid 1px #aca7a7; font-size:9pt;}
+#btn{margin-left:30px; margin-top:20px;height:25px; margin-right:28px; text-align:center;}
+#btn a{display:block; line-height:25px; background: url(../images/bt_bg.gif); border: solid 1px #b6b6b6; width:65px; float:left; margin-left:15px; text-decoration:none; color:#000;}

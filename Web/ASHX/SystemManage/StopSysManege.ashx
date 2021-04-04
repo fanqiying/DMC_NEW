@@ -1,0 +1,1 @@
+﻿<%@ WebHandler Language="C#" CodeBehind="StopSysManege.ashx.cs" Class="Web.ASHX.StopSysManege" %>

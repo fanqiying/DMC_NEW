@@ -1,0 +1,1 @@
+﻿<%@ WebHandler Language="C#" CodeBehind="SysNoManage.ashx.cs" Class="Web.ASHX.SysNoManage" %>

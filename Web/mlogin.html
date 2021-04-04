@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>用户登录</title>
+    <link rel="stylesheet" type="text/css" href="easyUI15/themes/metro/easyui.css" />
+    <link rel="stylesheet" type="text/css" href="easyUI15/themes/mobile.css" />
+    <link rel="stylesheet" type="text/css" href="easyUI15/themes/icon.css" />
+    <script src="../../easyUI15/jquery.min.js" type="text/javascript"></script>
+    <script src="../../easyUI15/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../../easyUI15/jquery.easyui.mobile.js" type="text/javascript"></script>
+    <!--    <style>
+        .combobox-item {
+            font-size: 18px;
+        }
+    </style>-->
+    <script type="text/javascript">
+        if (self.location != top.location) {
+            top.location.href = location.href;
+        }
+        var param = '';
+        $(document).ready(function () {
+            //加載下拉框的多語言
+            $('#language').combobox({
+                url: 'ASHX/Basic/ComboxManage.ashx?ComboxType=LanguageType',
+                valueField: 'languageid',
+                textField: 'languagename',
+                panelHeight: '150',
+                editable: false,
+                multiple: false,
+                onLoadSuccess: function () {
+                    if (getcookie("LanguageID") != null && getcookie("LanguageID") != "") {
+                        $("#language").combobox("setValue", getcookie("LanguageID"));
+                    }
+                    else {
+                        var data = $('#language').combobox('getData');
+                        if (data.length > 0) {
+                            $("#language").combobox("setValue", data[0].languageid);
+                        }
+                    }
+                },
+                onChange: function (newValue, oldValue) {
+                }
+            });
+            var position = location.href.indexOf("?");
+            if (position > -1) {
+                param = location.href.substring(position + 1);
+            }
+
+            //$("#username").textbox('textbox').css("font-size", "14pt");
+            //$("#password").passwordbox('textbox').css("font-size", "14pt");
+            //$("#language").combobox('textbox').css("font-size", "16pt");
+        });
+        var domainSer = '';
+        function checkLogin() {
+            //$("#tc_loading").css("display", "block");
+            var lanuageStr = $("#language").combobox("getValue");
+            //var comp = $("#company").combobox("getValue"); //选中的公司文本
+            var comp = "AAM";
+            var id = $("#username").val();
+            var pwd = $("#password").val();
+            //var vc = $("#verificationcode").val();
+            if (id == '') {
+                alert("登录帐号不能为空");
+                $("#username").focus();
+                //$("#tc_loading").css("display", "none");
+                return false;
+            }
+            else if (pwd == '') {
+                alert("密码不能为空");
+                $("#password").focus();
+                //$("#tc_loading").css("display", "none");
+                return false;
+            }
+            var flag = "false";
+            if (lanuageStr != '' && comp != '' && id != '' && pwd != '') {
+                flag = "true";
+                $.post("ASHX/Permission/UserLogin.ashx?x=" + Math.random(),
+                   { id: encodeURIComponent(id), p: encodeURIComponent(pwd), comp: encodeURIComponent(comp), lag: encodeURIComponent(lanuageStr), area: encodeURIComponent(domainSer) },
+                   function (result) {
+                       domainSer = '';
+                       try {
+                           var result = eval('(' + result + ')');
+                           if (result.success) {
+                               location.href = "UI/Equment/MRepairAssign.aspx";
+                           }
+                           else {
+                               alert(result.Err);
+                           }
+                       }
+                       catch (e) {
+                           alert(e);
+                       }
+                   });
+            }
+        }
+
+
+        function clearInput() {
+            $("#username").attr("value", "");
+            $("#password").attr("value", "");
+        }
+
+        function getcookie(name) {
+            var strcookie = document.cookie;
+            var arrcookie = strcookie.split("; ");
+            for (var i = 0; i < arrcookie.length; i++) {
+                var arr = arrcookie[i].split("=");
+                if (arr[0] == name) return arr[1];
+            }
+            return "";
+        }
+    </script>
+</head>
+
+<body>
+    <div class="easyui-navpanel" style="position: relative; padding: 20px">
+        <header>
+            <div class="m-toolbar">
+                <span class="m-title" style="color: #27A9E3; text-align: center;">登入系统</span>
+            </div>
+        </header>
+        <div style="margin: 20px auto; width: 100%; height: 80px; overflow: hidden; text-align: center;">
+            <img src="images/ammlogo.png">
+        </div>
+        <div>
+            <form id="loginForm" method="post">
+                <div style="margin-bottom: 10px">
+                    <input name="language" id="language" class="easyui-combobox" data-options="prompt:'请选择语言'" style="width: 100%;" />
+                    <input type="hidden" value="AAM" name="company" id="company" />
+                </div>
+                <div style="margin-bottom: 10px">
+                    <input name="username" id="username" class="easyui-textbox" data-options="prompt:'请输入用户名'" style="width: 100%;" />
+                </div>
+                <div style="margin-bottom: 10px">
+                    <input name="password" id="password" class="easyui-passwordbox" data-options="prompt:'请输入密码'" style="width: 100%;" />
+                </div>
+            </form>
+            <div style="text-align: center; margin-top: 10px">
+                <a href="javascript:void(0)" onclick="checkLogin()" class="easyui-linkbutton" style="width: 100%;">
+                    <span style="font-size: 16px">登录</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

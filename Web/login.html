@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>用户登录</title>
+    <link href="./login_files/login.css?v=2020043003" rel="stylesheet" type="text/css">
+    <link href="../../easyUI15/themes/public.css" rel="stylesheet" type="text/css" />
+    <link href="../../easyUI15/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="../../easyUI15/themes/icon.css" rel="stylesheet" type="text/css" />
+    <script src="../../easyUI15/jquery.min.js" type="text/javascript"></script>
+    <script src="../../easyUI15/jquery.easyui.min.js" type="text/javascript"></script>
+    <style>
+        .combobox-item {
+            font-size: 16px;
+        }
+    </style>
+    <script type="text/javascript">
+        //$(document).ready(function () {
+        //    $("#username").textbox('textbox').css("font-size", "14pt");
+        //    $("#password").passwordbox('textbox').css("font-size", "14pt");
+
+        //    $("#language").combobox('textbox').css("font-size", "16pt");
+        //    $("#company").combobox('textbox').css("font-size", "16pt");
+        //});
+    </script>
+    <script type="text/javascript">
+        if (self.location != top.location) {
+            top.location.href = location.href;
+        }
+        var param = '';
+        $(document).ready(function () {
+            //加載下拉框的多語言
+            $('#language').combobox({
+                url: 'ASHX/Basic/ComboxManage.ashx?ComboxType=LanguageType',
+                valueField: 'languageid',
+                textField: 'languagename',
+                panelHeight: '150',
+                editable: false,
+                multiple: false,
+                onLoadSuccess: function () {
+                    if (getcookie("LanguageID") != null && getcookie("LanguageID") != "") {
+                        $("#language").combobox("setValue", getcookie("LanguageID"));
+                        //LoadCompany(getcookie("LanguageID"));
+                    }
+                    else {
+                        var data = $('#language').combobox('getData');
+                        if (data.length > 0) {
+                            $("#language").combobox("setValue", data[0].languageid);
+                            //LoadCompany(data[0].languageid);
+                        }
+                    }
+                },
+                onChange: function (newValue, oldValue) {
+                    //$('#SComanyType').combobox('clear');
+                    //LoadCompany(newValue);
+                }
+            });
+            //$('#company').combobox({
+            //    valueField: 'displayid',
+            //    textField: 'displaytext',
+            //    panelHeight: '150',
+            //    editable: false,
+            //    multiple: false,
+            //    onLoadSuccess: function () { //数据加载完毕事件
+            //        if (getcookie("UserComp") != null && getcookie("UserComp") != "") {
+            //            $("#company").combobox("setValue", getcookie("UserComp"));
+            //        }
+            //        else {
+            //            var data = $('#SComanyType').combobox('getData');
+            //            if (data.length > 0) {
+            //                $("#company").combobox('setValue', data[0].displayid);
+            //            }
+            //        }
+            //    }
+            //});
+            var position = location.href.indexOf("?");
+            if (position > -1) {
+                param = location.href.substring(position + 1);
+            }
+            /*
+            $.post('ASHX/Basic/ComboxManage.ashx?ComboxType=getversion',
+                   function (version) {
+                       //加載所有公司别的简称
+                       $("#spVersion").html(version);
+                   });*/
+            $("#username").textbox('textbox').css("font-size", "14pt");
+            $("#password").passwordbox('textbox').css("font-size", "14pt");
+            //$("#verificationcode").passwordbox('textbox').css("font-size", "14pt");
+
+            $("#language").combobox('textbox').css("font-size", "16pt");
+            //$("#language").combobox('div').css("font-size", "16pt");
+            //$("#company").combobox('textbox').css("font-size", "16pt");
+            //$("#company").combobox('div').css("font-size", "16pt");
+            //getvcode();
+        });
+        var domainSer = '';
+        //function LoadCompany(languageId) {
+        //    $.post('ASHX/Basic/ComboxManage.ashx?ComboxType=companyType&ll=' + languageId,
+        //           {},
+        //           function (result) {
+        //               //加載所有公司别的简称
+        //               $('#company').combobox('loadData', result);
+        //           },
+        //           'json');
+        //}
+
+        function checkLogin() {
+            $("#tc_loading").css("display", "block");
+            var lanuageStr = $("#language").combobox("getValue");
+            //var comp = $("#company").combobox("getValue"); //选中的公司文本
+            var comp = "AAM";
+            var id = $("#username").val();
+            var pwd = $("#password").val();
+            //var vc = $("#verificationcode").val();
+            if (id == '') {
+                alert("登录帐号不能为空");
+                $("#username").focus();
+                //$("#tc_loading").css("display", "none");
+                return false;
+            }
+            else if (pwd == '') {
+                alert("密码不能为空");
+                $("#password").focus();
+                //$("#tc_loading").css("display", "none");
+                return false;
+            }
+            var flag = "false";
+            if (lanuageStr != '' && comp != '' && id != '' && pwd != '') {
+                flag = "true";
+                $.post("ASHX/Permission/UserLogin.ashx?x=" + Math.random(),
+                   { id: encodeURIComponent(id), p: encodeURIComponent(pwd), comp: encodeURIComponent(comp), lag: encodeURIComponent(lanuageStr), area: encodeURIComponent(domainSer) },
+                   function (result) {
+                       domainSer = '';
+                       try {
+                           var result = eval('(' + result + ')');
+                           if (result.success) {
+                               location.href = "Index.aspx" + (param == '' ? '' : '?p=' + param);
+                           }
+                           else {
+                               alert(result.Err);
+                           }
+                       }
+                       catch (e) {
+                           alert(e);
+                       }
+                   });
+            }
+        }
+
+
+        function clearInput() {
+            $("#username").attr("value", "");
+            $("#password").attr("value", "");
+        }
+
+        function getcookie(name) {
+            var strcookie = document.cookie;
+            var arrcookie = strcookie.split("; ");
+            for (var i = 0; i < arrcookie.length; i++) {
+                var arr = arrcookie[i].split("=");
+                if (arr[0] == name) return arr[1];
+            }
+            return "";
+        }
+
+        function getvcode() {
+            var obj = document.getElementById("mverificationcode");
+            obj.src = "ASHX/Basic/ComboxManage.ashx?ComboxType=GenVCode&time=" + Date.now();//能设置
+        }
+
+    </script>
+</head>
+
+<body>
+    <div style="white-space: nowrap; font-size: 35px; color: white; text-align: center; width: 100%; position: absolute; top: 30px;">
+        Device Management System
+    </div>
+    <div class="login_box">
+        <!--<div class="login_l_img">
+            <img src="./login_files/login-img.png">
+            <img src="./login_files/left_back.png">
+        </div>-->
+        <div class="login">
+            <div class="login_logo">
+                <!--style="background-image:url(./login_files/avclogo.png);background-size:100% 100%;background-repeat:no-repeat;background-position-x:center;background-position-y:center;"-->
+                <a href="login.html">
+                    <img src="./login_files/login_logo.png">
+                    <img src="images/uphand.jpg" style="height: 110px; width: 110px; margin-top: -125px; z-index: -9999; position: relative;" /></a>
+
+            </div>
+            <!--<div class="login_name" style="background: url(./login_files/AVC_logo.jpg) left no-repeat; text-align: center; vertical-align: text-bottom;">
+                 <img style="position: absolute; top: 50%; left: 50%;" src="">
+                iDAS 
+                <span style="margin-top: 20px;">iDAS</span>
+            </div>-->
+            <div class="login_name" style="vertical-align: middle;">
+                <div style="float: left;">
+                    <img src="images/ammlogo.png" style="margin-left: -45px; margin-top: -30px;" />
+                </div>
+                <div style="float: right; margin-right: -30px; margin-top: -30px;"><span style="font-size: 42px; height: 100%; vertical-align: middle; color: #27A9E3;">&nbsp;&nbsp;欢迎您</span></div>
+            </div>
+            <form id="fm" method="post">
+                <table style="width: 100%;">
+                    <!-- <tr style="height: 50px;">
+                        <td colspan="2"> 
+                        </td>
+                    </tr>-->
+                    <tr style="height: 50px;">
+                        <td colspan="2">
+                            <input name="language" id="language" class="easyui-combobox" data-options="prompt:'请选择语言'" style="height: 40px; width: 100%; padding-top: 5px; padding-bottom: 5px;" />
+                            <input type="hidden" value="AAM" name="company" id="company" />
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td colspan="2">
+                            <input name="username" id="username" class="easyui-textbox" data-options="prompt:'请输入用户名'" style="height: 40px; width: 100%; padding-top: 5px; padding-bottom: 5px;" /></td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td colspan="2">
+                            <input name="password" id="password" class="easyui-passwordbox" data-options="prompt:'请输入密码'" style="height: 40px; width: 100%; padding-top: 5px; padding-bottom: 5px;" /></td>
+                    </tr>
+                    <!--<tr style="height: 50px;">
+                        <td style="width: 60%">
+                            <input name="company" id="company" class="easyui-combobox" data-options="prompt:'请选择公司'" style="height: 40px; width: 100%; padding-top: 5px; padding-bottom: 5px;" />
+                    <input name="verificationcode" id="verificationcode" class="easyui-textbox" data-options="prompt:'请输入验证码'" style="height: 40px; width: 100%; padding-top: 5px; padding-bottom: 5px;" />
+                    </td>
+                        <td style="width: 40%">
+                            <img alt="验证码" id="mverificationcode" onclick="getvcode()" />
+                        </td>
+                    </tr>-->
+
+                    <tr style="height: 50px;">
+                        <td colspan="2">
+                            <input value="登录" style="width: 100%;" onclick="checkLogin(); return false;" type="button"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <div class="copyright">
+        Copyright © 2020 Advanced Assembly Materials International Limited Co.,Ltd. All rights reserved<br />
+        建议使用1024*768以上的屏幕分辨率和FireFox/Chrome/IE10+浏览器
+    </div>
+</body>
+</html>

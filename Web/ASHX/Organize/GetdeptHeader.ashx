@@ -1,0 +1,1 @@
+﻿<%@ WebHandler Language="C#" CodeBehind="GetdeptHeader.ashx.cs" Class="Web.ASHX.GetdeptHeader" %>

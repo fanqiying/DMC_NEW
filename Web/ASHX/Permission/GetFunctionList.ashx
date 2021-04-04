@@ -1,0 +1,1 @@
+﻿<%@ WebHandler Language="C#" CodeBehind="GetFunctionList.ashx.cs" Class="Web.ASHX.GetFunctionList" %>
