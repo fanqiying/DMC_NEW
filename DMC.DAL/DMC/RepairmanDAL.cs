@@ -82,7 +82,7 @@ group by RepairmanId,workedtime,totaltime ");
   FROM t_Repairman A LEFT JOIN (SELECT RepairmanId,COUNT(1) WaitRepairNum FROM t_RepairRecord 
 WHERE RepairStatus IN(20,23,24,25)
 GROUP BY RepairmanId
-) B ON A.RepairmanId=B.RepairmanId WHERE IsWorking=1 AND  (WorkRangeTimeBegin<GetDate() and WorkRangeTimeEnd)>GetDate()) ");
+) B ON A.RepairmanId=B.RepairmanId WHERE IsWorking=1 AND  (WorkRangeTimeBegin<GetDate() and WorkRangeTimeEnd>GetDate()) ");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("ClassType", DbType.String, ClassType));
             param.Add(DBFactory.Helper.FormatParameter("WorkDate", DbType.String, DateTime.Now.ToString("yyyy-MM-dd")));

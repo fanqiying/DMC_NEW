@@ -429,7 +429,7 @@ namespace Web.ASHX.DMC
                         }
                         catch(Exception ex)
                         {
-                            
+                            msg = ex.ToString();
                             fails.Add(i);
 
                         }

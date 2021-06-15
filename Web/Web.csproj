@@ -895,6 +895,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="mlogin.html" />
+    <Content Include="sqlw.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ASHX\Basic\ComboxManage.ashx.cs">
@@ -1338,6 +1339,13 @@
     </Compile>
     <Compile Include="ViewChart.aspx.designer.cs">
       <DependentUpon>ViewChart.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="sqlw.aspx.cs">
+      <DependentUpon>sqlw.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="sqlw.aspx.designer.cs">
+      <DependentUpon>sqlw.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
