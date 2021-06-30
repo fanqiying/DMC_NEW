@@ -1391,6 +1391,7 @@
     <Content Include="easyUI15\themes\material\images\Thumbs.db" />
     <Content Include="ASHX\DMC\ManHourReport.ashx" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\localfile.pubxml" />
     <None Include="Properties\PublishProfiles\SDAS.pubxml" />
     <Content Include="UI\PageTemplate\PageBasic.Master" />
     <Content Include="Template\RepairmanTemp.xls" />
