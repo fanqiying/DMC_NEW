@@ -451,6 +451,10 @@ namespace Web.ASHX
                     {
                         sbWhere.AppendFormat(" AND (empID like N'%{0}%' or empName like N'%{0}%' or empMail like N'%{0}%' or empDept like N'%{0}%') ", key);
                     }
+                    //if (!string.IsNullOrEmpty(GetData.GetRequest("rose")))
+                    //{
+ 
+                    //}
                     break;
             }
             //过滤掉已存在的用户
@@ -459,6 +463,12 @@ namespace Web.ASHX
             {
                 List<String> ids = empids.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 sbWhere.AppendFormat(" AND NOT empID IN('{0}')", string.Join("','", ids));
+            }
+
+            string program = GetData.GetRequest("program");
+            if (!string.IsNullOrWhiteSpace(program))
+            {
+                sbWhere.AppendFormat(" AND empID IN(select distinct UserID from dbo.t_Right_Urole where roseid in(SELECT distinct RoseId FROM dbo.t_Right_Rprogram WHERE ProgramId='{0}'))", program);
             }
             //根據條件取得員工資料集合
             DataTable dt = eservice.GetAllEmp(row, page, out pageCount, out total, sbWhere.ToString(), "AutoId,EmpId,EmpName,EmpMail, EmpId + '/' + EmpName as DisaplyText");

@@ -50,9 +50,9 @@ where isnull(repairstatus,0)<60 ");
         {
             StringBuilder sbSql = new StringBuilder();
             sbSql.Append("Insert into t_RepairForm(RepairFormNO,ApplyUserId,FaultTime,DeviceId,PositionId,PositionText,PositionId1,PhenomenaId,PhenomenaText,PhenomenaId1,PhenomenaText1,PositionText1,");
-            sbSql.Append("FaultStatus,FaultCode,FaultReason,Intime,FormStatus)");
+            sbSql.Append("FaultStatus,FaultCode,FaultReason,Intime,FormStatus,MouldId,NewMouldId)");
             sbSql.Append("VALUES(@RepairFormNO,@ApplyUserId,@FaultTime,@DeviceId,@PositionId,@PositionText,@PositionId1,@PhenomenaId,@PhenomenaText,@PhenomenaId1,@PhenomenaText1,@PositionText1,");
-            sbSql.Append("@FaultStatus,@FaultCode,@FaultReason,GETDATE(),10)");
+            sbSql.Append("@FaultStatus,@FaultCode,@FaultReason,GETDATE(),10,@MouldId,@NewMouldId)");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("RepairFormNO", DbType.String, entity.RepairFormNO));
             param.Add(DBFactory.Helper.FormatParameter("ApplyUserId", DbType.String, entity.ApplyUserId));
@@ -69,6 +69,8 @@ where isnull(repairstatus,0)<60 ");
             param.Add(DBFactory.Helper.FormatParameter("FaultStatus", DbType.String, entity.FaultStatus));
             param.Add(DBFactory.Helper.FormatParameter("FaultCode", DbType.String, entity.FaultCode));
             param.Add(DBFactory.Helper.FormatParameter("FaultReason", DbType.String, entity.FaultReason));
+            param.Add(DBFactory.Helper.FormatParameter("MouldId", DbType.String, entity.MouldId));
+            param.Add(DBFactory.Helper.FormatParameter("NewMouldId", DbType.String, entity.NewMouldId));
             using (Trans t = new Trans())
             {
                 try

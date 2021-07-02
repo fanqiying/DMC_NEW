@@ -111,8 +111,10 @@ GROUP BY RepairmanId
             param.Add(DBFactory.Helper.FormatParameter("WorkRangeTimeEnd", DbType.String, entity.WorkRangeTimeEnd));
             param.Add(DBFactory.Helper.FormatParameter("WorkDate", DbType.String, entity.WorkDate));
             param.Add(DBFactory.Helper.FormatParameter("WorkNum", DbType.String, entity.WorkNum));
-            param.Add(DBFactory.Helper.FormatParameter("GroupName", DbType.String, entity.GroupName));
-
+            if (!string.IsNullOrEmpty(entity.GroupName))
+                param.Add(DBFactory.Helper.FormatParameter("GroupName", DbType.String, entity.GroupName));
+            else
+                param.Add(DBFactory.Helper.FormatParameter("GroupName", DbType.String, DBNull.Value));
             using (Trans t = new Trans())
             {
                 try

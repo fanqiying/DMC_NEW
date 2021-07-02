@@ -83,6 +83,8 @@
                            { field: 'phenomenatext', title: '故障现象', width: 70, align: 'left' },
                            { field: 'repairstime', title: '指派时间', width: 80, align: 'left' },
                     { field: 'repairetime', title: '完成时间', width: 80, align: 'left' },
+                    { field: 'mouldid', title: '模具编号', width: 70, align: 'left' },
+                    { field: 'newmouldid', title: '新模编号', width: 70, align: 'left' },
                     { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
                     { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
                            {
@@ -150,30 +152,48 @@
         //设备详情
         function Confirm() {
             //var row = $('#tbAppraise').datagrid('getData').rows[index];
-            if (!(row.repairstatus == '30' )) {
+            if ($("#auserid").textbox("getValue") == "") {
+                $.messager.alert({ title: '消息提示', msg: '请设置操作员' });
+                return;
+            }
+            if (!(row.repairstatus == '30')) {
                 $.messager.alert({ title: '错误提示', msg: '只有待确认状态的数据才能确认' + row.repairstatus });
                 return;
             }
             if (row != null) {
                 $.messager.confirm("完工确认", "请确认设备是否维修完成可使用!", function (r) {
                     if (r) {
-                        $.post("../../ASHX/DMC/RepairRecord.ashx?M=LeaderAppraise", {
-                            RepairFormNO: row.repairformno,
-                            AutoId: row.autoid
-                        },
-                        function (result) {
-                            if (result.success) {
-                                closeWindow('divEvaluate');
-                                $('#tbAppraise').datagrid('reload');
-                                $.messager.alert({ title: '成功提示', msg: '报修单已确认' });
-                            } else {
-                                $.messager.alert({
-                                    title: '错误提示',
-                                    msg: result.msg
-                                });
-                            }
-                        },
-                        'json');
+                        //检查是否有操作权限
+                        $.post("../../ASHX/Permission/UserRightManage.ashx?M=programright",
+                               { opuser: $("#auserid").textbox("getValue"), ProgramId: "eqwi005" },
+                               function (result) {
+                                   if (result.success) {
+                                       //数据提交
+                                       $.post("../../ASHX/DMC/RepairRecord.ashx?M=LeaderAppraise", {
+                                           RepairFormNO: row.repairformno,
+                                           AutoId: row.autoid
+                                       },
+                                       function (result) {
+                                           if (result.success) {
+                                               closeWindow('divEvaluate');
+                                               $('#tbAppraise').datagrid('reload');
+                                               $.messager.alert({ title: '成功提示', msg: '报修单已确认' });
+                                           } else {
+                                               $.messager.alert({
+                                                   title: '错误提示',
+                                                   msg: result.msg
+                                               });
+                                           }
+                                       },
+                                       'json');
+                                   } else {
+                                       $.messager.alert({
+                                           title: '错误提示',
+                                           msg: result.msg
+                                       });
+                                   }
+                               },
+                               'json');
                     }
                 });
             }
@@ -181,6 +201,10 @@
         //返修
         function Appraise() {
             //var row = $('#tbAppraise').datagrid('getData').rows[index];
+            if ($("#auserid").textbox("getValue") == "") {
+                $.messager.alert({ title: '消息提示', msg: '请设置操作员' });
+                return;
+            }
             if (!(row.repairstatus == '30')) {
                 $.messager.alert({ title: '错误提示', msg: '只有待确认状态的数据才能返修' });
                 return;
@@ -192,27 +216,40 @@
         }
         //评价保存
         function Save() {
-            //评价保存
-            $.post("../../ASHX/DMC/RepairRecord.ashx?M=RepairManReject", {
-                RepairFormNO: $("#arepairformno").val(),
-                RebackReason: $("#arebackreason").textbox("getValue"),
-                AutoId: $("#aautoid").val()
-            },
-            function (result) {
-                if (result.success) {
-                    closeWindow('divEvaluate');
-                    closeWindow('divIPQC');
-                    $('#fm').form('clear');
-                    $('#tbAppraise').datagrid('reload');                    
-                    $.messager.alert({ title: '成功提示', msg: '數據已保存成功' });
-                } else {
-                    $.messager.alert({
-                        title: '错误提示',
-                        msg: result.msg
-                    });
-                }
-            },
-            'json');
+            //检查是否有操作权限
+            $.post("../../ASHX/Permission/UserRightManage.ashx?M=programright",
+                   { opuser: $("#auserid").textbox("getValue"), ProgramId: "eqwi005" },
+                   function (result) {
+                       if (result.success) {
+                           //评价保存
+                           $.post("../../ASHX/DMC/RepairRecord.ashx?M=RepairManReject", {
+                               RepairFormNO: $("#arepairformno").val(),
+                               RebackReason: $("#arebackreason").textbox("getValue"),
+                               AutoId: $("#aautoid").val()
+                           },
+                           function (result) {
+                               if (result.success) {
+                                   closeWindow('divEvaluate');
+                                   closeWindow('divIPQC');
+                                   $('#fm').form('clear');
+                                   $('#tbAppraise').datagrid('reload');
+                                   $.messager.alert({ title: '成功提示', msg: '數據已保存成功' });
+                               } else {
+                                   $.messager.alert({
+                                       title: '错误提示',
+                                       msg: result.msg
+                                   });
+                               }
+                           },
+                           'json');
+                       } else {
+                           $.messager.alert({
+                               title: '错误提示',
+                               msg: result.msg
+                           });
+                       }
+                   },
+                   'json');
         }
 
         /**
@@ -269,6 +306,7 @@
                 <input class="easyui-textbox" data-options="prompt:'请输入关键字'" id="txtKeyword" style="width: 200px;" />
                 <a class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="Search('ByKey')">搜索</a>
                 <a id="btnMore" class="easyui-linkbutton" data-options="iconCls:'icon-expand',plain:true" onclick="openSearch('divSearch');">高级搜索</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;操作人：<input data-options="prompt:'请输入操作人工号',required: true" class="easyui-textbox" id="auserid" style="width: 150px;" />
             </div>
             <div class="r rightSearch">
             </div>
@@ -287,7 +325,7 @@
                         <td style="width: 195px;">
                             <input class="easyui-textbox" id="qDeviceId" data-options="prompt:'请输入设备编号'" style="width: 150px;" />
                         </td>
-                       <%-- <td style="width: 70px;">单据状态:</td>
+                        <%-- <td style="width: 70px;">单据状态:</td>
                         <td>
                             <select class="easyui-combobox" id="qRepairStatus" data-options="editable:false" style="width: 150px;">
                                 <option value="" selected="selected">All</option>
@@ -325,7 +363,7 @@
                     <col span="1" style="width: 220px;" />
                 </colgroup>
                 <tbody>
-                   <%-- <tr>
+                    <%-- <tr>
                         <td style="height: 50px;">评分:</td>
                         <td colspan="3">
                             <input disabled="disabled" class="easyui-slider" value="80" style="width: 520px; height: 25px;" data-options="

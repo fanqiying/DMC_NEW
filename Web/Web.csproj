@@ -55,8 +55,7 @@
     <Reference Include="Common.Logging.Core">
       <HintPath>..\References\Common.Logging.Core.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\References\ICSharpCode.SharpZipLib.DLL</HintPath>
     </Reference>
     <Reference Include="Interop.MSXML2, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
@@ -1476,7 +1475,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>6825</DevelopmentServerPort>
+          <DevelopmentServerPort>55549</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

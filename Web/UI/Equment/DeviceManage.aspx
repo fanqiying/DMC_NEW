@@ -408,7 +408,7 @@
     </div>
 
     <div id="divQCCode" class="easyui-dialog" data-options="closed:true,modal:true,maximizable:false,buttons:'#dlg-QCCode'"
-        style="width: 220px; height: 280px; padding: 2px;">
+        style="width: 220px; height: 290px; padding: 2px;">
         <div id="qrcode" style="width: 200px; height: 200px;"></div>
     </div>
     <div id="dlg-QCCode">

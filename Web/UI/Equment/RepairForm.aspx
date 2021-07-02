@@ -15,13 +15,13 @@
     <script src="../../easyUI15/locale/easyui-lang-zh_TW.js" type="text/javascript"></script>
 
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function () {            
             $('#aapplyuserid').combogrid({
                 //是否折叠
                 required: false,
                 panelWidth: 430,
                 //toolbar: '#toolbarleader',
-                url: '../../ASHX/Organize/EmpManage.ashx?M=SearchGroup&SearchType=ByKey&rows=10000&page=1',
+                url: '../../ASHX/Organize/EmpManage.ashx?M=SearchGroup&SearchType=ByKey&rows=10000&page=1&program=eqwi001',
                 idField: 'empid',
                 textField: 'disaplytext',
                 pagination: false,//是否分页
@@ -116,7 +116,7 @@
                 required: false,
                 panelWidth: 430,
                 //toolbar: '#toolbardeviceid',
-                url: '../../ASHX/DMC/DeviceManage.ashx?M=Search&SearchType=ByKey&rows=10000&page=1',
+                url: '../../ASHX/DMC/DeviceManage.ashx?M=Search&SearchType=ByKey&CategoryId=A01&rows=10000&page=1',
                 idField: 'deviceid',
                 textField: 'deviceid',
                 mode: 'remote',
@@ -210,6 +210,204 @@
                     }
                 }
             });
+            $('#amouldid').combogrid({
+                //是否折叠
+                required: false,
+                panelWidth: 430,
+                //toolbar: '#toolbardeviceid',
+                url: '../../ASHX/DMC/DeviceManage.ashx?M=Search&SearchType=ByKey&CategoryId=B01&rows=10000&page=1',
+                idField: 'deviceid',
+                textField: 'deviceid',
+                mode: 'remote',
+                pagination: false,//是否分页
+                rownumbers: true,//序号 
+                method: 'post',
+                fitColumns: true,
+                fit: true,
+                columns: [[
+                    {
+                        field: 'deviceid', title: '模具编号', width: 70, align: 'left', formatter: function (value, row, index) {
+                            return row.deviceid + "(" + row.devicename + ")";
+                        }
+                    }
+                ]],
+                onSelect: function (rowIndex, rowData) {
+                    LoadHisRecord();
+                },
+                keyHandler: {
+                    enter: function () {
+                        var pClosed = $("#amouldid").combogrid("panel").panel("options").closed;
+                        if (!pClosed) {
+                            $("#amouldid").combogrid("hidePanel");
+                        }
+                        var grid = $('#amouldid').combogrid("grid");
+                        var record = grid.datagrid("getSelected");
+                        if (record == null || record == undefined) {
+                            //如果未选中，则匹配当前回车选择的第一个
+                            var rows = grid.datagrid("getRows");
+                            if (rows.length > 0) {
+                                //record = rows[0];
+                                var rowIndex = grid.datagrid("getRowIndex", rows[0]);
+                                //setPatient(record);
+                                grid.datagrid("selectRow", rowIndex);
+                            }
+                            return;
+                        }
+                        else {
+                            var rowIndex = grid.datagrid("getRowIndex", record);
+                            grid.datagrid("selectRow", rowIndex);
+                            //setPatient(record);
+                        }
+                    },
+                    up: function () {
+                        var pClosed = $("#amouldid").combogrid("panel").panel("options").closed;
+                        if (pClosed) {
+                            $("#amouldid").combogrid("showPanel");
+                        }
+                        var grid = $('#amouldid').combogrid("grid");
+                        var rowSelected = grid.datagrid("getSelected");
+                        if (rowSelected != null) {
+                            var rowIndex = grid.datagrid("getRowIndex", rowSelected);
+                            if (rowIndex > 0) {
+                                rowIndex = rowIndex - 1;
+                                grid.datagrid("selectRow", rowIndex);
+                            }
+                        } else if (grid.datagrid("getRows").length > 0) {
+                            grid.datagrid("selectRow", 0);
+                        }
+                    },
+                    down: function () {
+                        var pClosed = $("#amouldid").combogrid("panel").panel("options").closed;
+                        if (pClosed) {
+                            $("#amouldid").combogrid("showPanel");
+                        }
+                        var grid = $('#amouldid').combogrid("grid");
+                        var rowSelected = grid.datagrid("getSelected");
+                        if (rowSelected != null) {
+                            var totalRow = grid.datagrid("getRows").length;
+                            var rowIndex = grid.datagrid("getRowIndex", rowSelected);
+                            if (rowIndex < totalRow - 1) {
+                                rowIndex = rowIndex + 1;
+                                grid.datagrid("selectRow", rowIndex);
+                            }
+                        } else if (grid.datagrid("getRows").length > 0) {
+                            grid.datagrid("selectRow", 0);
+                        }
+                    },
+                    query: function (q) {
+                        //$('#adeviceid').combogrid("setValue", null);
+                        $('#amouldid').combogrid("grid").datagrid("clearSelections");
+                        $('#amouldid').combogrid("grid").datagrid("reload", {
+                            'KeyWord': q,
+                            'sid2': Math.round(Math.random() * 1000)
+                        });
+                        $('#amouldid').combogrid("grid").datagrid({
+                            onLoadSuccess: function (data) {
+                                $('#amouldid').combogrid("setText", q);
+                            }
+                        });
+                    }
+                }
+            });
+            $('#anewmouldid').combogrid({
+                //是否折叠
+                required: false,
+                panelWidth: 430,
+                //toolbar: '#toolbardeviceid',
+                url: '../../ASHX/DMC/DeviceManage.ashx?M=Search&SearchType=ByKey&CategoryId=B01&rows=10000&page=1',
+                idField: 'deviceid',
+                textField: 'deviceid',
+                mode: 'remote',
+                pagination: false,//是否分页
+                rownumbers: true,//序号 
+                method: 'post',
+                fitColumns: true,
+                fit: true,
+                columns: [[
+                    {
+                        field: 'deviceid', title: '模具编号', width: 70, align: 'left', formatter: function (value, row, index) {
+                            return row.deviceid + "(" + row.devicename + ")";
+                        }
+                    }
+                ]],
+                onSelect: function (rowIndex, rowData) {
+                    LoadHisRecord();
+                },
+                keyHandler: {
+                    enter: function () {
+                        var pClosed = $("#anewmouldid").combogrid("panel").panel("options").closed;
+                        if (!pClosed) {
+                            $("#anewmouldid").combogrid("hidePanel");
+                        }
+                        var grid = $('#anewmouldid').combogrid("grid");
+                        var record = grid.datagrid("getSelected");
+                        if (record == null || record == undefined) {
+                            //如果未选中，则匹配当前回车选择的第一个
+                            var rows = grid.datagrid("getRows");
+                            if (rows.length > 0) {
+                                //record = rows[0];
+                                var rowIndex = grid.datagrid("getRowIndex", rows[0]);
+                                //setPatient(record);
+                                grid.datagrid("selectRow", rowIndex);
+                            }
+                            return;
+                        }
+                        else {
+                            var rowIndex = grid.datagrid("getRowIndex", record);
+                            grid.datagrid("selectRow", rowIndex);
+                            //setPatient(record);
+                        }
+                    },
+                    up: function () {
+                        var pClosed = $("#anewmouldid").combogrid("panel").panel("options").closed;
+                        if (pClosed) {
+                            $("#anewmouldid").combogrid("showPanel");
+                        }
+                        var grid = $('#anewmouldid').combogrid("grid");
+                        var rowSelected = grid.datagrid("getSelected");
+                        if (rowSelected != null) {
+                            var rowIndex = grid.datagrid("getRowIndex", rowSelected);
+                            if (rowIndex > 0) {
+                                rowIndex = rowIndex - 1;
+                                grid.datagrid("selectRow", rowIndex);
+                            }
+                        } else if (grid.datagrid("getRows").length > 0) {
+                            grid.datagrid("selectRow", 0);
+                        }
+                    },
+                    down: function () {
+                        var pClosed = $("#anewmouldid").combogrid("panel").panel("options").closed;
+                        if (pClosed) {
+                            $("#anewmouldid").combogrid("showPanel");
+                        }
+                        var grid = $('#anewmouldid').combogrid("grid");
+                        var rowSelected = grid.datagrid("getSelected");
+                        if (rowSelected != null) {
+                            var totalRow = grid.datagrid("getRows").length;
+                            var rowIndex = grid.datagrid("getRowIndex", rowSelected);
+                            if (rowIndex < totalRow - 1) {
+                                rowIndex = rowIndex + 1;
+                                grid.datagrid("selectRow", rowIndex);
+                            }
+                        } else if (grid.datagrid("getRows").length > 0) {
+                            grid.datagrid("selectRow", 0);
+                        }
+                    },
+                    query: function (q) {
+                        //$('#adeviceid').combogrid("setValue", null);
+                        $('#anewmouldid').combogrid("grid").datagrid("clearSelections");
+                        $('#anewmouldid').combogrid("grid").datagrid("reload", {
+                            'KeyWord': q,
+                            'sid2': Math.round(Math.random() * 1000)
+                        });
+                        $('#anewmouldid').combogrid("grid").datagrid({
+                            onLoadSuccess: function (data) {
+                                $('#anewmouldid').combogrid("setText", q);
+                            }
+                        });
+                    }
+                }
+            });
             //加載下拉框的故障位置
             $('#apositionid').combobox({
                 url: '../../ASHX/DMC/FaultPosition.ashx?M=GetFaultPositionMain',
@@ -234,6 +432,11 @@
                                }
                            },
                            'json');
+                    }
+                    if (newValue.indexOf("M01") > -1) {
+                        $('#trnewmould').show();
+                    } else {
+                        $('#trnewmould').hide();
                     }
                 }
             });
@@ -342,9 +545,9 @@
                                        case "50":
                                            text = "50-待组长确认";
                                            break;
-                                       //case "60":
-                                       //    text = "60-已完成";
-                                       //    break;
+                                           //case "60":
+                                           //    text = "60-已完成";
+                                           //    break;
                                    }
                                    return text;
                                }
@@ -354,6 +557,8 @@
                            { field: 'phenomenatext', title: '故障现象', width: 70, align: 'left' },
                            { field: 'faulttime', title: '故障时间', width: 70, align: 'left' },
                            { field: 'intime', title: '报修时间', width: 70, align: 'left' },
+                           { field: 'mouldid', title: '模具编号', width: 70, align: 'left' },
+                           { field: 'newmouldid', title: '新模编号', width: 70, align: 'left' },
                            { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
                            { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
                            //{ field: 'assigntime', title: '指派时间', width: 70, align: 'left' },
@@ -427,6 +632,7 @@
                     $("#afaultcode").textbox('setValue', $(this).val().substring(0, 3));
                 }
             });
+            $('#trnewmould').hide();
         });
         function LoadHisRecord() {
             //设备
@@ -561,7 +767,9 @@
                 PositionId1: $('#apositionid1').combobox('getValue'),
                 PhenomenaId1: $('#aphenomenaid1').combobox('getValue'),
                 PositionText1: $('#apositionid1').combobox('getText'),
-                PhenomenaText1: $('#aphenomenaid1').combobox('getText')
+                PhenomenaText1: $('#aphenomenaid1').combobox('getText'),
+                MouldId: $('#amouldid').combogrid("getValue"),
+                NewMouldId: $('#anewmouldid').combogrid("getValue")
             },
             function (result) {
                 if (result.success) {
@@ -633,7 +841,7 @@
     </style>
 </head>
 <body style="width: 100%; height: 100%;">
-    <div id="funMain" style="margin-left: 5px; margin-right: 0px; " class="auto-style1">
+    <div id="funMain" style="margin-left: 5px; margin-right: 0px;" class="auto-style1">
         <div id="divOperation" class="Search" style="display: none;">
             <div class="l leftSearch">
                 <input class="easyui-textbox" data-options="prompt:'请输入关键字'" id="txtKeyword" style="width: 200px;" />
@@ -642,7 +850,9 @@
             </div>
             <div class="r rightSearch">
                 &nbsp;&nbsp;
+               
                 <%--<a class="easyui-linkbutton" data-options="iconCls:'icon-scan',plain:true" href="javascript:void(0)" onclick='add()'>扫码报修</a>--%> &nbsp;&nbsp;                
+           
             </div>
         </div>
         <div style="clear: both">
@@ -708,6 +918,8 @@
                                         <option value="NA" selected="selected">NA</option>
                                         <option value="C">C</option>
                                         <option value="P">P</option>
+                                        <option value="S">S</option>
+                                        <option value="R">R</option>
                                     </select>
                                     <input disabled="disabled" data-options="prompt:'请输入瑕疵代码'" id="afaultcode" name="faultcode" class="easyui-textbox" style="width: 100px;" />
                                 </td>
@@ -721,7 +933,15 @@
                                 <td>
                                     <input data-options="prompt:'请选择故障现象1'" class="easyui-combobox" style="width: 100%;" id="aphenomenaid1" name="phenomenaid1" />
                                 </td>
-                                <td colspan="2"></td>
+                                <td>模具编号</td>
+                                <td>
+                                    <input data-options="prompt:'请填入模具编号'" class="easyui-textbox" id="amouldid" name="mouldid" style="width: 100px;" /></td>
+                            </tr>
+                            <tr id="trnewmould">
+                                <td style="height: 25px;">新模编号</td>
+                                <td>
+                                    <input data-options="prompt:'请填入新模具编号'" class="easyui-textbox" id="anewmouldid" name="newmouldid" style="width: 100px;" /></td>
+                                <td colspan="4"></td>
                             </tr>
                             <tr>
                                 <td>历史故障原因:</td>

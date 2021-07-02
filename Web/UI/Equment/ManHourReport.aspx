@@ -56,6 +56,8 @@
                                    return (((row.gradetime - row.manhoure) / row.gradetime) * 100).toFixed(0) + "%";
                                }
                            },
+                    { field: 'mouldid', title: '模具编号', width: 70, align: 'left' },
+                    { field: 'newmouldid', title: '新模编号', width: 70, align: 'left' },
                     { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
                     { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' }
                 ]]
@@ -85,6 +87,37 @@
             queryParams.RepairmanName = $('#repairmanname').textbox("getValue");
             queryParams.YearMonth = $('#qyearmonth').datebox("getValue");
             $('#tbEqManage').datagrid('reload');
+        }
+        function Export() {
+            var queryParams = $('#tbEqManage').datagrid('options').queryParams;
+            var url = "../../ASHX/DMC/RepairRecord.ashx?M=downloadhour&repairstatus=1&fileName=工时统计.xls";
+            if (queryParams.SearchType) {
+                url = url + "&SearchType=" + queryParams.SearchType;
+            }
+            if (queryParams.KeyWord) {
+                url = url + "&KeyWord=" + queryParams.KeyWord;
+            }
+            if (queryParams.RepairFormNO) {
+                url = url + "&RepairFormNO=" + queryParams.RepairFormNO;
+            }
+            if (queryParams.EqumentId) {
+                url = url + "&EqumentId=" + queryParams.EqumentId;
+            }
+            if (queryParams.RepairmanId) {
+                url = url + "&RepairmanId=" + queryParams.RepairmanId;
+            }
+            if (queryParams.RepairmanName) {
+                url = url + "&RepairmanName=" + queryParams.RepairmanName;
+            }
+            if (queryParams.YearMonth) {
+                url = url + "&YearMonth=" + queryParams.YearMonth;
+            }
+            if ($("#downloadForm").length <= 0) {
+                $("body").append("<form id='downloadForm' method='post' target='iframe'></form>");
+                $("body").append("<iframe id='ifm' name='iframe' style='display:none;'></iframe>");
+            }
+            $("#downloadForm").attr('action', url);
+            $("#downloadForm").submit();
         }
         //單擊高級查詢按鈕
         function openSearch(obj) {
@@ -186,6 +219,7 @@
                 <a id="btnMore" class="easyui-linkbutton" data-options="iconCls:'icon-expand',plain:true" onclick="openSearch('divSearch');">高级搜索</a>
             </div>
             <div class="r rightSearch">
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-excel',plain:true" href="javascript:void(0)" onclick='Export()'>导出</a> &nbsp;&nbsp;                
             </div>
         </div>
         <div style="clear: both">
