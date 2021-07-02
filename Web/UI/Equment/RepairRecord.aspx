@@ -114,10 +114,12 @@
                            { field: 'repairstime', title: '指派时间', width: 80, align: 'left' },
                     { field: 'repairetime', title: '完成时间', width: 80, align: 'left' },
                     { field: 'ipqcnumber', title: 'IPQC', width: 80, align: 'left' },
+                    { field: 'mouldid', title: '模具编号', width: 70, align: 'left' },
+                    { field: 'newmouldid', title: '新模编号', width: 70, align: 'left' },
                     { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
                     { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
                      { field: 'rebackreason', title: '返修原因', width: 70, align: 'left' },
-                    
+
                            {
                                field: 'opt', title: '操作', width: 120, align: 'left',
                                formatter: function (value, row, index) {
@@ -180,13 +182,13 @@
             $('#divView').dialog('open').dialog('setTitle', '信息查看');
         }
         //挂单
-        var repairstatus="";
+        var repairstatus = "";
         function Reject(index) {
             var row = $('#tbRepairRecord').datagrid('getData').rows[index];
             if (row.repairstatus == "20" || row.repairstatus == "23" || row.repairstatus == "24" || row.repairstatus == "25") {
                 $('#fmReback').form('clear');
                 $('#fmReback').form('load', row);
-                repairstatus=row.repairstatus;
+                repairstatus = row.repairstatus;
                 $('#divReback').dialog('open').dialog('setTitle', '挂单');
             } else {
                 $.messager.alert({ title: '错误提示', msg: '只能挂单待维修和返修的单号！' });
@@ -195,31 +197,51 @@
 
         function SaveReback() {
             $.messager.defaults = { ok: '是', cancel: '否', width: 300 };
-            $.messager.confirm('挂单确认', '你確定需要挂单吗?', function (r) {
-                if (r) {
-                    $.post("../../ASHX/DMC/RepairRecord.ashx?M=Reject",
-                           {
-                               RepairFormNO: $("#rrepairformno").val(),
-                               AutoId: $("#rautoid").val(),
-                               RebackType: $("#rebacktype").combobox("getValue"),
-                               RebackReason: $("#rebackreason").textbox("getValue"),
-                               OldRepairStatus: repairstatus
-                           },
-                            function (result) {
-                                if (result.success) {
-                                    $('#tbRepairRecord').datagrid('reload');
-                                    closeWindow('divReback');
-                                    $.messager.alert({ title: '成功提示', msg: '挂单已确认！' });
-                                } else {
-                                    $.messager.alert({
-                                        title: '错误提示',
-                                        msg: result.msg
-                                    });
-                                }
-                            },
-                            'json');
-                }
-            });
+
+            if ($("#auserid").textbox("getValue") == "") {
+                $.messager.alert({ title: '消息提示', msg: '请设置操作员' });
+                return;
+            }
+            //检查是否有操作权限
+            $.post("../../ASHX/Permission/UserRightManage.ashx?M=programright",
+                   { opuser: $("#auserid").textbox("getValue"), ProgramId: "eqwi002" },
+                   function (result) {
+                       if (result.success) {
+                           //有权限则提交
+                           $.messager.confirm('挂单确认', '你確定需要挂单吗?', function (r) {
+                               if (r) {
+                                   $.post("../../ASHX/DMC/RepairRecord.ashx?M=Reject",
+                                          {
+                                              RepairFormNO: $("#rrepairformno").val(),
+                                              AutoId: $("#rautoid").val(),
+                                              RebackType: $("#rebacktype").combobox("getValue"),
+                                              RebackReason: $("#rebackreason").textbox("getValue"),
+                                              OldRepairStatus: repairstatus
+                                          },
+                                           function (result) {
+                                               if (result.success) {
+                                                   $('#tbRepairRecord').datagrid('reload');
+                                                   closeWindow('divReback');
+                                                   $.messager.alert({ title: '成功提示', msg: '挂单已确认！' });
+                                               } else {
+                                                   $.messager.alert({
+                                                       title: '错误提示',
+                                                       msg: result.msg
+                                                   });
+                                               }
+                                           },
+                                           'json');
+                               }
+                           });
+
+                       } else {
+                           $.messager.alert({
+                               title: '错误提示',
+                               msg: result.msg
+                           });
+                       }
+                   },
+                   'json');
         }
 
         var curConfirmState = "20";
@@ -247,57 +269,76 @@
         //保存
         function Save() {
             var msg = "";
-            //获取当前combotree的tree对象
-            //var treeposition = $('#apositionid').combotree('tree');
-            ////获取当前选中的节点
-            //var nodeposition = treeposition.tree('getSelected');
-            //var PositionId = "";
-            //var PositionText = "";
-            //if (nodeposition != null) {
-            //    PositionId = nodeposition.id;
-            //    PositionText = nodeposition.attributes.positiontext;
-            //}
-            ////获取当前combotree的tree对象
-            //var treephenomena = $('#aphenomenaid').combotree('tree');
-            ////获取当前选中的节点
-            //var nodephenomena = treephenomena.tree('getSelected');
-            //var PhenomenaId = "";
-            //var PhenomenaText = "";
-            //if (nodephenomena != null) {
-            //    PhenomenaId = nodephenomena.id;
-            //    PhenomenaText = nodephenomena.attributes.categorytext;
-            //}
+            if ($("#auserid").textbox("getValue") == "") {
+                $.messager.alert({ title: '消息提示', msg: '请设置操作员' });
+                return;
+            }
+            //检查是否有操作权限
+            $.post("../../ASHX/Permission/UserRightManage.ashx?M=programright",
+                   { opuser: $("#auserid").textbox("getValue"), ProgramId: "eqwi002" },
+                   function (result) {
+                       if (result.success) {
+                           //数据提交
+                           $.post("../../ASHX/DMC/RepairRecord.ashx?M=Confirm", {
+                               RepairFormNO: $("#arepairformno").val(),
+                               FaultReason: $("#afaultreason").textbox("getValue"),
+                               //FaultStatus: $("#afaultstatus").combobox("getValue"),
+                               FaultStatus: "",
+                               FaultCode: $("#afaultcode").textbox("getValue"),
+                               PositionText: $('#apositionid').combobox('getText'),
+                               PositionId: $('#apositionid').combobox('getValue'),
+                               PhenomenaId: $('#aphenomenaid').combobox('getValue'),
+                               PhenomenaText: $('#aphenomenaid').combobox('getText'),
+                               FaultAnalysis: $("#afaultanalysis").textbox("getValue"),
+                               RepairStatus: curConfirmState,
+                               OldRepairStatus: repairstatus,
+                               AutoId: $("#aautoid").val()
+                           },
+                           function (result) {
+                               if (result.success) {
+                                   $('#fm').form('clear');
+                                   $('#tbRepairRecord').datagrid('reload');
+                                   closeWindow('divNew');
+                                   $.messager.alert({ title: '成功提示', msg: '數據已保存成功' });
+                               } else {
+                                   $.messager.alert({
+                                       title: '错误提示',
+                                       msg: result.msg
+                                   });
+                               }
+                           },
+                           'json');
+                       } else {
+                           $.messager.alert({
+                               title: '错误提示',
+                               msg: result.msg
+                           });
+                       }
+                   },
+                   'json');
+        }
 
-            //数据提交
-            $.post("../../ASHX/DMC/RepairRecord.ashx?M=Confirm", {
-                RepairFormNO: $("#arepairformno").val(),
-                FaultReason: $("#afaultreason").textbox("getValue"),
-                //FaultStatus: $("#afaultstatus").combobox("getValue"),
-                FaultStatus: "",
-                FaultCode: $("#afaultcode").textbox("getValue"),
-                PositionText: $('#apositionid').combobox('getText'),
-                PositionId: $('#apositionid').combobox('getValue'),
-                PhenomenaId: $('#aphenomenaid').combobox('getValue'),
-                PhenomenaText: $('#aphenomenaid').combobox('getText'),
-                FaultAnalysis: $("#afaultanalysis").textbox("getValue"),
-                RepairStatus: curConfirmState,
-                OldRepairStatus: repairstatus,
-                AutoId: $("#aautoid").val()
-            },
-            function (result) {
-                if (result.success) {
-                    $('#fm').form('clear');
-                    $('#tbRepairRecord').datagrid('reload');
-                    closeWindow('divNew');
-                    $.messager.alert({ title: '成功提示', msg: '數據已保存成功' });
-                } else {
-                    $.messager.alert({
-                        title: '错误提示',
-                        msg: result.msg
-                    });
-                }
-            },
-            'json');
+        function Export() {
+            var queryParams = $('#tbRepairRecord').datagrid('options').queryParams;
+            var url = "../../ASHX/DMC/RepairRecord.ashx?M=download&repairstatus=1&fileName=维修记录.csv";
+            if (queryParams.KeyWord)
+            {
+                url = url + "&KeyWord=" + queryParams.KeyWord;
+            }
+            if (queryParams.RepairFormNO)
+            {
+                url = url + "&RepairFormNO=" + queryParams.RepairFormNO;
+            }
+            if (queryParams.DeviceId)
+            {
+                url = url + "&DeviceId=" + queryParams.DeviceId;
+            }
+            if ($("#downloadForm").length <= 0) {
+                $("body").append("<form id='downloadForm' method='post' target='iframe'></form>");
+                $("body").append("<iframe id='ifm' name='iframe' style='display:none;'></iframe>");
+            }
+            $("#downloadForm").attr('action', url);
+            $("#downloadForm").submit();
         }
 
         /**
@@ -354,8 +395,10 @@
                 <input class="easyui-textbox" data-options="prompt:'请输入关键字'" id="txtKeyword" style="width: 200px;" />
                 <a class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="Search('ByKey')">搜索</a>
                 <a id="btnMore" class="easyui-linkbutton" data-options="iconCls:'icon-expand',plain:true" onclick="openSearch('divSearch');">高级搜索</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;操作人：<input data-options="prompt:'请输入操作人工号',required: true" class="easyui-textbox" id="auserid" style="width: 150px;" />
             </div>
             <div class="r rightSearch">
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-excel',plain:true" href="javascript:void(0)" onclick='Export()'>导出</a> &nbsp;&nbsp;                
             </div>
         </div>
         <div style="clear: both">

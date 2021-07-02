@@ -231,6 +231,8 @@ namespace Web.ASHX.DMC
                 entity.FaultCode = context.Request["FaultCode"];
                 entity.FaultReason = context.Request["FaultReason"];
                 entity.FaultStatus = context.Request["FaultStatus"];
+                entity.MouldId = context.Request["MouldId"];
+                entity.NewMouldId = context.Request["NewMouldId"];
                 entity.FormStatus = "10";
                 //entity.RepairFormNO = "0";//报修单号，自动生成
                 string msg = rfs.NewRepairForm(entity);
@@ -286,8 +288,9 @@ namespace Web.ASHX.DMC
                 string RepairFormNO = context.Request["RepairFormNO"];
                 string AssignUser = context.Request["AssignUser"];
                 string oldFormStatus = context.Request["FormStatus"];
-
-                string msg = rfs.RepairAssign(RepairFormNO, AssignUser, UserId, oldFormStatus);
+                //操作员
+                string opuser = context.Request["opuser"];
+                string msg = rfs.RepairAssign(RepairFormNO, AssignUser, opuser, oldFormStatus);
                 if (string.IsNullOrWhiteSpace(msg))
                 {
                     context.Response.Write("{\"success\":true,\"msg\":\"指派成功\"}");

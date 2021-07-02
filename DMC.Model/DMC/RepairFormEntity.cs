@@ -101,5 +101,13 @@ namespace DMC.Model
         /// IPQC号码
         /// </summary>
         public string IPQCNumber { get; set; }
+        /// <summary>
+        /// 模具编号
+        /// </summary>
+        public string MouldId { get; set; }
+        /// <summary>
+        /// 新模编号
+        /// </summary>
+        public string NewMouldId { get; set; }
     }
 }

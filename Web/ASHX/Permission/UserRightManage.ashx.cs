@@ -104,6 +104,31 @@ namespace Web.ASHX
                 case "prightsetting"://保存個人程式的公司和資料權限
                     PRightSetting(context);
                     break;
+                case "programright"://检查是否有程序权限
+                    CheckUserOptProgram(context);
+                    break;
+            }
+        }
+        /// <summary>
+        /// 验证权限
+        /// </summary>
+        /// <param name="context"></param>
+        private void CheckUserOptProgram(HttpContext context)
+        {
+            string opuser = context.Request.Params["opuser"];
+            string ProgramId = context.Request.Params["ProgramId"];
+
+            //验证权限
+            PermissionServices permission = new PermissionServices();
+            DataTable dt = new DataTable();
+            permission.GetMyMenu(opuser, "L001", CompanyId, ref dt);
+            DataRow[] drList = dt.Select(string.Format("ISNULL(ID,'')='{0}'", ProgramId), "orderid asc");
+            if (drList == null || drList.Length <= 0)
+            {
+                context.Response.Write("{\"success\":false,\"msg\":\"" + string.Format("操作员{0}没有该程序的操作权限", opuser) + "\"}");
+            }
+            else {
+                context.Response.Write("{\"success\":true,\"msg\":\"指派成功\"}");
             }
         }
 
@@ -478,7 +503,7 @@ namespace Web.ASHX
                 model.userDept = context.Request["userDept"].ToString();
                 model.domainID = context.Request["domainID"].ToString();
                 model.domainAddr = context.Request["domainAddr"].ToString();
-                
+
                 model.usy = context.Request["usy"].ToString();
                 model.defLanguage = LanguageId;
                 model.updaterID = UserId;// userManage.GetUserMain().userID;

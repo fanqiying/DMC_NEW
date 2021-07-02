@@ -53,27 +53,48 @@
                                 var queryParams = $('#tbRepairAssign').datagrid('options').queryParams;
                                 if (queryParams.DType != "1") {
                                     $.messager.defaults = { ok: '确认', cancel: '取消', width: 300 };
-                                    $.messager.confirm('指派确认', '你確定需要指派给' + rec.repairmanname + '吗?', function (r) {
-                                        if (r) {
-                                            $.post("../../ASHX/DMC/RepairForm.ashx?M=RepairAssign",
-                                                { RepairFormNO: repairformno, AssignUser: rec.repairmanid, AssignUserFullname: rec.repairmanname,FormStatus:formstatus },
-                                                     function (result) {
-                                                         if (result.success) {
-                                                             repairformno = "";
-                                                             formstatus = "";
-                                                             editIndex = undefined;
-                                                             Refersh();
-                                                             $.messager.alert({ title: '成功提示', msg: '指派成功' });
-                                                         } else {
-                                                             $.messager.alert({
-                                                                 title: '错误提示',
-                                                                 msg: result.msg
-                                                             });
-                                                         }
-                                                     },
-                                                     'json');
-                                        }
-                                    });
+                                    if ($("#auserid").textbox("getValue") == "") {
+                                        Refersh();
+                                        $.messager.alert({ title: '消息提示', msg: '请设置操作员' });
+                                        return;
+                                    }
+                                    //检查是否有操作权限
+                                    $.post("../../ASHX/Permission/UserRightManage.ashx?M=programright",
+                                           { opuser: $("#auserid").textbox("getValue"), ProgramId: "eqwi004" },
+                                           function (result) {
+                                               if (result.success) {
+                                                   //有权限则提交
+                                                   $.messager.confirm('指派确认', '你確定需要指派给' + rec.repairmanname + '吗?', function (r) {
+                                                       if (r) {
+                                                           $.post("../../ASHX/DMC/RepairForm.ashx?M=RepairAssign",
+                                                               { RepairFormNO: repairformno, AssignUser: rec.repairmanid, AssignUserFullname: rec.repairmanname, FormStatus: formstatus, opuser: $("#auserid").textbox("getValue") },
+                                                                    function (result) {
+                                                                        if (result.success) {
+                                                                            repairformno = "";
+                                                                            formstatus = "";
+                                                                            editIndex = undefined;
+                                                                            Refersh();
+                                                                            $.messager.alert({ title: '成功提示', msg: '指派成功' });
+                                                                        } else {
+                                                                            $.messager.alert({
+                                                                                title: '错误提示',
+                                                                                msg: result.msg
+                                                                            });
+                                                                            Refersh();
+                                                                        }
+                                                                    },
+                                                                    'json');
+                                                       }
+                                                   });
+                                               } else {
+                                                   $.messager.alert({
+                                                       title: '错误提示',
+                                                       msg: result.msg
+                                                   });
+                                                   Refersh();
+                                               }
+                                           },
+                                           'json');
                                 }
                             }
                         }
@@ -88,6 +109,8 @@
                            { field: 'rebackreason', title: '重排原因', width: 150, align: 'left' },
                            { field: 'faulttime', title: '故障时间', width: 150, align: 'left' },
                            { field: 'ipqcnumber', title: 'IPQC工号', width: 100, align: 'left' },
+                           { field: 'mouldid', title: '模具编号', width: 70, align: 'left' },
+                           { field: 'newmouldid', title: '新模编号', width: 70, align: 'left' },
                            { field: 'positiontext1', title: '故障位置1', width: 100, align: 'left' },
                     { field: 'phenomenatext1', title: '故障现象1', width: 100, align: 'left' },
                     { field: 'repairformno', title: '维修单号', width: 120, align: 'left' }
@@ -202,13 +225,12 @@
                         $("#Reback").html(0);
                         $("#Change").html(0);
                     }
-                    
+
                     //   Search(type);
                     if (type == 0) {
                         $("#Wait").click();
                     }
-                    else if(type==1)
-                    {
+                    else if (type == 1) {
                         $("#Reback").click();
                     }
                     else {
@@ -249,8 +271,11 @@
         <div id="divOperation" class="Search">
             <div class="l leftSearch" id="opter">
                 <a class="easyui-linkbutton" data-options="toggle:true,group:'g1',selected:true" onclick="Search(0)">待排单(<span id="Wait">0</span>)</a>&nbsp;&nbsp;
+               
                 <a class="easyui-linkbutton" data-options="toggle:true,group:'g1'" onclick="Search(1)">返修排单(<span id="Reback">0</span>)</a>&nbsp;&nbsp;
+               
                 <a class="easyui-linkbutton" data-options="toggle:true,group:'g1'" onclick="Search(2)">交接排单(<span id="Change">0</span>)</a>
+                操作人：<input data-options="prompt:'请输入操作人工号',required: true" class="easyui-textbox" id="auserid" style="width: 150px;" />
                 <%-- <input class="easyui-textbox" data-options="prompt:'请输入关键字'" id="txtKeyword" style="width: 200px;" />
                 <a class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="Search()">搜索</a>
                 <a id="btnMore" class="easyui-linkbutton" data-options="iconCls:'icon-expand',plain:true" onclick="openSearch('divSearch');">高级搜索</a>--%>

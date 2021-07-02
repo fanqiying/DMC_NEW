@@ -98,6 +98,10 @@ namespace Web.ASHX.DMC
                     }
                     break;
             }
+            if (!string.IsNullOrEmpty(context.Request.Params["CategoryId"]))
+            {
+                strWhere.AppendFormat(" AND CategoryId like'{0}%'", context.Request.Params["CategoryId"]);
+            }
             //取得相關查詢條件下的數據列表
             DataTable dt = ds.Search(pagesize, pageindex, out pageCount, out total, strWhere.ToString());
             StringBuilder sb = new StringBuilder();
@@ -180,7 +184,7 @@ namespace Web.ASHX.DMC
             try
             {
                 DeviceEntity entity = new DeviceEntity();
-                entity.DeviceId = context.Request["CategoryId"]; 
+                entity.DeviceId = context.Request["CategoryId"];
                 string msg = ds.DeleteDevice(entity);
                 if (string.IsNullOrWhiteSpace(msg))
                 {
