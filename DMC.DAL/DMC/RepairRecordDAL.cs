@@ -172,17 +172,17 @@ namespace DMC.DAL
 
             //创建报修记录
             sbSql.Append("INSERT INTO t_RepairForm(RepairFormNO,ApplyUserId,FaultTime,DeviceId,PositionId,PositionText,PositionId1,PhenomenaId,");
-            sbSql.Append("PhenomenaText,PhenomenaId1,FaultStatus,FaultCode,FaultReason,FaultAnalysis,Intime,FormStatus,RebackType,RebackReason,IPQCNumber,RepairmanId,RepairmanName,PhenomenaText1,PositionText1)");
+            sbSql.Append("PhenomenaText,PhenomenaId1,FaultStatus,FaultCode,FaultReason,FaultAnalysis,Intime,FormStatus,RebackType,RebackReason,IPQCNumber,RepairmanId,RepairmanName,PhenomenaText1,PositionText1,MouldId,NewMouldId)");
             sbSql.Append("SELECT @NewRepairFormNO RepairFormNO,ApplyUserId,FaultTime,DeviceId,PositionId,PositionText,PositionId1,PhenomenaId,");
             sbSql.Append("        PhenomenaText,PhenomenaId1,FaultStatus,FaultCode,FaultReason,FaultAnalysis,GetDate() Intime,");
-            sbSql.Append("        @newStatus FormStatus,RebackType,RebackReason,IPQCNumber,RepairmanId,RepairmanName,PhenomenaText1,PositionText1 ");
+            sbSql.Append("        @newStatus FormStatus,RebackType,RebackReason,IPQCNumber,RepairmanId,RepairmanName,PhenomenaText1,PositionText1,MouldId,NewMouldId ");
             sbSql.Append("   FROM t_RepairForm");
             sbSql.Append("  WHERE RepairFormNO=@OldRepairFormNO;");
             //创建维修记录
             sbSql.Append("INSERT INTO t_RepairRecord(RepairFormNO,RebackReason,ApplyUserId,IPQCNumber,RepairmanId,RepairmanName,DeviceId,PositionId,PositionText,PhenomenaId,");
-            sbSql.Append("PhenomenaText,FaultCode,FaultReason,FaultAnalysis,RepairSTime,RepairStatus,FaultTime,PhenomenaText1,PositionText1)");
+            sbSql.Append("PhenomenaText,FaultCode,FaultReason,FaultAnalysis,RepairSTime,RepairStatus,FaultTime,PhenomenaText1,PositionText1,MouldId,NewMouldId)");
             sbSql.Append("SELECT @NewRepairFormNO RepairFormNO,RebackReason,ApplyUserId,@IPQCNumber IPQCNumber,RepairmanId,RepairmanName,DeviceId,PositionId,PositionText,PhenomenaId,");
-            sbSql.Append("       PhenomenaText,FaultCode,FaultReason,FaultAnalysis,GetDate() RepairSTime,@newStatus RepairStatus,FaultTime,PhenomenaText1,PositionText1 ");
+            sbSql.Append("       PhenomenaText,FaultCode,FaultReason,FaultAnalysis,GetDate() RepairSTime,@newStatus RepairStatus,FaultTime,PhenomenaText1,PositionText1,MouldId,NewMouldId ");
             sbSql.Append("  FROM t_RepairRecord");
             sbSql.Append(" WHERE AutoId=@AutoId;");
             List<DbParameter> param = new List<DbParameter>();
