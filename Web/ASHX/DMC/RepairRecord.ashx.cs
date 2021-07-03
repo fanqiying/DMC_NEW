@@ -273,6 +273,8 @@ namespace Web.ASHX.DMC
             dtSns.Columns.Add("指派时间", typeof(string));
             dtSns.Columns.Add("完成时间", typeof(string));
             dtSns.Columns.Add("IPQC", typeof(string));
+            dtSns.Columns.Add("模具编号", typeof(string));
+            dtSns.Columns.Add("新模编号", typeof(string));         
             dtSns.Columns.Add("故障位置1", typeof(string));
             dtSns.Columns.Add("故障现象1", typeof(string));
             dtSns.Columns.Add("返修原因", typeof(string));
@@ -288,6 +290,8 @@ namespace Web.ASHX.DMC
                 dr["指派时间"] = Convert.ToDateTime(item["repairstime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
                 dr["完成时间"] = (Convert.IsDBNull(item["repairetime"]) ? "" : Convert.ToDateTime(item["repairetime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
                 dr["IPQC"] = item["ipqcnumber"].ToString();// item.lenovo_part_no;//联想料号
+                dr["模具编号"] = item["mouldid"].ToString();
+                dr["新模编号"] = item["newmouldid"].ToString();
                 dr["故障位置"] = item["positiontext1"].ToString();// item.product_line;//产品类别 
                 dr["故障现象"] = item["phenomenatext1"].ToString(); //item.test_station;//产品类别 
                 dr["返修原因"] = item["rebackreason"].ToString(); //item.product_type;//产品类别  

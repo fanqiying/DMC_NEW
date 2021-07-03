@@ -398,8 +398,7 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;操作人：<input data-options="prompt:'请输入操作人工号',required: true" class="easyui-textbox" id="auserid" style="width: 150px;" />
             </div>
             <div class="r rightSearch">
-                <a class="easyui-linkbutton" data-options="iconCls:'icon-excel',plain:true" href="javascript:void(0)" onclick='Export()'>导出</a> &nbsp;&nbsp;                
-            </div>
+               </div>
         </div>
         <div style="clear: both">
         </div>

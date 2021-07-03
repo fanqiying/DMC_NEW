@@ -83,6 +83,9 @@
                            { field: 'phenomenatext', title: '故障现象', width: 70, align: 'left' },
                            { field: 'repairstime', title: '指派时间', width: 80, align: 'left' },
                     { field: 'repairetime', title: '完成时间', width: 80, align: 'left' },
+                    { field: 'mouldid', title: '模具编号', width: 70, align: 'left' },
+                           { field: 'newmouldid', title: '新模编号', width: 70, align: 'left' },
+                           { field: 'rebackreason', title: '返修原因', width: 70, align: 'left' },
                     { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
                     { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
                            {

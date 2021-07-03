@@ -88,6 +88,9 @@
                             { field: 'repairstime', title: '指派时间', width: 80, align: 'left' },
                      { field: 'repairetime', title: '完成时间', width: 80, align: 'left' },
                      { field: 'ipqcnumber', title: 'IPQC', width: 80, align: 'left' },
+                     { field: 'mouldid', title: '模具编号', width: 70, align: 'left' },
+                     { field: 'rebackreason', title: '返修原因', width: 70, align: 'left' },
+                           { field: 'newmouldid', title: '新模编号', width: 70, align: 'left' },
                      { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
                      { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
                      { field: 'applyuserid', title: '申请人', width: 50, align: 'left' }
@@ -106,6 +109,36 @@
                 displayMsg: '当前显示 {from} - {to} 条记录 共 {total} 条记录'
             });
         });
+
+        function Export() {
+            var queryParams = $('#tbEqManage').datagrid('options').queryParams;
+            var url = "../../ASHX/DMC/RepairRecord.ashx?M=download&RepairStatus=100&fileName=维修记录.csv";
+            if (queryParams.KeyWord) {
+                url = url + "&KeyWord=" + queryParams.KeyWord;
+            }
+            if (queryParams.RepairFormNO) {
+                url = url + "&RepairFormNO=" + queryParams.RepairFormNO;
+            }
+            if (queryParams.DeviceId) {
+                url = url + "&EqumentId=" + queryParams.EqumentId;
+            }
+            if (queryParams.RepairmanId) {
+                url = url + "&RepairmanId=" + queryParams.RepairmanId;
+            }
+            if (queryParams.RepairmanName) {
+                url = url + "&RepairmanName=" + queryParams.RepairmanName;
+            }
+            if (queryParams.YearMonth) {
+                url = url + "&YearMonth=" + queryParams.YearMonth;
+            }
+            if ($("#downloadForm").length <= 0) {
+                $("body").append("<form id='downloadForm' method='post' target='iframe'></form>");
+                $("body").append("<iframe id='ifm' name='iframe' style='display:none;'></iframe>");
+            }
+            $("#downloadForm").attr('action', url);
+            $("#downloadForm").submit();
+        }
+
         //Grid初使加載的數據
         function Search(SearchType) {
             var queryParams = $('#tbEqManage').datagrid('options').queryParams;
@@ -220,6 +253,7 @@
                 <a id="btnMore" class="easyui-linkbutton" data-options="iconCls:'icon-expand',plain:true" onclick="openSearch('divSearch');">高级搜索</a>
             </div>
             <div class="r rightSearch">
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-excel',plain:true" href="javascript:void(0)" onclick='Export()'>导出</a> &nbsp;&nbsp; 
             </div>
         </div>
         <div style="clear: both">

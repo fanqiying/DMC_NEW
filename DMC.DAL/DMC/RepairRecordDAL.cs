@@ -24,9 +24,9 @@ namespace DMC.DAL
         {
             StringBuilder sbSql = new StringBuilder();
             sbSql.Append("Insert into t_RepairRecord(RepairFormNO,ApplyUserId,RepairmanId,RepairmanName,DeviceId,FaultTime,PositionId,PositionText,PhenomenaId,PhenomenaText,PositionId1,PositionText1,PhenomenaId1,PhenomenaText1,");
-            sbSql.Append("FaultStatus,FaultCode,FaultReason,RepairSTime,RepairStatus)");
+            sbSql.Append("FaultStatus,FaultCode,FaultReason,RepairSTime,RepairStatus,MouldId,NewMouldId)");
             sbSql.Append("SELECT RepairFormNO,ApplyUserId,@RepairmanId,(select top 1 RepairmanName from  t_Repairman where RepairmanId=@RepairmanId and RepairmanName is not null) ,DeviceId,FaultTime,PositionId,PositionText,PhenomenaId,PhenomenaText,PositionId1,PositionText1,PhenomenaId1,PhenomenaText1,");
-            sbSql.Append("       FaultStatus,FaultCode,FaultReason,GETDATE(),'20' ");
+            sbSql.Append("       FaultStatus,FaultCode,FaultReason,GETDATE(),'20',MouldId,NewMouldId ");
             sbSql.Append("  FROM t_RepairForm ");
             sbSql.Append(" WHERE RepairFormNO=@RepairFormNO ");
             List<DbParameter> param = new List<DbParameter>();
