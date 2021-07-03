@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>工时报表</title>
+    <title>工时报表</title>  
     <script src="../../easyUI15/jquery.min.js" type="text/javascript"></script>
     <link href="../../easyUI15/themes/public.css" rel="stylesheet" type="text/css" />
     <link href="../../easyUI15/themes/bootstrap/easyui.css" rel="stylesheet" type="text/css" />
@@ -112,14 +112,14 @@
 
         function Export() {
             var queryParams = $('#tbEqManage').datagrid('options').queryParams;
-            var url = "../../ASHX/DMC/RepairRecord.ashx?M=download&RepairStatus=100&fileName=维修记录.csv";
+            var url = "../../ASHX/DMC/RepairRecord.ashx?M=download&SearchType=ByAdvanced&RepairStatus=100&fileName=维修记录.csv";
             if (queryParams.KeyWord) {
                 url = url + "&KeyWord=" + queryParams.KeyWord;
             }
             if (queryParams.RepairFormNO) {
                 url = url + "&RepairFormNO=" + queryParams.RepairFormNO;
             }
-            if (queryParams.DeviceId) {
+            if (queryParams.EqumentId) {
                 url = url + "&EqumentId=" + queryParams.EqumentId;
             }
             if (queryParams.RepairmanId) {

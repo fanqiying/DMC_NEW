@@ -201,7 +201,7 @@ namespace Web.ASHX.DMC
                 dr["维修时间(分钟)"] = item["manhoure"].ToString();
                 dr["标准时间(分钟)"] = item["gradetime"].ToString();
                 dr["标准评分"] = item["standgrade"].ToString();
-                dr["绩效比(%)"] = ((Convert.ToInt32(item["gradetime"]) - Convert.ToInt32(item["manhoure"]))*100 / Convert.ToInt32(item["gradetime"])).ToString();
+                dr["绩效比(%)"] = ((Convert.ToInt32(item["gradetime"]) - Convert.ToInt32(item["manhoure"])) * 100 / Convert.ToInt32(item["gradetime"])).ToString();
                 dr["故障位置1"] = item["positiontext1"].ToString();
                 dr["故障现象1"] = item["phenomenatext1"].ToString();
                 dtSns.Rows.Add(dr);
@@ -220,21 +220,72 @@ namespace Web.ASHX.DMC
             int pageindex = 1;
             int total = 0;
             int pageCount = 0;
-            string key = context.Request.Params["KeyWord"];
             StringBuilder strWhere = new StringBuilder();
             strWhere.Append(" 1=1 ");
-            if (!string.IsNullOrEmpty(key))
+            string type = context.Request.Params["SearchType"];
+            string key = string.Empty;
+            switch (type)
             {
-                strWhere.AppendFormat(" AND (RepairFormNO like N'%{0}%' or DeviceId like N'%{0}%' or PositionId like N'%{0}%' or PhenomenaId like N'%{0}%' or FaultCode like N'%{0}%' or FaultReason like N'%{0}%' ) ", key);
+                case "ByKey":
+                    key = context.Request.Params["KeyWord"];
+                    if (!string.IsNullOrEmpty(key))
+                    {
+                        strWhere.AppendFormat(" AND (RepairFormNO like N'%{0}%' or DeviceId like N'%{0}%' or PositionId like N'%{0}%' or PhenomenaId like N'%{0}%' or FaultCode like N'%{0}%' or FaultReason like N'%{0}%' ) ", key);
+                    }
+                    break;
+                case "ByAdvanced":
+                    key = context.Request.Params["KeyWord"];
+                    if (!string.IsNullOrEmpty(key))
+                    {
+                        strWhere.AppendFormat(" AND (RepairFormNO like N'%{0}%' or DeviceId like N'%{0}%' or PositionId like N'%{0}%' or PhenomenaId like N'%{0}%' or FaultCode like N'%{0}%' or FaultReason like N'%{0}%' ) ", key);
+                    }
+                    if (!string.IsNullOrEmpty(context.Request.Params["RepairFormNO"]))
+                    {
+                        strWhere.AppendFormat(" AND (RepairFormNO like N'%{0}%')", context.Request.Params["RepairFormNO"]);
+                    }
+
+                    if (!string.IsNullOrEmpty(context.Request.Params["ApplyUserId"]))
+                    {
+                        strWhere.AppendFormat(" AND (ApplyUserId like N'%{0}%')", context.Request.Params["ApplyUserId"]);
+                    }
+
+                    if (!string.IsNullOrEmpty(context.Request.Params["DeviceId"]))
+                    {
+                        strWhere.AppendFormat(" AND DeviceId = N'{0}'", context.Request.Params["DeviceId"]);
+                    }
+
+                    if (!string.IsNullOrEmpty(context.Request.Params["PositionId"]))
+                    {
+                        strWhere.AppendFormat(" AND PositionId = N'{0}'", context.Request.Params["PositionId"]);
+                    }
+
+                    if (!string.IsNullOrEmpty(context.Request.Params["PhenomenaId"]))
+                    {
+                        strWhere.AppendFormat(" AND PhenomenaId = N'{0}'", context.Request.Params["PhenomenaId"]);
+                    }
+
+                    if (!string.IsNullOrEmpty(context.Request.Params["FaultCode"]))
+                    {
+                        strWhere.AppendFormat(" AND FaultCode = N'{0}'", context.Request.Params["FaultCode"]);
+                    }
+
+                    if (!string.IsNullOrEmpty(context.Request.Params["FaultReason"]))
+                    {
+                        strWhere.AppendFormat(" AND FaultReason = like N'%{0}%'", context.Request.Params["FaultReason"]);
+                    }
+                    if (!string.IsNullOrEmpty(context.Request.Params["YearMonth"]))
+                    {
+                        strWhere.AppendFormat(" AND CONVERT(varchar(7),RepairETime,120)   = N'{0}'", context.Request.Params["YearMonth"]);
+                    }
+                    break;
             }
-            if (!string.IsNullOrEmpty(context.Request.Params["RepairFormNO"]))
+            //UserId维修员
+            if (!string.IsNullOrEmpty(context.Request.Params["RepairmanId"]))
             {
-                strWhere.AppendFormat(" AND (RepairFormNO like N'%{0}%')", context.Request.Params["RepairFormNO"]);
+                //strWhere.AppendFormat(" AND RepairmanId = '{0}'", context.Request.Params["RepairmanId"]);
             }
-            if (!string.IsNullOrEmpty(context.Request.Params["DeviceId"]))
-            {
-                strWhere.AppendFormat(" AND DeviceId = N'{0}'", context.Request.Params["DeviceId"]);
-            }
+
+
             if (!string.IsNullOrEmpty(context.Request.Params["RepairStatus"]))
             {
                 switch (context.Request.Params["RepairStatus"])
@@ -245,24 +296,43 @@ namespace Web.ASHX.DMC
                         strWhere.Append(" AND RepairStatus in(20,23,24,25) ");
                         break;
                     case "3":
-                        //生产员确认 
+                        //生产员确认
+                        //UserManageService umserive = new UserManageService();
+                        //currentUser = umserive.GetUserMain();
                         strWhere.AppendFormat(" AND RepairStatus = '{0}'", "30");
+                        //strWhere.AppendFormat(" AND ApplyUserId = '{0}'", UserId);
                         break;
                     case "4":
-                        //QC确认 
+                        //QC确认
+                        //UserManageService umserive = new UserManageService();
+                        //currentUser = umserive.GetUserMain();
                         strWhere.AppendFormat(" AND RepairStatus = '{0}'", "40");
                         break;
                     case "5":
-                        //组长确认 
+                        //组长确认and exists(select 1 from t_Repairman a,t_Repairman b
+                        //           where a.WorkDate = b.WorkDate
+
+                        //and a.groupname = b.groupname
+
+                        // and a.RepairmanId = t_RepairRecord.RepairmanId
+
+                        //AND a.ClassType = b.ClassType
+
+                        //and b.IsLeader = 'Y'
+
+                        //and b.RepairmanId = '50012369')
                         strWhere.AppendFormat(" AND RepairStatus = '{0}'", "50");
+                        //strWhere.AppendFormat(" AND EXISTS(SELECT 1 FROM t_Employee WHERE empid =t_RepairRecord.ApplyUserId and signerID = '{0}')", UserId);
                         break;
                     default:
                         strWhere.AppendFormat(" AND RepairStatus = '{0}'", context.Request.Params["RepairStatus"]);
                         break;
                 }
+
             }
             //取得相關查詢條件下的數據列表
             DataTable dt = rrs.Search(pagesize, pageindex, out pageCount, out total, strWhere.ToString());
+
             DataTable dtSns = new DataTable();
             dtSns.Columns.Add("维修单号", typeof(string));
             dtSns.Columns.Add("维修员", typeof(string));
@@ -274,16 +344,50 @@ namespace Web.ASHX.DMC
             dtSns.Columns.Add("完成时间", typeof(string));
             dtSns.Columns.Add("IPQC", typeof(string));
             dtSns.Columns.Add("模具编号", typeof(string));
-            dtSns.Columns.Add("新模编号", typeof(string));         
+            dtSns.Columns.Add("新模编号", typeof(string));
             dtSns.Columns.Add("故障位置1", typeof(string));
             dtSns.Columns.Add("故障现象1", typeof(string));
-            dtSns.Columns.Add("返修原因", typeof(string));
+            dtSns.Columns.Add("申请人", typeof(string));
             foreach (DataRow item in dt.Rows)
             {
                 DataRow dr = dtSns.NewRow();
                 dr["维修单号"] = item["repairformno"].ToString();
                 dr["维修员"] = item["repairmanname"].ToString();
-                dr["状态"] = item["repairstatus"].ToString();
+                var text = "N/A";
+                switch (item["repairstatus"].ToString())
+                {
+                    case "10":
+                        text = "10-待指派";
+                        break;
+                    case "12":
+                        text = "12-待指派(挂单)";
+                        break;
+                    case "24":
+                        text = "24-待维修(IPQC返修)";
+                        break;
+                    case "25":
+                        text = "25-待维修(组长返修)";
+                        break;
+                    case "20":
+                        text = "20-待维修";
+                        break;
+                    case "23":
+                        text = "23-待维修(返修)";
+                        break;
+                    case "30":
+                        text = "30-待生产员确认";
+                        break;
+                    case "40":
+                        text = "40-待IPQC确认";
+                        break;
+                    case "50":
+                        text = "50-待组长确认";
+                        break;
+                    default:
+                        text = item["repairstatus"].ToString() + "-维修完成";
+                        break;
+                }
+                dr["状态"] = text;
                 dr["设备编号"] = item["deviceid"].ToString();
                 dr["故障位置"] = item["positiontext"].ToString();
                 dr["故障现象"] = item["phenomenatext"].ToString();
@@ -292,9 +396,9 @@ namespace Web.ASHX.DMC
                 dr["IPQC"] = item["ipqcnumber"].ToString();// item.lenovo_part_no;//联想料号
                 dr["模具编号"] = item["mouldid"].ToString();
                 dr["新模编号"] = item["newmouldid"].ToString();
-                dr["故障位置"] = item["positiontext1"].ToString();// item.product_line;//产品类别 
-                dr["故障现象"] = item["phenomenatext1"].ToString(); //item.test_station;//产品类别 
-                dr["返修原因"] = item["rebackreason"].ToString(); //item.product_type;//产品类别  
+                dr["故障位置1"] = item["positiontext1"].ToString();// item.product_line;//产品类别 
+                dr["故障现象1"] = item["phenomenatext1"].ToString(); //item.test_station;//产品类别 
+                dr["申请人"] = item["applyuserid"].ToString(); //item.product_type;//产品类别  
                 dtSns.Rows.Add(dr);
             }
             Dictionary<String, DataTable> dic = new Dictionary<string, DataTable>();
