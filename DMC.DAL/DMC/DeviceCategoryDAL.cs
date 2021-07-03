@@ -8,7 +8,7 @@ using System.Text;
 
 namespace DMC.DAL
 {
-    public class DeviceCategoryDAL  
+    public class DeviceCategoryDAL
     {
         /// <summary>
         /// 新增设备分类
