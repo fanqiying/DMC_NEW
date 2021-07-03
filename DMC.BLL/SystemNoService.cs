@@ -10,7 +10,7 @@ namespace DMC.BLL
     /// 系統單據編號管理
     /// </summary>
     public class SystemNoService : IRequiresSessionState
-    {
+    { 
         private PageManage pageView = new PageManage();
         private SystemNoDAL _dal = new SystemNoDAL();
 
