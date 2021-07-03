@@ -3,6 +3,7 @@ using DMC.DAL;
 using DMC.Model;
 using System.Data;
 using Utility.HelpClass;
+using System;
 
 namespace DMC.BLL
 {
@@ -184,7 +185,7 @@ namespace DMC.BLL
                             result = "fail";
                         }
                     }
-                    catch
+                    catch(Exception ex)
                     {
                         t.RollBack();
                     }
