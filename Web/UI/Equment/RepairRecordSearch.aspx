@@ -15,7 +15,7 @@
     <script src="../../easyUI15/locale/easyui-lang-zh_TW.js" type="text/javascript"></script>
 
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function () {  
             //綁定datagrid
             $('#tbEqManage').datagrid({
                 //是否折?
