@@ -120,5 +120,26 @@ namespace DMC.BLL
             }
             return msg;
         }
+        /// <summary>
+        /// 通过模具号查询
+        /// </summary>
+        /// <param name="DeviceId"></param>
+        /// <returns></returns>
+        public string IsExistsModel(string DeviceId)
+        {
+            string msg = string.Empty;
+            try
+            {
+                if(!_dal.IsExistsModel(DeviceId))
+                {
+                    msg = "模板编号不存在";
+                }
+            }
+            catch
+            {
+                msg = "模具数据异常";
+            }
+            return msg;
+        }
     }
 }

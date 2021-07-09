@@ -728,6 +728,7 @@
                 $.messager.alert({ title: '错误提示', msg: "请设置故障时间" });
                 return;
             }
+            
             /*
             //获取当前combotree的tree对象
             var treeposition = $('#apositionid').combotree('tree');
@@ -768,8 +769,8 @@
                 PhenomenaId1: $('#aphenomenaid1').combobox('getValue'),
                 PositionText1: $('#apositionid1').combobox('getText'),
                 PhenomenaText1: $('#aphenomenaid1').combobox('getText'),
-                MouldId: $('#amouldid').combogrid("getValue"),
-                NewMouldId: $('#anewmouldid').combogrid("getValue")
+                MouldId: $('#amouldid').combogrid("getText"),
+                NewMouldId: $('#anewmouldid').combogrid("getText")
             },
             function (result) {
                 if (result.success) {

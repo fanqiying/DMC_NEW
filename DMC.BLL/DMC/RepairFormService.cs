@@ -63,13 +63,22 @@ namespace DMC.BLL
                 {
                     msg = "设备编号处于报修中，无需再添加";
                 }
+                else if(!_dal.IsExistsModel(entity.MouldId))
+                {
+                     msg = "提交模具号不存在";  
+                }
+                else if (!_dal.IsExistsModel(entity.NewMouldId))
+                {
+                     msg = "提交模具号不存在"; 
+                }
                 else if (!_dal.NewRepairForm(entity))
                 {
                     msg = "新增报修单保存数据库失败";
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                
                 msg = "新增报修单异常";
             }
             return msg;

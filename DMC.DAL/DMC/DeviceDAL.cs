@@ -141,5 +141,21 @@ namespace DMC.DAL
                 }
             }
         }
+        /// <summary>
+        /// 通过模具号查询模具是否存在
+        /// </summary>
+        /// <param name="DeviceId">模具编号，多模具用/分割</param>
+        /// <returns></returns>
+        public bool IsExistsModel(string DeviceId)
+        {
+            StringBuilder sbSql = new StringBuilder();
+            string inDeviceId ="('"+DeviceId.Replace("/",",")+"')";
+            sbSql.Append("select count(*) from t_Device where CategoryId=B01 and DeviceId in "+inDeviceId);
+            List<DbParameter> param = new List<DbParameter>();
+            param.Add(DBFactory.Helper.FormatParameter("DeviceId", DbType.String, DeviceId));
+            int result = Convert.ToInt32(DBFactory.Helper.ExecuteScalar(sbSql.ToString(), param.ToArray()));
+            string[] sArray = DeviceId.Split('/');
+            return result ==sArray.Length;
+        }
     }
 }

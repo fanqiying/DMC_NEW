@@ -106,8 +106,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\nl\PdfiumViewer.resources.dll" />
-    <Content Include="bin\x64\pdfium.dll" />
-    <Content Include="bin\x86\pdfium.dll" />
     <Content Include="common\BaseManage.js" />
     <Content Include="common\keyUp.js" />
     <Content Include="css\base.css" />
@@ -1423,7 +1421,10 @@
       <Name>Utility.HelpClass</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="bin\x64\" />
+    <Folder Include="bin\x86\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
