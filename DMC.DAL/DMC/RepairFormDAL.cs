@@ -50,9 +50,9 @@ where isnull(repairstatus,0)<60 ");
         {
             StringBuilder sbSql = new StringBuilder();
             sbSql.Append("Insert into t_RepairForm(RepairFormNO,ApplyUserId,FaultTime,DeviceId,PositionId,PositionText,PositionId1,PhenomenaId,PhenomenaText,PhenomenaId1,PhenomenaText1,PositionText1,");
-            sbSql.Append("FaultStatus,FaultCode,FaultReason,Intime,FormStatus,MouldId,NewMouldId)");
+            sbSql.Append("FaultStatus,FaultCode,FaultReason,Intime,FormStatus,MouldId,NewMouldId,MouldId1,NewMouldId1)");
             sbSql.Append("VALUES(@RepairFormNO,@ApplyUserId,@FaultTime,@DeviceId,@PositionId,@PositionText,@PositionId1,@PhenomenaId,@PhenomenaText,@PhenomenaId1,@PhenomenaText1,@PositionText1,");
-            sbSql.Append("@FaultStatus,@FaultCode,@FaultReason,GETDATE(),10,@MouldId,@NewMouldId)");
+            sbSql.Append("@FaultStatus,@FaultCode,@FaultReason,GETDATE(),10,@MouldId,@NewMouldId,@MouldId1,@NewMouldId1)");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("RepairFormNO", DbType.String, entity.RepairFormNO));
             param.Add(DBFactory.Helper.FormatParameter("ApplyUserId", DbType.String, entity.ApplyUserId));
@@ -71,6 +71,8 @@ where isnull(repairstatus,0)<60 ");
             param.Add(DBFactory.Helper.FormatParameter("FaultReason", DbType.String, entity.FaultReason));
             param.Add(DBFactory.Helper.FormatParameter("MouldId", DbType.String, entity.MouldId));
             param.Add(DBFactory.Helper.FormatParameter("NewMouldId", DbType.String, entity.NewMouldId));
+            param.Add(DBFactory.Helper.FormatParameter("MouldId1", DbType.String, entity.MouldId1));
+            param.Add(DBFactory.Helper.FormatParameter("NewMouldId1", DbType.String, entity.NewMouldId1));
             using (Trans t = new Trans())
             {
                 try
@@ -115,13 +117,12 @@ where isnull(repairstatus,0)<60 ");
             if (DeviceId != "")
             {
                 StringBuilder sbSql = new StringBuilder();
-                string inDeviceId = "('" + DeviceId.Replace("/", "','") + "')";
-                sbSql.Append("select count(*) from t_Device where CategoryId='B01' and DeviceId in " + inDeviceId);
-                List<DbParameter> param = new List<DbParameter>();
+                
+                sbSql.Append("select count(*) from t_Device where CategoryId='B01' and DeviceId=@DeviceId");
+                List <DbParameter> param = new List<DbParameter>();
                 param.Add(DBFactory.Helper.FormatParameter("DeviceId", DbType.String, DeviceId));
                 int result = Convert.ToInt32(DBFactory.Helper.ExecuteScalar(sbSql.ToString(), param.ToArray()));
-                string[] sArray = DeviceId.Split('/');
-                return result == sArray.Length;
+                return result > 0;
             }
             else
             {
@@ -129,7 +130,66 @@ where isnull(repairstatus,0)<60 ");
             }
              
         }
+        /// <summary>
+        /// 判断维修单状态是否准确
+        /// </summary>
+        /// <param name="repairformno"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public bool IsRepariStatus(string repairformno,string status)
+        {
+            if (repairformno != "")
+            {
+                StringBuilder sbSql = new StringBuilder();
 
+                sbSql.Append("select count(*) from t_RepairForm where RepairFormNO=@repairformno and FormStatus=@status");
+                List<DbParameter> param = new List<DbParameter>();
+                param.Add(DBFactory.Helper.FormatParameter("repairformno", DbType.String, repairformno));
+                param.Add(DBFactory.Helper.FormatParameter("status", DbType.String, status));
+                int result = Convert.ToInt32(DBFactory.Helper.ExecuteScalar(sbSql.ToString(), param.ToArray()));
+                return result > 0;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+        /// <summary>
+        /// 删除维修单
+        /// </summary>
+        /// <param name="repairformno"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public bool DeleteRepariStatus(string repairformno, string status)
+        {
+             
+                StringBuilder sbSql = new StringBuilder();
+
+                sbSql.Append("delete   t_RepairForm where RepairFormNO=@repairformno and FormStatus=@status");
+                List<DbParameter> param = new List<DbParameter>();
+                param.Add(DBFactory.Helper.FormatParameter("repairformno", DbType.String, repairformno));
+                param.Add(DBFactory.Helper.FormatParameter("status", DbType.String, status));
+                using (Trans t = new Trans())
+                {
+                    try
+                    {
+                        if (DBFactory.Helper.ExecuteNonQuery(sbSql.ToString(), param.ToArray()) > 0)
+                        {
+                            t.Commit();
+                            return true;
+                        }
+                        else
+                            return false;
+                    }
+                    catch (Exception ex)
+                    {
+                        t.RollBack();
+                        throw ex;
+                    }
+                }
+
+            }
         /// <summary>
         /// 报修单是否存在
         /// </summary>

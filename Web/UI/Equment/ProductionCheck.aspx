@@ -84,8 +84,26 @@
                            { field: 'phenomenatext', title: '故障现象', width: 70, align: 'left' },
                            { field: 'repairstime', title: '指派时间', width: 80, align: 'left' },
                     { field: 'repairetime', title: '完成时间', width: 80, align: 'left' },
-                    { field: 'mouldid', title: '模具编号', width: 70, align: 'left' },
-                    { field: 'newmouldid', title: '新模编号', width: 70, align: 'left' },
+                    { field: 'mouldid', title: '模具编号1', width: 70, align: 'left' },
+                           { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left' },
+                           {
+                               field: 'newmouldid', title: '新模编号1', width: 70, align: 'left',
+                               styler: function (value, row, index) {
+                                   if (row.newmouldid != '') {
+                                       return 'background-color:#4cae4c;color: #fff;border: 0px'
+                                   }
+
+                               }
+                           },
+                           {
+                               field: 'newmouldid1', title: '新模编号2', width: 70, align: 'left',
+                               styler: function (value, row, index) {
+                                   if (row.newmouldid1 != '') {
+                                       return 'background-color:#4cae4c;color: #fff;border: 0px'
+                                   }
+
+                               }
+                           },
                     { field: 'rebackreason', title: '返修原因', width: 70, align: 'left' },
                     { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
                     { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
@@ -178,6 +196,7 @@
                                            if (result.success) {
                                                closeWindow('divEvaluate');
                                                $('#tbAppraise').datagrid('reload');
+                                               $("#auserid").textbox("setValue", "");
                                                $.messager.alert({ title: '成功提示', msg: '报修单已确认' });
                                            } else {
                                                $.messager.alert({
@@ -234,6 +253,7 @@
                                    closeWindow('divIPQC');
                                    $('#fm').form('clear');
                                    $('#tbAppraise').datagrid('reload');
+                                   $("#auserid").textbox("setValue", "");
                                    $.messager.alert({ title: '成功提示', msg: '數據已保存成功' });
                                } else {
                                    $.messager.alert({
@@ -299,6 +319,16 @@
                 return new Date();
             }
         }
+
+        function Refersh() {
+            //重新加载数据
+            $('#tbAppraise').datagrid('reload');
+        }
+
+        $(function () {//间隔60s自动加载一次   
+            Refersh(); //首次立即加载   
+            window.setInterval(Refersh, 60 * 1000); //循环执行！！   
+        });
     </script>
 </head>
 <body>

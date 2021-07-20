@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>工时报表</title>  
+    <title>工时报表</title>
     <script src="../../easyUI15/jquery.min.js" type="text/javascript"></script>
     <link href="../../easyUI15/themes/public.css" rel="stylesheet" type="text/css" />
     <link href="../../easyUI15/themes/bootstrap/easyui.css" rel="stylesheet" type="text/css" />
@@ -15,7 +15,7 @@
     <script src="../../easyUI15/locale/easyui-lang-zh_TW.js" type="text/javascript"></script>
 
     <script type="text/javascript">
-        $(document).ready(function () {  
+        $(document).ready(function () {
             //綁定datagrid
             $('#tbEqManage').datagrid({
                 //是否折?
@@ -76,7 +76,7 @@
                                             text = "50-待组长确认";
                                             break;
                                         default:
-                                            text = row.repairstatus+"维修完成";
+                                            text = row.repairstatus + "维修完成";
                                             break;
                                     }
                                     return text;
@@ -85,14 +85,37 @@
                             { field: 'deviceid', title: '设备编号', width: 60, align: 'left' },
                             { field: 'positiontext', title: '故障位置', width: 70, align: 'left' },
                             { field: 'phenomenatext', title: '故障现象', width: 70, align: 'left' },
-                            { field: 'repairstime', title: '指派时间', width: 80, align: 'left' },
-                     { field: 'repairetime', title: '完成时间', width: 80, align: 'left' },
-                     { field: 'ipqcnumber', title: 'IPQC', width: 80, align: 'left' },
-                     { field: 'mouldid', title: '模具编号', width: 70, align: 'left' },
-                     { field: 'rebackreason', title: '返修原因', width: 70, align: 'left' },
-                           { field: 'newmouldid', title: '新模编号', width: 70, align: 'left' },
-                     { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
+                            { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
                      { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
+                            { field: 'faulttime', title: '故障时间', width: 70, align: 'left' },
+                            { field: 'repairstime', title: '指派时间', width: 80, align: 'left' },
+                     { field: 'confirmtime', title: '完成时间', width: 80, align: 'left' },
+                     { field: 'repairetime', title: 'IPQC确认<br />时间', width: 80, align: 'left' },
+                        { field: 'confirmtime', title: '生产员<br />生产组长<br />确认时间', width: 70, align: 'left' },
+                     { field: 'ipqcnumber', title: 'IPQC确认', width: 80, align: 'left' },
+                        { field: 'confirmuser', title: '生产员<br />生产组长<br />工号', width: 70, align: 'left' },
+
+                          { field: 'mouldid', title: '模具编号1', width: 70, align: 'left' },
+                           { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left' },
+                           {
+                               field: 'newmouldid', title: '新模编号1', width: 70, align: 'left',
+                               styler: function (value, row, index) {
+                                   if (row.newmouldid != '') {
+                                       return 'background-color:#4cae4c;color: #fff;border: 0px'
+                                   }
+
+                               }
+                           },
+                           {
+                               field: 'newmouldid1', title: '新模编号2', width: 70, align: 'left',
+                               styler: function (value, row, index) {
+                                   if (row.newmouldid1 != '') {
+                                       return 'background-color:#4cae4c;color: #fff;border: 0px'
+                                   }
+
+                               }
+                           },
+                     { field: 'rebackreason', title: '返修原因', width: 70, align: 'left' },
                      { field: 'applyuserid', title: '申请人', width: 50, align: 'left' }
                 ]]
             });
@@ -131,6 +154,9 @@
             if (queryParams.YearMonth) {
                 url = url + "&YearMonth=" + queryParams.YearMonth;
             }
+            if (queryParams.EYearMonth) {
+                url = url + "&EYearMonth=" + queryParams.EYearMonth;
+            }
             if ($("#downloadForm").length <= 0) {
                 $("body").append("<form id='downloadForm' method='post' target='iframe'></form>");
                 $("body").append("<iframe id='ifm' name='iframe' style='display:none;'></iframe>");
@@ -150,7 +176,7 @@
             queryParams.RepairmanId = $("#repairmanid").textbox("getValue");
             queryParams.RepairmanName = $('#repairmanname').textbox("getValue");
             queryParams.YearMonth = $('#qyearmonth').datebox("getValue");
-            
+            queryParams.EYearMonth = $('#eqyearmonth').datebox("getValue");
             $('#tbEqManage').datagrid('reload');
         }
         //單擊高級查詢按鈕
@@ -213,7 +239,12 @@
             }
         }
 
-        function datedayFormatter(value) {
+        /**
+         * 时间格式化
+         * @param value
+         * @returns {string}
+        */
+        function datetimeFormatter(value) {
             var date;
             if (value == "") {
                 date = new Date();
@@ -224,26 +255,37 @@
             var year = date.getFullYear().toString();
             var month = date.getMonth() + 1;
             var day = date.getDate();
+            var hour = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
             month = month < 10 ? '0' + month : month;
             day = day < 10 ? '0' + day : day;
-            return year + "-" + month + "-" + day;
+            hour = hour < 10 ? '0' + hour : hour;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            return year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds;
         }
-
-        function datedayParser(s) {
+        /**
+         * 解析时间
+         */
+        function datetimeParser(s) {
             if (s != "") {
                 var dt = s.split(" ");
-                var arr = dt[0].split("-");
-                var y = parseInt(arr[0], 10);
-                var m = parseInt(arr[1], 10) - 1;
-                var d = null;
-                d = parseInt(arr[2], 10);
-                return new Date(y, m, d);
+                var d = dt[0].split("-");
+                var t = dt[1].split(":");
+                var y = parseInt(d[0], 10);
+                var m = parseInt(d[1], 10) - 1;
+                var d = parseInt(d[2], 10);
+                var hh = parseInt(t[0], 10);
+                var mm = parseInt(t[1], 10);
+                var ss = parseInt(t[2], 10);
+                return new Date(y, m, d, hh, mm, ss);
             } else {
                 return new Date();
             }
         }
     </script>
-</head> 
+</head>
 <body>
     <div id="funMain" style="background-color: transparent; margin-left: 5px; margin-right: 0px;">
         <div id="divOperation" class="Search">
@@ -253,7 +295,6 @@
                 <a id="btnMore" class="easyui-linkbutton" data-options="iconCls:'icon-expand',plain:true" onclick="openSearch('divSearch');">高级搜索</a>
             </div>
             <div class="r rightSearch">
-                <a class="easyui-linkbutton" data-options="iconCls:'icon-excel',plain:true" href="javascript:void(0)" onclick='Export()'>导出</a> &nbsp;&nbsp; 
             </div>
         </div>
         <div style="clear: both">
@@ -278,10 +319,17 @@
                         <td style="width: 120px;">
                             <input class="easyui-textbox" id="repairmanname" name="repairmanname" data-options="prompt:'请输入维修员姓名'" style="width: 120px;" />
                         </td>
-                        <td style="width: 90px;">按年月查询:</td>
+                        <td style="width: 90px;">按报修时间查询:</td>
                         <td style="width: 150px;">
-                            <input data-options="formatter: dateFormatter, parser: dateParser" class="easyui-datebox" name="yearmonth" id="qyearmonth" style="width: 150px;" />
+                            <input data-options="formatter: datetimeFormatter, parser: datetimeParser" class="easyui-datetimebox" name="yearmonth" id="qyearmonth" style="width: 150px;" />
                         </td>
+                        <td style="width: 150px;">
+                            <input data-options="formatter: datetimeFormatter, parser: datetimeParser" class="easyui-datetimebox" name="eyearmonth" id="eqyearmonth" style="width: 150px;" />
+                        </td>
+                        <td style="width: 150px;">
+                            <a class="easyui-linkbutton" data-options="iconCls:'icon-excel',plain:true" href="javascript:void(0)" onclick='Export()'>导出</a>
+                        </td>
+
                     </tr>
                 </table>
             </div>

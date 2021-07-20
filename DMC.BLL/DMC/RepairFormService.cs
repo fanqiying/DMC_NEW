@@ -65,11 +65,19 @@ namespace DMC.BLL
                 }
                 else if(!_dal.IsExistsModel(entity.MouldId))
                 {
-                     msg = "提交模具号不存在";  
+                     msg = "提交模具号1不存在";  
+                }
+                else if (!_dal.IsExistsModel(entity.MouldId1))
+                {
+                    msg = "提交模具号2不存在";
                 }
                 else if (!_dal.IsExistsModel(entity.NewMouldId))
                 {
-                     msg = "提交模具号不存在"; 
+                     msg = "提交新模具编号1不存在"; 
+                }
+                else if (!_dal.IsExistsModel(entity.NewMouldId1))
+                {
+                    msg = "提交新模具编号2不存在";
                 }
                 else if (!_dal.NewRepairForm(entity))
                 {
@@ -83,7 +91,28 @@ namespace DMC.BLL
             }
             return msg;
         }
-
+        public string deleteRepair(string repairformno)
+        {
+            string msg = string.Empty;
+            try
+            {
+                 
+                //1.检查必输字段是状态是否待排单
+                 if (!_dal.IsRepariStatus(repairformno,"10"))
+                {
+                    msg = "只有10-待指派状态才能撤销";
+                }
+                else if(_dal.DeleteRepariStatus(repairformno, "10"))
+                {
+                    msg = repairformno+"撤销成功";
+                }                
+            }
+            catch (Exception ex)
+            {
+                msg = "撤销异常";
+            }
+            return msg;
+        }
         /// <summary>
         /// 报修单确认
         /// </summary>

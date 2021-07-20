@@ -242,6 +242,8 @@
         myChart.setOption(option);
     }
     function Refersh() {
+        $('#tbWait').datagrid('reload');
+        $('#tbDo').datagrid('reload');
         $.post("ASHX/DMC/Repairman.ashx?M=GetRepairmWorking",
             {},
             function (data) {

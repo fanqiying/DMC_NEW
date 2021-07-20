@@ -68,6 +68,11 @@ namespace Web.ASHX.DMC
                     case "getassignqty":
                         GetAssignQty(context);
                         break;
+
+                    case "deleterepair":
+                        deleteRepair(context);
+                        break;
+                        
                 }
             }
             else
@@ -132,10 +137,10 @@ namespace Web.ASHX.DMC
                     if (!string.IsNullOrEmpty(context.Request.Params["NoFormStatus"]))
                     {
                         strWhere.AppendFormat(" AND NOT FormStatus like N'{0}%'", context.Request.Params["NoFormStatus"]);
-                        if (context.Request.Params["NoFormStatus"] == "6")
-                        {
-                            strWhere.AppendFormat(" AND ApplyUserId = N'{0}'", UserId);
-                        }
+                        //if (context.Request.Params["NoFormStatus"] == "6")
+                        //{
+                        //    strWhere.AppendFormat(" AND ApplyUserId = N'{0}'", UserId);
+                        //}
                     }
                     //判断类别：返修 || 挂单
                     if (!string.IsNullOrEmpty(context.Request.Params["DType"]))
@@ -233,6 +238,8 @@ namespace Web.ASHX.DMC
                 entity.FaultStatus = context.Request["FaultStatus"];
                 entity.MouldId = context.Request["MouldId"];
                 entity.NewMouldId = context.Request["NewMouldId"];
+                entity.MouldId1 = context.Request["MouldId1"];
+                entity.NewMouldId1 = context.Request["NewMouldId1"];
                 entity.FormStatus = "10";
                 //entity.RepairFormNO = "0";//报修单号，自动生成
                 string msg = rfs.NewRepairForm(entity);
@@ -251,6 +258,27 @@ namespace Web.ASHX.DMC
             }
         }
 
+        public void deleteRepair(HttpContext context)
+        {
+            try
+            {
+                RepairFormEntity entity = new RepairFormEntity();
+                var repairformno = context.Request["repairformno"];
+                string msg = rfs.deleteRepair(repairformno);
+                if (string.IsNullOrWhiteSpace(msg))
+                {
+                    context.Response.Write("{\"success\":true,\"msg\":\"撤销成功\"}");
+                }
+                else
+                {
+                    context.Response.Write("{\"success\":false,\"msg\":\"" + msg + "\"}");
+                }
+            }
+            catch (Exception ex)
+            {
+                context.Response.Write("{\"success\":false,\"msg\":\"" + ex.Message + "\"}");
+            }
+        }
         /// <summary>
         /// 
         /// </summary>

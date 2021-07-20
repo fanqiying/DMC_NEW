@@ -45,6 +45,8 @@
                            { field: 'repairetime', title: '完成时间', width: 90, align: 'left' },
                            { field: 'positiontext', title: '故障位置', width: 60, align: 'left' },
                            { field: 'phenomenatext', title: '故障现象', width: 60, align: 'left' },
+                           { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
+                    { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
                     { field: 'repairmanid', title: '维修员', width: 60, align: 'left', hidden: true },
                     { field: 'repairmanname', title: '维修员', width: 60, align: 'left' },
                            { field: 'manhoure', title: '维修时间(分钟)', width: 60, align: 'left' },
@@ -56,10 +58,27 @@
                                    return (((row.gradetime - row.manhoure) / row.gradetime) * 100).toFixed(0) + "%";
                                }
                            },
-                    { field: 'mouldid', title: '模具编号', width: 70, align: 'left' },
-                    { field: 'newmouldid', title: '新模编号', width: 70, align: 'left' },
-                    { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
-                    { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' }
+                    { field: 'mouldid', title: '模具编号1', width: 70, align: 'left' },
+                           { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left' },
+                           {
+                               field: 'newmouldid', title: '新模编号1', width: 70, align: 'left',
+                               styler: function (value, row, index) {
+                                   if (row.newmouldid != '') {
+                                       return 'background-color:#4cae4c;color: #fff;border: 0px'
+                                   }
+
+                               }
+                           },
+                           {
+                               field: 'newmouldid1', title: '新模编号2', width: 70, align: 'left',
+                               styler: function (value, row, index) {
+                                   if (row.newmouldid1 != '') {
+                                       return 'background-color:#4cae4c;color: #fff;border: 0px'
+                                   }
+
+                               }
+                           },
+                    
                 ]]
             });
             $(window).resize(function () {

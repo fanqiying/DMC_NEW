@@ -78,11 +78,12 @@
                            { field: 'deviceid', title: '设备编号', width: 100, align: 'left' },
                            { field: 'positiontext', title: '故障位置', width: 100, align: 'left' },
                            { field: 'phenomenatext', title: '故障现象', width: 100, align: 'left' },
+                           { field: 'positiontext1', title: '故障位置1', width: 100, align: 'left' },
+                           { field: 'phenomenatext1', title: '故障现象1', width: 100, align: 'left' },
                            { field: 'rebackreason', title: '重排原因', width: 150, align: 'left' },
                            { field: 'faulttime', title: '故障时间', width: 150, align: 'left' },
                            { field: 'ipqcnumber', title: 'IPQC工号', width: 100, align: 'left' },
-                           { field: 'positiontext1', title: '故障位置1', width: 100, align: 'left' },
-                           { field: 'phenomenatext1', title: '故障现象1', width: 100, align: 'left' },
+                           
 
 
                 ]]

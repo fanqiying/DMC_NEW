@@ -273,9 +273,10 @@ namespace Web.ASHX.DMC
                     {
                         strWhere.AppendFormat(" AND FaultReason = like N'%{0}%'", context.Request.Params["FaultReason"]);
                     }
-                    if (!string.IsNullOrEmpty(context.Request.Params["YearMonth"]))
+                    if (!string.IsNullOrEmpty(context.Request.Params["YearMonth"]) && !string.IsNullOrEmpty(context.Request.Params["EYearMonth"]))
                     {
-                        strWhere.AppendFormat(" AND CONVERT(varchar(7),RepairETime,120)   = N'{0}'", context.Request.Params["YearMonth"]);
+                        strWhere.AppendFormat(" AND RepairSTime  >= '{0}'", context.Request.Params["YearMonth"]);
+                        strWhere.AppendFormat(" AND RepairSTime   <= '{0}'", context.Request.Params["EYearMonth"]);
                     }
                     break;
             }
@@ -340,11 +341,18 @@ namespace Web.ASHX.DMC
             dtSns.Columns.Add("设备编号", typeof(string));
             dtSns.Columns.Add("故障位置", typeof(string));
             dtSns.Columns.Add("故障现象", typeof(string));
+            dtSns.Columns.Add("故障时间", typeof(string));
             dtSns.Columns.Add("指派时间", typeof(string));
             dtSns.Columns.Add("完成时间", typeof(string));
-            dtSns.Columns.Add("IPQC", typeof(string));
-            dtSns.Columns.Add("模具编号", typeof(string));
-            dtSns.Columns.Add("新模编号", typeof(string));
+            dtSns.Columns.Add("IPQC确认时间", typeof(string));
+            dtSns.Columns.Add("生产确认时间", typeof(string));
+            dtSns.Columns.Add("IPQC确认", typeof(string));
+            dtSns.Columns.Add("生产确认", typeof(string));
+            dtSns.Columns.Add("模具编号1", typeof(string));
+            dtSns.Columns.Add("模具编号2", typeof(string));
+            dtSns.Columns.Add("新模编号1", typeof(string));           
+            dtSns.Columns.Add("新模编号2", typeof(string));
+            dtSns.Columns.Add("返修原因", typeof(string));
             dtSns.Columns.Add("故障位置1", typeof(string));
             dtSns.Columns.Add("故障现象1", typeof(string));
             dtSns.Columns.Add("申请人", typeof(string));
@@ -391,11 +399,21 @@ namespace Web.ASHX.DMC
                 dr["设备编号"] = item["deviceid"].ToString();
                 dr["故障位置"] = item["positiontext"].ToString();
                 dr["故障现象"] = item["phenomenatext"].ToString();
+                dr["故障时间"] = item["faulttime"].ToString();
                 dr["指派时间"] = Convert.ToDateTime(item["repairstime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
-                dr["完成时间"] = (Convert.IsDBNull(item["repairetime"]) ? "" : Convert.ToDateTime(item["repairetime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
-                dr["IPQC"] = item["ipqcnumber"].ToString();// item.lenovo_part_no;//联想料号
-                dr["模具编号"] = item["mouldid"].ToString();
-                dr["新模编号"] = item["newmouldid"].ToString();
+                dr["完成时间"] = (Convert.IsDBNull(item["confirmtime"]) ? "" : Convert.ToDateTime(item["confirmtime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
+                dr["IPQC确认时间"] = item["repairetime"].ToString();// item.lenovo_part_no;//联想料号
+                dr["生产确认时间"] = item["confirmtime"].ToString();
+                
+                dr["IPQC确认"] = item["ipqcnumber"].ToString();// item.lenovo_part_no;//联想料号
+                dr["生产确认"] = item["confirmuser"].ToString();// item.lenovo_part_no;//联想料号
+               
+                dr["模具编号1"] = item["mouldid"].ToString();
+                dr["模具编号2"] = item["mouldid1"].ToString();
+                dr["新模编号1"] = item["newmouldid"].ToString();                
+                dr["新模编号2"] = item["newmouldid1"].ToString();
+                dr["返修原因"] = item["rebackreason"].ToString();
+                
                 dr["故障位置1"] = item["positiontext1"].ToString();// item.product_line;//产品类别 
                 dr["故障现象1"] = item["phenomenatext1"].ToString(); //item.test_station;//产品类别 
                 dr["申请人"] = item["applyuserid"].ToString(); //item.product_type;//产品类别  
@@ -700,10 +718,12 @@ namespace Web.ASHX.DMC
                     {
                         strWhere.AppendFormat(" AND FaultReason = like N'%{0}%'", context.Request.Params["FaultReason"]);
                     }
-                    if (!string.IsNullOrEmpty(context.Request.Params["YearMonth"]))
+                    if (!string.IsNullOrEmpty(context.Request.Params["YearMonth"]) && !string.IsNullOrEmpty(context.Request.Params["EYearMonth"]))
                     {
-                        strWhere.AppendFormat(" AND CONVERT(varchar(7),RepairETime,120)   = N'{0}'", context.Request.Params["YearMonth"]);
+                        strWhere.AppendFormat(" AND RepairSTime  >= '{0}'", context.Request.Params["YearMonth"]);
+                        strWhere.AppendFormat(" AND RepairSTime   <= '{0}'", context.Request.Params["EYearMonth"]);
                     }
+
                     break;
             }
             //UserId维修员

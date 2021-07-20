@@ -86,6 +86,26 @@
                     { field: 'positiontext', title: '故障位置', width: 70, align: 'left', sortable: true },
                     { field: 'phenomenatext', title: '故障现象', width: 70, align: 'left', sortable: true },
                     { field: 'repairmanid', title: '维修员', width: 70, align: 'left', sortable: true },
+                    { field: 'mouldid', title: '模具编号1', width: 70, align: 'left' },
+                           { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left' },
+                           {
+                               field: 'newmouldid', title: '新模编号1', width: 70, align: 'left',
+                               styler: function (value, row, index) {
+                                   if (row.newmouldid != '') {
+                                       return 'background-color:#4cae4c;color: #fff;border: 0px'
+                                   }
+
+                               }
+                           },
+                           {
+                               field: 'newmouldid1', title: '新模编号2', width: 70, align: 'left',
+                               styler: function (value, row, index) {
+                                   if (row.newmouldid1 != '') {
+                                       return 'background-color:#4cae4c;color: #fff;border: 0px'
+                                   }
+
+                               }
+                           },
                     { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
                     { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
                     { field: 'manhoure', title: '维修时长', width: 70, align: 'left' },
@@ -312,6 +332,6 @@
 
     $(function () {//间隔60s自动加载一次   
         Refersh(); //首次立即加载   
-        window.setInterval(Refersh, 1 * 60 * 1000); //循环执行！！   
+        window.setInterval(Refersh, 60 * 1000); //循环执行！！   
     });
 </script>

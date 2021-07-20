@@ -371,7 +371,7 @@ namespace DMC.BLL
                             msg = "评价失败";
                         }
                     }
-                    catch
+                    catch(Exception ex)
                     {
                         msg = "评价异常";
                         isSuccess = false;

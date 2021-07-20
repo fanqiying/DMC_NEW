@@ -101,5 +101,21 @@ namespace DMC.Model
         /// 评价
         /// </summary>
         public string Appraise { get; set; }
+        /// <summary>
+        /// 模具编号
+        /// </summary>
+        public string MouldId { get; set; }
+        /// <summary>
+        /// 新模编号
+        /// </summary>
+        public string NewMouldId { get; set; }
+        /// <summary>
+        /// 模具编号
+        /// </summary>
+        public string MouldId1 { get; set; }
+        /// <summary>
+        /// 新模编号
+        /// </summary>
+        public string NewMouldId1 { get; set; }
     }
 }
