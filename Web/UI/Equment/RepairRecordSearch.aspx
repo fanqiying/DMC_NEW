@@ -25,7 +25,8 @@
                 url: '../../ASHX/DMC/RepairRecord.ashx?M=Search&SearchType=ByAdvanced&RepairStatus=100',
                 //數據在一行顯示 
                 nowrap: false,
-                fitColumns: true,
+                fitColumns: false,
+                 
                 //行條紋化
                 striped: true,
                 //固定序號
@@ -117,7 +118,11 @@
                            },
                      { field: 'rebackreason', title: '返修原因', width: 70, align: 'left' },
                      { field: 'applyuserid', title: '申请人', width: 50, align: 'left' }
-                ]]
+                ]],
+                onLoadSuccess: function (data) {
+                    $($("td[field='newmouldid']")[0]).css({ "background": "#4cae4c", "color": "#fff" });
+                    $($("td[field='newmouldid1']")[0]).css({ "background": "#4cae4c", "color": "#fff" });
+                }
             });
             $(window).resize(function () {
                 $('#tbEqManage').datagrid('resize');

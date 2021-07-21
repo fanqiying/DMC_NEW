@@ -792,7 +792,11 @@
                                }
                            },
 
-                ]]
+                ]],
+                onLoadSuccess: function (data) {
+                    $($("td[field='newmouldid']")[0]).css({ "background": "#4cae4c", "color": "#fff" });
+                    $($("td[field='newmouldid1']")[0]).css({ "background": "#4cae4c", "color": "#fff" });
+                }
             });
             $(window).resize(function () {
                 $('#tbRepairForm').datagrid('resize');
@@ -1208,10 +1212,10 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td style="height: 25px;background-color:#ff0000;color: #fff">模具编号1</td>
+                                <td style="height: 25px;background-color:#e33030;color: #fff">模具编号1</td>
                                 <td>
                                     <input data-options="prompt:'请填入模具编号'" class="easyui-textbox"  id="amouldid" name="mouldid1" style="width: 100px" size="20" /></td>
-                                <td style="height: 25px;background-color:#ff0000;color: #fff">模具编号2</td>
+                                <td style="height: 25px;background-color:#e33030;color: #fff">模具编号2</td>
                                 <td>
                                     <input data-options="prompt:'请填入模具编号'" class="easyui-textbox" id="amouldid1" name="mouldid2" style="width: 100px;" size="20" /></td>
                                 <td>&nbsp;</td>

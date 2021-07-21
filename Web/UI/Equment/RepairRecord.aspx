@@ -144,7 +144,11 @@
                                    return '<a href="#" onclick="Confirm(\'30\',\'' + index + '\')">提交生产员</a> | <a href="#" onclick="Confirm(\'40\',\'' + index + '\')">提交QC</a> | <a href="#" onclick="Reject(\'' + index + '\')">挂单</a> | <a href="#" onclick="View(\'' + index + '\')">查看</a>';
                                }
                            }
-                ]]
+                ]],
+                onLoadSuccess: function (data) {
+                    $($("td[field='newmouldid']")[0]).css({ "background": "#4cae4c", "color": "#fff" });
+                    $($("td[field='newmouldid1']")[0]).css({ "background": "#4cae4c", "color": "#fff" });
+                }
             });
             $(window).resize(function () {
                 $('#tbRepairRecord').datagrid('resize');
