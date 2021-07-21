@@ -885,7 +885,8 @@ namespace Web.ASHX.DMC
                 string RepairFormNO = context.Request["RepairFormNO"];
                 //string Appraise = context.Request["Appraise"];
                 int AutoId = Convert.ToInt32(context.Request["AutoId"]);
-                string msg = rrs.LeaderAppraise(AutoId, RepairFormNO, UserId);
+                string LeaderID = context.Request["LeaderID"];
+                string msg = rrs.LeaderAppraise(AutoId, RepairFormNO, LeaderID);
                 if (string.IsNullOrWhiteSpace(msg))
                 {
                     context.Response.Write("{\"success\":true,\"msg\":\"QC确认成功\"}");

@@ -91,10 +91,20 @@
                             { field: 'faulttime', title: '故障时间', width: 70, align: 'left' },
                             { field: 'repairstime', title: '指派时间', width: 80, align: 'left' },
                      { field: 'confirmtime', title: '完成时间', width: 80, align: 'left' },
-                     { field: 'repairetime', title: 'IPQC确认<br />时间', width: 80, align: 'left' },
-                        { field: 'confirmtime', title: '生产员<br />生产组长<br />确认时间', width: 70, align: 'left' },
+                     {
+                         field: 'repairetime', title: 'IPQC确认<br />时间', width: 80, align: 'left',
+                         formatter: function (value, row, index) {
+                             if(row.ipqcnumber =='')
+                             {
+                                 return '';
+                             }
+                             else { return value; }
+
+                         }
+                     },
+                        { field: 'confirmtime', title: '生产<br />确认时间', width: 70, align: 'left' },
                      { field: 'ipqcnumber', title: 'IPQC确认', width: 80, align: 'left' },
-                        { field: 'confirmuser', title: '生产员<br />生产组长<br />工号', width: 70, align: 'left' },
+                        { field: 'confirmuser', title: '生产<br />确认工号', width: 70, align: 'left' },
 
                           { field: 'mouldid', title: '模具编号1', width: 70, align: 'left' },
                            { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left' },
@@ -117,7 +127,7 @@
                                }
                            },
                      { field: 'rebackreason', title: '返修原因', width: 70, align: 'left' },
-                     { field: 'applyuserid', title: '申请人', width: 50, align: 'left' }
+                     { field: 'applyuserid', title: '申请人', width: 70, align: 'left' }
                 ]],
                 onLoadSuccess: function (data) {
                     $($("td[field='newmouldid']")[0]).css({ "background": "#4cae4c", "color": "#fff" });

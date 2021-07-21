@@ -86,15 +86,7 @@
                            { field: 'repairstime', title: '指派时间', width: 80, align: 'left' },
                     { field: 'repairetime', title: '完成时间', width: 80, align: 'left' },
                     { field: 'mouldid', title: '模具编号1', width: 70, align: 'left' },
-                           {
-                               field: 'newmouldid', title: '新模编号1', width: 70, align: 'left',
-                               styler: function (value, row, index) {
-                                   if (row.newmouldid != '') {
-                                       return 'background-color:#4cae4c;color: #fff;border: 0px'
-                                   }
-
-                               }
-                           },
+                    { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left' },
                            {
                                field: 'newmouldid1', title: '新模编号2', width: 70, align: 'left',
                                styler: function (value, row, index) {
@@ -191,7 +183,8 @@
                                        //数据提交
                                        $.post("../../ASHX/DMC/RepairRecord.ashx?M=LeaderAppraise", {
                                            RepairFormNO: row.repairformno,
-                                           AutoId: row.autoid
+                                           AutoId: row.autoid,
+                                           LeaderID:$("#auserid").textbox("getValue")
                                        },
                                        function (result) {
                                            if (result.success) {

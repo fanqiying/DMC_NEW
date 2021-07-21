@@ -86,6 +86,7 @@
                 columns: [[
                            { field: 'repairformno', title: '维修单号', width: 50, align: 'left' },
                            { field: 'applyuserid', title: '申请人', width: 50, align: 'left' },
+                           { field: 'repairmanname', title: '维修员', width: 60, align: 'left' },
                            { field: 'deviceid', title: '设备编号', width: 50, align: 'left' },
                            { field: 'positiontext', title: '故障位置', width: 50, align: 'left' },
                            { field: 'phenomenatext', title: '故障现象', width: 50, align: 'left' },

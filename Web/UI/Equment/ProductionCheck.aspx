@@ -190,7 +190,8 @@
                                    if (result.success) {
                                        $.post("../../ASHX/DMC/RepairRecord.ashx?M=LeaderAppraise", {
                                            RepairFormNO: row.repairformno,
-                                           AutoId: row.autoid
+                                           AutoId: row.autoid,
+                                           LeaderID: $("#auserid").textbox("getValue")
                                        },
                                        function (result) {
                                            if (result.success) {

@@ -997,7 +997,7 @@
                 $.messager.alert({ title: '错误提示', msg: "模具编号1和磨具编号2相同" });
                 return;
             }
-            if ($("#anewmouldid").combogrid("getValue") == $("#anewmouldid1").combogrid("getValue")) {
+            if ($("#apositionid").combogrid("getValue") == "M01" && $("#anewmouldid").combogrid("getValue") == $("#anewmouldid1").combogrid("getValue")) {
                 $.messager.alert({ title: '错误提示', msg: "新模具编号1和新磨具编号2相同" });
                 return;
             }

@@ -76,7 +76,7 @@ namespace DMC.DAL
             sbSql.Append("Update t_Device");
             sbSql.Append("   SET DeviceName=@DeviceName,CategoryId=@CategoryId,Usey=@Usey,CategoryText=@CategoryText,Placement=@Placement, ");
             sbSql.Append("       Remark=@Remark,KeepUserId=@KeepUserId ");
-            sbSql.Append(" WHERE CategoryId=@CategoryId ");
+            sbSql.Append(" WHERE DeviceId=@DeviceId ");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("DeviceId", DbType.String, entity.DeviceId));
             param.Add(DBFactory.Helper.FormatParameter("DeviceName", DbType.String, entity.DeviceName));
