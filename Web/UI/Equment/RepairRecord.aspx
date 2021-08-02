@@ -245,6 +245,7 @@
                                                    $('#tbRepairRecord').datagrid('reload');
                                                    closeWindow('divReback');
                                                    $("#auserid").textbox("setValue", "");
+                                                   $("#afaultanalysis").textbox("setValue", "");
                                                    $.messager.alert({ title: '成功提示', msg: '挂单已确认！' });
                                                } else {
                                                    $.messager.alert({
@@ -270,6 +271,7 @@
         var curConfirmState = "20";
         //提交
         function Confirm(nextStatus, index) {
+            
             var row = $('#tbRepairRecord').datagrid('getData').rows[index];
             if (row.repairstatus == "20" || row.repairstatus == "23" || row.repairstatus == "24" || row.repairstatus == "25") {
                 $('#fm').form('clear');
@@ -323,6 +325,7 @@
                                    $('#tbRepairRecord').datagrid('reload');
                                    closeWindow('divNew');
                                    $("#auserid").textbox("setValue", "");
+                                   $("#afaultanalysis").textbox("setValue", "");
                                    $.messager.alert({ title: '成功提示', msg: '數據已保存成功' });
                                } else {
                                    $.messager.alert({

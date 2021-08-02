@@ -41,9 +41,9 @@
                 pagination: true,
                 //可動列
                 columns: [[
-                            { field: 'repairformno', title: '维修单号', width: 60, align: 'left' },
-                     { field: 'repairmanid', title: '维修员', width: 60, align: 'left', hidden: true },
-                     { field: 'repairmanname', title: '维修员', width: 60, align: 'left' },
+                            { field: 'repairformno', title: '维修单号', width: 60, align: 'left', sortable: "true" },
+                     { field: 'repairmanid', title: '维修员', width: 60, align: 'left', hidden: true, sortable: "true" },
+                     { field: 'repairmanname', title: '维修员', width: 60, align: 'left', sortable: "true" },
                             {
                                 field: 'repairstatus', title: '状态', width: 50, align: 'left',
                                 formatter: function (value, row, index) {
@@ -76,6 +76,27 @@
                                         case "50":
                                             text = "50-待组长确认";
                                             break;
+                                        case "61":
+                                            text = "23-待维修(返修)";
+                                            break;
+                                        case "62":
+                                            text = "12-待指派(挂单)";
+                                            break;
+                                        case "64":
+                                            text = "维修完成";
+                                            break;
+                                        case "63":
+                                            text = "维修完成";
+                                            break;
+                                        case "60":
+                                            text = "维修完成";
+                                            break;
+                                        case "65":
+                                            text = "维修完成";
+                                            break;
+                                        case "50":
+                                            text = "50-待组长确认";
+                                            break;
                                         default:
                                             text = row.repairstatus + "维修完成";
                                             break;
@@ -83,31 +104,24 @@
                                     return text;
                                 }
                             },
-                            { field: 'deviceid', title: '设备编号', width: 60, align: 'left' },
-                            { field: 'positiontext', title: '故障位置', width: 70, align: 'left' },
-                            { field: 'phenomenatext', title: '故障现象', width: 70, align: 'left' },
-                            { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
-                     { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
-                            { field: 'faulttime', title: '故障时间', width: 70, align: 'left' },
-                            { field: 'repairstime', title: '指派时间', width: 80, align: 'left' },
-                     { field: 'confirmtime', title: '完成时间', width: 80, align: 'left' },
+                            { field: 'deviceid', title: '设备编号', width: 60, align: 'left', sortable: "true" },
+                            { field: 'positiontext', title: '故障位置', width: 70, align: 'left', sortable: "true" },
+                            { field: 'phenomenatext', title: '故障现象', width: 70, align: 'left', sortable: "true" },
+                            { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left', sortable: "true" },
+                     { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left', sortable: "true" },
+                            { field: 'faulttime', title: '故障时间', width: 70, align: 'left', sortable: "true" },
+                            { field: 'repairstime', title: '指派时间', width: 80, align: 'left', sortable: "true" },
+                     { field: 'repairetime', title: '完成时间', width: 80, align: 'left', sortable: "true" },
                      {
-                         field: 'repairetime', title: 'IPQC确认<br />时间', width: 80, align: 'left',
-                         formatter: function (value, row, index) {
-                             if(row.ipqcnumber =='')
-                             {
-                                 return '';
-                             }
-                             else { return value; }
-
-                         }
+                         field: 'qcconfirmtime', title: 'IPQC确认<br />时间', width: 80, align: 'left',sortable:"true"
+                          
                      },
-                        { field: 'confirmtime', title: '生产<br />确认时间', width: 70, align: 'left' },
-                     { field: 'ipqcnumber', title: 'IPQC确认', width: 80, align: 'left' },
-                        { field: 'confirmuser', title: '生产<br />确认工号', width: 70, align: 'left' },
+                        { field: 'confirmtime', title: '生产<br />确认时间', width: 70, align: 'left', sortable: "true" },
+                     { field: 'ipqcnumber', title: 'IPQC确认', width: 80, align: 'left', sortable: "true" },
+                        { field: 'confirmuser', title: '生产<br />确认工号', width: 70, align: 'left', sortable: "true" },
 
-                          { field: 'mouldid', title: '模具编号1', width: 70, align: 'left' },
-                           { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left' },
+                          { field: 'mouldid', title: '模具编号1', width: 70, align: 'left', sortable: "true" },
+                           { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left', sortable: "true" },
                            {
                                field: 'newmouldid', title: '新模编号1', width: 70, align: 'left',
                                styler: function (value, row, index) {
@@ -149,35 +163,55 @@
         });
 
         function Export() {
+
+             
             var queryParams = $('#tbEqManage').datagrid('options').queryParams;
-            var url = "../../ASHX/DMC/RepairRecord.ashx?M=download&SearchType=ByAdvanced&RepairStatus=100&fileName=维修记录.csv";
-            if (queryParams.KeyWord) {
-                url = url + "&KeyWord=" + queryParams.KeyWord;
+            //請輸入關鍵字            
+            queryParams.KeyWord = $('#txtKeyword').textbox("getValue");
+            //queryParams.SearchType = SearchType;
+            queryParams.EqumentId = $("#qequmentid").textbox("getValue");
+            queryParams.RepairFormNO = $('#qrepairformno').textbox("getValue");
+            queryParams.RepairmanId = $("#repairmanid").textbox("getValue");
+            queryParams.RepairmanName = $('#repairmanname').textbox("getValue");
+            queryParams.YearMonth = $('#qyearmonth').datebox("getValue");
+            queryParams.EYearMonth = $('#eqyearmonth').datebox("getValue");
+            if (queryParams.YearMonth && queryParams.EYearMonth) {
+
+                var url = "../../ASHX/DMC/RepairRecord.ashx?M=download&SearchType=ByAdvanced&RepairStatus=100&fileName=维修记录.csv";
+                if (queryParams.KeyWord) {
+                    url = url + "&KeyWord=" + queryParams.KeyWord;
+                }
+                if (queryParams.RepairFormNO) {
+                    url = url + "&RepairFormNO=" + queryParams.RepairFormNO;
+                }
+                if (queryParams.EqumentId) {
+                    url = url + "&EqumentId=" + queryParams.EqumentId;
+                }
+                if (queryParams.RepairmanId) {
+                    url = url + "&RepairmanId=" + queryParams.RepairmanId;
+                }
+                if (queryParams.RepairmanName) {
+                    url = url + "&RepairmanName=" + queryParams.RepairmanName;
+                }
+                if (queryParams.YearMonth) {
+                    url = url + "&YearMonth=" + queryParams.YearMonth;
+                }
+                if (queryParams.EYearMonth) {
+                    url = url + "&EYearMonth=" + queryParams.EYearMonth;
+                }
+                if ($("#downloadForm").length <= 0) {
+                    $("body").append("<form id='downloadForm' method='post' target='iframe'></form>");
+                    $("body").append("<iframe id='ifm' name='iframe' style='display:none;'></iframe>");
+                }
+                $("#downloadForm").attr('action', url);
+                $("#downloadForm").submit();
             }
-            if (queryParams.RepairFormNO) {
-                url = url + "&RepairFormNO=" + queryParams.RepairFormNO;
+            else
+            {
+                $.messager.alert({ title: '错误提示', msg: "请录入报修时间查询:" });
+                return;
             }
-            if (queryParams.EqumentId) {
-                url = url + "&EqumentId=" + queryParams.EqumentId;
-            }
-            if (queryParams.RepairmanId) {
-                url = url + "&RepairmanId=" + queryParams.RepairmanId;
-            }
-            if (queryParams.RepairmanName) {
-                url = url + "&RepairmanName=" + queryParams.RepairmanName;
-            }
-            if (queryParams.YearMonth) {
-                url = url + "&YearMonth=" + queryParams.YearMonth;
-            }
-            if (queryParams.EYearMonth) {
-                url = url + "&EYearMonth=" + queryParams.EYearMonth;
-            }
-            if ($("#downloadForm").length <= 0) {
-                $("body").append("<form id='downloadForm' method='post' target='iframe'></form>");
-                $("body").append("<iframe id='ifm' name='iframe' style='display:none;'></iframe>");
-            }
-            $("#downloadForm").attr('action', url);
-            $("#downloadForm").submit();
+            
         }
 
         //Grid初使加載的數據

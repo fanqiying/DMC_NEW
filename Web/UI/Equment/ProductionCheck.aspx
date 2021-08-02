@@ -246,7 +246,8 @@
                            $.post("../../ASHX/DMC/RepairRecord.ashx?M=LeaderReject", {
                                RepairFormNO: $("#arepairformno").val(),
                                RebackReason: $("#arebackreason").textbox("getValue"),
-                               AutoId: $("#aautoid").val()
+                               AutoId: row.autoid,
+                               LeaderID: $("#auserid").textbox("getValue")
                            },
                            function (result) {
                                if (result.success) {

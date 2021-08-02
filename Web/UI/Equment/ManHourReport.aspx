@@ -105,38 +105,58 @@
             queryParams.RepairmanId = $("#repairmanid").textbox("getValue");
             queryParams.RepairmanName = $('#repairmanname').textbox("getValue");
             queryParams.YearMonth = $('#qyearmonth').datebox("getValue");
+            queryParams.EYearMonth = $('#eqyearmonth').datebox("getValue");
+            
             $('#tbEqManage').datagrid('reload');
         }
         function Export() {
             var queryParams = $('#tbEqManage').datagrid('options').queryParams;
-            var url = "../../ASHX/DMC/RepairRecord.ashx?M=downloadhour&repairstatus=1&fileName=工时统计.xls";
-            if (queryParams.SearchType) {
-                url = url + "&SearchType=" + queryParams.SearchType;
+            //請輸入關鍵字            
+            queryParams.KeyWord = $('#txtKeyword').textbox("getValue");
+            queryParams.SearchType = "ByAdvanced";//SearchType;
+            queryParams.EqumentId = $("#qequmentid").textbox("getValue");
+            queryParams.RepairFormNO = $('#qrepairformno').textbox("getValue");
+            queryParams.RepairmanId = $("#repairmanid").textbox("getValue");
+            queryParams.RepairmanName = $('#repairmanname').textbox("getValue");
+            queryParams.YearMonth = $('#qyearmonth').datebox("getValue");
+            queryParams.EYearMonth = $('#eqyearmonth').datebox("getValue");
+            if (queryParams.YearMonth && queryParams.EYearMonth) {
+                var url = "../../ASHX/DMC/RepairRecord.ashx?M=downloadhour&repairstatus=1&fileName=工时统计.xls";
+                if (queryParams.SearchType) {
+                    url = url + "&SearchType=" + queryParams.SearchType;
+                }
+                if (queryParams.KeyWord) {
+                    url = url + "&KeyWord=" + queryParams.KeyWord;
+                }
+                if (queryParams.RepairFormNO) {
+                    url = url + "&RepairFormNO=" + queryParams.RepairFormNO;
+                }
+                if (queryParams.EqumentId) {
+                    url = url + "&EqumentId=" + queryParams.EqumentId;
+                }
+                if (queryParams.RepairmanId) {
+                    url = url + "&RepairmanId=" + queryParams.RepairmanId;
+                }
+                if (queryParams.RepairmanName) {
+                    url = url + "&RepairmanName=" + queryParams.RepairmanName;
+                }
+                if (queryParams.YearMonth) {
+                    url = url + "&YearMonth=" + queryParams.YearMonth;
+                }
+                if (queryParams.EYearMonth) {
+                    url = url + "&EYearMonth=" + queryParams.EYearMonth;
+                }
+                if ($("#downloadForm").length <= 0) {
+                    $("body").append("<form id='downloadForm' method='post' target='iframe'></form>");
+                    $("body").append("<iframe id='ifm' name='iframe' style='display:none;'></iframe>");
+                }
+                $("#downloadForm").attr('action', url);
+                $("#downloadForm").submit();
             }
-            if (queryParams.KeyWord) {
-                url = url + "&KeyWord=" + queryParams.KeyWord;
+            else {
+                $.messager.alert({ title: '错误提示', msg: "请录入报修时间查询:" });
+                return;
             }
-            if (queryParams.RepairFormNO) {
-                url = url + "&RepairFormNO=" + queryParams.RepairFormNO;
-            }
-            if (queryParams.EqumentId) {
-                url = url + "&EqumentId=" + queryParams.EqumentId;
-            }
-            if (queryParams.RepairmanId) {
-                url = url + "&RepairmanId=" + queryParams.RepairmanId;
-            }
-            if (queryParams.RepairmanName) {
-                url = url + "&RepairmanName=" + queryParams.RepairmanName;
-            }
-            if (queryParams.YearMonth) {
-                url = url + "&YearMonth=" + queryParams.YearMonth;
-            }
-            if ($("#downloadForm").length <= 0) {
-                $("body").append("<form id='downloadForm' method='post' target='iframe'></form>");
-                $("body").append("<iframe id='ifm' name='iframe' style='display:none;'></iframe>");
-            }
-            $("#downloadForm").attr('action', url);
-            $("#downloadForm").submit();
         }
         //單擊高級查詢按鈕
         function openSearch(obj) {
@@ -156,10 +176,10 @@
         }
 
         /**
-         * 时间格式化
-         * @param value
-         * @returns {string}
-        */
+        * 时间格式化
+        * @param value
+        * @returns {string}
+       */
         var isDay = false;
         function dateFormatter(value) {
             var date;
@@ -198,7 +218,12 @@
             }
         }
 
-        function datedayFormatter(value) {
+        /**
+         * 时间格式化
+         * @param value
+         * @returns {string}
+        */
+        function datetimeFormatter(value) {
             var date;
             if (value == "") {
                 date = new Date();
@@ -209,20 +234,31 @@
             var year = date.getFullYear().toString();
             var month = date.getMonth() + 1;
             var day = date.getDate();
+            var hour = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
             month = month < 10 ? '0' + month : month;
             day = day < 10 ? '0' + day : day;
-            return year + "-" + month + "-" + day;
+            hour = hour < 10 ? '0' + hour : hour;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            return year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds;
         }
-
-        function datedayParser(s) {
+        /**
+         * 解析时间
+         */
+        function datetimeParser(s) {
             if (s != "") {
                 var dt = s.split(" ");
-                var arr = dt[0].split("-");
-                var y = parseInt(arr[0], 10);
-                var m = parseInt(arr[1], 10) - 1;
-                var d = null;
-                d = parseInt(arr[2], 10);
-                return new Date(y, m, d);
+                var d = dt[0].split("-");
+                var t = dt[1].split(":");
+                var y = parseInt(d[0], 10);
+                var m = parseInt(d[1], 10) - 1;
+                var d = parseInt(d[2], 10);
+                var hh = parseInt(t[0], 10);
+                var mm = parseInt(t[1], 10);
+                var ss = parseInt(t[2], 10);
+                return new Date(y, m, d, hh, mm, ss);
             } else {
                 return new Date();
             }
@@ -237,9 +273,7 @@
                 <a class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="Search('ByKey')">搜索</a>
                 <a id="btnMore" class="easyui-linkbutton" data-options="iconCls:'icon-expand',plain:true" onclick="openSearch('divSearch');">高级搜索</a>
             </div>
-            <div class="r rightSearch">
-                <a class="easyui-linkbutton" data-options="iconCls:'icon-excel',plain:true" href="javascript:void(0)" onclick='Export()'>导出</a> &nbsp;&nbsp;                
-            </div>
+            
         </div>
         <div style="clear: both">
         </div>
@@ -263,13 +297,21 @@
                         <td style="width: 120px;">
                             <input class="easyui-textbox" id="repairmanname" name="repairmanname" data-options="prompt:'请输入维修员姓名'" style="width: 120px;" />
                         </td>
-                        <td style="width: 90px;">按年月查询:</td>
+                        <td style="width: 90px;">按报修时间查询:</td>
                         <td style="width: 150px;">
-                            <input data-options="formatter: dateFormatter, parser: dateParser" class="easyui-datebox" name="yearmonth" id="qyearmonth" style="width: 150px;" />
+                            <input data-options="formatter: datetimeFormatter, parser: datetimeParser" class="easyui-datetimebox" name="yearmonth" id="qyearmonth" style="width: 150px;" />
+                         </td>
+                        <td style="width: 150px;">
+                            <input data-options="formatter: datetimeFormatter, parser: datetimeParser" class="easyui-datetimebox" name="eyearmonth" id="eqyearmonth" style="width: 150px;" />
+                        </td>
+                        <td style="width: 150px;">
+                             <a class="easyui-linkbutton" data-options="iconCls:'icon-excel',plain:true" href="javascript:void(0)" onclick='Export()'>导出</a> &nbsp;&nbsp;                
+          
                         </td>
                     </tr>
                 </table>
             </div>
+             
             <div style="text-align: right; padding: 3px 0; padding-right: 8px; height: 26px; font-size: 12px;">
                 <a class="easyui-linkbutton" data-options="iconCls:'icon-enlarge',plain:true" onclick="Search('ByAdvanced')">高級搜索</a>
             </div>

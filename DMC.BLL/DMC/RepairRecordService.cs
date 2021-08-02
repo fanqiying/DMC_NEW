@@ -46,7 +46,8 @@ namespace DMC.BLL
                               t_FaultPosition c on  b.PositionId=c.PPositionId and b.PhenomenaId=c.PositionId left join 
                               t_Device d on a.DeviceId=d.DeviceId ");
             StringBuilder sbShow = new StringBuilder();
-            sbShow.Append(" A.*,isnull(repairstatus,0)repairstatus,c.GradeTime,c.Grade StandGrade,datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-10-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure,d.KeepUserId ");
+            sbShow.Append(" A.*,isnull(repairstatus,0)repairstatus,c.GradeTime,c.Grade StandGrade,datediff(minute ,b.faulttime, GetDate()) manhoure,d.KeepUserId ");
+            sbShow.Append(" ,(case   FormStatus when 10 then datediff(minute,a.Intime,GETDATE())    when 40 then  datediff(minute, b.RepairSTime, GETDATE())   when 30 then datediff(minute, b.RepairETime, GETDATE())    when 50 then datediff(minute, b.QCConfirmTime, GETDATE())	else 0    end) rowcolor");
             return pageView.PageView(sbTable.ToString(), "a.AutoId", pageIndex, pageSize, sbShow.ToString(), "a.AutoId DESC", Where, out total, out pageCount);
         }
 
@@ -55,7 +56,7 @@ namespace DMC.BLL
             StringBuilder sbTable = new StringBuilder();
             sbTable.Append(" t_RepairRecord a left join t_FaultPosition b on a.PhenomenaId=b.PositionId ");
             StringBuilder sbShow = new StringBuilder();
-            sbShow.Append(" A.*,b.GradeTime,b.Grade StandGrade,datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-10-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure ");
+            sbShow.Append(" A.*,b.GradeTime,b.Grade StandGrade,datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure ");
             return pageView.PageView(sbTable.ToString(), "a.AutoId", pageIndex, pageSize, sbShow.ToString(), "a.AutoId DESC", Where, out total, out pageCount);
         }
 
@@ -302,7 +303,7 @@ namespace DMC.BLL
         /// <param name="newStatus">驳回返修newStatus=61 生产员返修，newStatus=65生产组长返修</param>
         /// <param name="newRStatus">12 待指派(挂单),14 待指派(IPQC返修),15 待指派(组长返修)</param>
         /// <returns></returns>
-        public string LeaderReject(int AutoId, string RepairFormNO, string RebackReason, string oldStatus, string newStatus, string newRStatus)
+        public string LeaderReject(int AutoId, string RepairFormNO, string RebackReason, string LeaderID,string oldStatus, string newStatus, string newRStatus)
         {
             string msg = string.Empty;
             if (string.IsNullOrWhiteSpace(RepairFormNO) ||
@@ -324,7 +325,7 @@ namespace DMC.BLL
                         //1.组长返修，原单状态也更改为已确认
                         isSuccess = _dal.SetFormStatus(RepairFormNO, oldStatus, newStatus, "", RebackReason, "", t);
                         //2.组长返修
-                        isSuccess = isSuccess && rrDal.LeaderReject(AutoId, RepairFormNO, RebackReason, newStatus, t);
+                        isSuccess = isSuccess && rrDal.LeaderReject(AutoId, RepairFormNO, LeaderID,RebackReason, newStatus, t);
                         //3.创建新的报修与维修信息
                         isSuccess = isSuccess && rrDal.NewRepairRecord(AutoId, RepairFormNO, NewRepairFormNO, "", newRStatus, t);
                         if (!isSuccess)

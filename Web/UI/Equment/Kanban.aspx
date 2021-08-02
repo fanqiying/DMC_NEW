@@ -17,170 +17,194 @@
     <script src="../../easyUI15/locale/easyui-lang-zh_TW.js" type="text/javascript"></script>
     <script src="../../JSPage/echarts.min.js"></script>
     <script type="text/javascript">
-        $(document).ready(function () {
-            //綁定datagrid
-            $('#tbEqManage').datagrid({
-                //是否折?
-                collapsible: true,
-                checkOnSelect: false,
-                selectOnCheck: false,
-                url: '../../ASHX/DMC/RepairRecord.ashx?M=KanBan',
-                //數據在一行顯示 
-                nowrap: false,
-                fitColumns: true,
-                //行條紋化
-                striped: true,
-                //固定序號
+    $(document).ready(function () {
+        //綁定datagrid
+        $('#tbEqManage').datagrid({
+            //是否折?
+            collapsible: true,
+            checkOnSelect: false,
+            selectOnCheck: false,
+            url: '../../ASHX/DMC/RepairRecord.ashx?M=KanBan',
+            //數據在一行顯示 
+            nowrap: false,
+            fitColumns: true,
+            //行條紋化
+            striped: true,
+            //固定序號
 
-                rownumbers: true,
-                pageSize: 20,
-                //是否可以多選
-                singleSelect: true,
-                remoteSort: false,
-                idField: 'autoid',
-                loadMsg: '數據加載中...',//數據加載中
-                //是否顯示分页
-                pagination: true,
-                //可動列
-                columns: [[
-                    { field: 'repairformno', title: '维修单号', width: 70, align: 'left', sortable: true },
-                    {
-                        field: 'repairstatus', title: '状态', width: 50, align: 'left',
-                        formatter: function (value, row, index) {
-                            var text = "N/A";
-                            switch (row.formstatus) {
-                                case "10":
-                                    text = "10-待指派";
-                                    break;
-                                case "12":
-                                    text = "12-待指派(挂单)";
-                                    break;
-                                case "24":
-                                    text = "24-待维修(IPQC返修)";
-                                    break;
-                                case "25":
-                                    text = "25-待维修(组长返修)";
-                                    break;
-                                case "20":
-                                    text = "20-待维修";
-                                    break;
-                                case "23":
-                                    text = "23-待维修(返修)";
-                                    break;
-                                case "30":
-                                    text = "30-待生产员确认";
-                                    break;
-                                case "40":
-                                    text = "40-待IPQC确认";
-                                    break;
-                                case "50":
-                                    text = "50-待组长确认";
-                                    break;
-                            }
-                            return text;
+            rownumbers: true,
+            pageSize: 20,
+            //是否可以多選
+            singleSelect: true,
+            remoteSort: false,
+            idField: 'autoid',
+            loadMsg: '數據加載中...',//數據加載中
+            //是否顯示分页
+            pagination: true,
+            //可動列
+            columns: [[
+                { field: 'repairformno', title: '维修单号', width: 70, align: 'left', sortable: true },
+                {
+                    field: 'repairstatus', title: '状态', width: 50, align: 'left',
+                    formatter: function (value, row, index) {
+                        var text = "N/A";
+                        switch (row.formstatus) {
+                            case "10":
+                                text = "10-待指派";
+                                break;
+                            case "12":
+                                text = "12-待指派(挂单)";
+                                break;
+                            case "24":
+                                text = "24-待维修(IPQC返修)";
+                                break;
+                            case "25":
+                                text = "25-待维修(组长返修)";
+                                break;
+                            case "20":
+                                text = "20-待维修";
+                                break;
+                            case "23":
+                                text = "23-待维修(返修)";
+                                break;
+                            case "30":
+                                text = "30-待生产员确认";
+                                break;
+                            case "40":
+                                text = "40-待IPQC确认";
+                                break;
+                            case "50":
+                                text = "50-待组长确认";
+                                break;
+                            case "61":
+                                text = "23-待维修(返修)";
+                                break;
+                            case "62":
+                                text = "12-待指派(挂单)";
+                                break;
+                            case "64":
+                                text = "64-QC返修";
+                                break;
+                            case "65":
+                                text = "23-待维修(返修)";
+                                break;
+                            case "50":
+                                text = "50-待组长确认";
+                                break;
                         }
-                    },
-                    { field: 'deviceid', title: '设备信息', width: 70, align: 'left', sortable: true },
-                    { field: 'keepuserid', title: '保修生产员', width: 50, align: 'left', sortable: true },
-                    { field: 'faulttime', title: '故障时间', width: 70, align: 'left', sortable: true },
-                    { field: 'positiontext', title: '故障位置', width: 70, align: 'left', sortable: true },
-                    { field: 'phenomenatext', title: '故障现象', width: 70, align: 'left', sortable: true },
-                    { field: 'repairmanid', title: '维修员', width: 70, align: 'left', sortable: true },
-                    { field: 'mouldid', title: '模具编号1', width: 70, align: 'left' },
-                           { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left' },
-                           {
-                               field: 'newmouldid', title: '新模编号1', width: 70, align: 'left',
-                               styler: function (value, row, index) {
-                                   if (row.newmouldid != '') {
-                                       return 'background-color:#4cae4c;color: #fff;border: 0px'
-                                   }
-
-                               }
-                           },
-                           {
-                               field: 'newmouldid1', title: '新模编号2', width: 70, align: 'left',
-                               styler: function (value, row, index) {
-                                   if (row.newmouldid1 != '') {
-                                       return 'background-color:#4cae4c;color: #fff;border: 0px'
-                                   }
-
-                               }
-                           },
-                    { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
-                    { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
-                    { field: 'manhoure', title: '维修时长', width: 70, align: 'left' },
-                    { field: 'gradetime', title: '标准工时', width: 70, align: 'left' },
-                ]],
-                rowStyler: function (index, row) {
-                    if (row.manhoure > row.gradetime) {
-                        return 'background-color:HotPink;color:blue;font-weight:bold;';
-                    } else {
-                        return "";
+                        return text;
                     }
-                    //else if (row.status == "2-已指派") {
-                    //    return 'background-color:DeepSkyBlue;color:blue;font-weight:bold;';
-                    //} else if (row.status == "3-维修中") {
-                    //    return 'background-color:LawnGreen;color:blue;font-weight:bold;';
-                    //}
-                }
-            });
+                },
+                { field: 'deviceid', title: '设备信息', width: 70, align: 'left', sortable: true },
+                { field: 'applyuserid', title: '申请生产员', width: 50, align: 'left', sortable: true },
+                { field: 'faulttime', title: '故障时间', width: 70, align: 'left', sortable: true },
+                { field: 'positiontext', title: '故障位置', width: 70, align: 'left', sortable: true },
+                { field: 'phenomenatext', title: '故障现象', width: 70, align: 'left', sortable: true },
+                { field: 'repairmanid', title: '维修员', width: 70, align: 'left', sortable: true },
+                { field: 'mouldid', title: '模具编号1', width: 70, align: 'left' },
+                       { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left' },
+                       {
+                           field: 'newmouldid', title: '新模编号1', width: 70, align: 'left',
+                           styler: function (value, row, index) {
+                               if (row.newmouldid != '') {
+                                   return 'background-color:#4cae4c;color: #fff;border: 0px'
+                               }
 
-            //設置分页控件屬性 
-            var p1 = $('#tbEqManage').datagrid('getPager');
-            $(p1).pagination({
-                pageSize: 20,
-                pageList: [10, 15, 20, 25, 30],
-                beforePageText: '第',
-                afterPageText: '页 共{pages}页',
-                displayMsg: '当前显示 {from} - {to} 条记录 共 {total} 条记录'
-            });
+                           }
+                       },
+                       {
+                           field: 'newmouldid1', title: '新模编号2', width: 70, align: 'left',
+                           styler: function (value, row, index) {
+                               if (row.newmouldid1 != '') {
+                                   return 'background-color:#4cae4c;color: #fff;border: 0px'
+                               }
+
+                           }
+                       },
+                { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
+                { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
+                { field: 'manhoure', title: '维修时长(分钟)', width: 70, align: 'left' },
+                { field: 'gradetime', title: '标准工时(分钟)', width: 70, align: 'left' },
+                { field: 'rowcolor', title: '颜色', width: 70, align: 'left', hidden: true }
+                
+                ]],
+            rowStyler: function (index, row) {
+                if (row.manhoure > row.gradetime) {
+                    return 'background-color:HotPink;color:blue;font-weight:bold;';
+                } else {
+                    if (row.formstatus == "10" && parseInt(row.rowcolor) > 30) {
+                        return 'background-color:#e1c311;color:blue;font-weight:bold;';
+                    } else if (row.formstatus == "40" && parseInt(row.rowcolor) > 30) {
+                        return 'background-color:#db861e;color:blue;font-weight:bold;';
+                    }
+                    else if (row.formstatus == "30" && parseInt(row.rowcolor) > 30) {
+                        return 'background-color:#d5d51a;color:blue;font-weight:bold;';
+                    }
+                    else if (row.formstatus == "50" && parseInt(row.rowcolor) > 30) {
+                        return 'background-color:#27c890;color:blue;font-weight:bold;';
+                    }
+                    else { return "" }
+                }
+
+            }
         });
 
-        /**
-         * 时间格式化
-         * @param value
-         * @returns {string}
-        */
-        function datetimeFormatter(value) {
-            var date;
-            if (value == "") {
-                date = new Date();
-            }
-            else {
-                date = new Date(value);
-            }
-            var year = date.getFullYear().toString();
-            var month = date.getMonth() + 1;
-            var day = date.getDate();
-            var hour = date.getHours();
-            var minutes = date.getMinutes();
-            var seconds = date.getSeconds();
-            month = month < 10 ? '0' + month : month;
-            day = day < 10 ? '0' + day : day;
-            hour = hour < 10 ? '0' + hour : hour;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
-            return year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds;
+        //設置分页控件屬性 
+        var p1 = $('#tbEqManage').datagrid('getPager');
+        $(p1).pagination({
+            pageSize: 20,
+            pageList: [10, 15, 20, 25, 30],
+            beforePageText: '第',
+            afterPageText: '页 共{pages}页',
+            displayMsg: '当前显示 {from} - {to} 条记录 共 {total} 条记录'
+        });
+    });
+
+    /**
+     * 时间格式化
+     * @param value
+     * @returns {string}
+    */
+    function datetimeFormatter(value) {
+        var date;
+        if (value == "") {
+            date = new Date();
         }
-        /**
-         * 解析时间
-         */
-        function datetimeParser(s) {
-            if (s != "") {
-                var dt = s.split(" ");
-                var d = dt[0].split("-");
-                var t = dt[1].split(":");
-                var y = parseInt(d[0], 10);
-                var m = parseInt(d[1], 10) - 1;
-                var d = parseInt(d[2], 10);
-                var hh = parseInt(t[0], 10);
-                var mm = parseInt(t[1], 10);
-                var ss = parseInt(t[2], 10);
-                return new Date(y, m, d, hh, mm, ss);
-            } else {
-                return new Date();
-            }
+        else {
+            date = new Date(value);
         }
+        var year = date.getFullYear().toString();
+        var month = date.getMonth() + 1;
+        var day = date.getDate();
+        var hour = date.getHours();
+        var minutes = date.getMinutes();
+        var seconds = date.getSeconds();
+        month = month < 10 ? '0' + month : month;
+        day = day < 10 ? '0' + day : day;
+        hour = hour < 10 ? '0' + hour : hour;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        return year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds;
+    }
+    /**
+     * 解析时间
+     */
+    function datetimeParser(s) {
+        if (s != "") {
+            var dt = s.split(" ");
+            var d = dt[0].split("-");
+            var t = dt[1].split(":");
+            var y = parseInt(d[0], 10);
+            var m = parseInt(d[1], 10) - 1;
+            var d = parseInt(d[2], 10);
+            var hh = parseInt(t[0], 10);
+            var mm = parseInt(t[1], 10);
+            var ss = parseInt(t[2], 10);
+            return new Date(y, m, d, hh, mm, ss);
+        } else {
+            return new Date();
+        }
+    }
     </script>
     <style type="text/css">
         /*::-webkit-scrollbar { width:4px;}
@@ -192,10 +216,10 @@
         <table id="tbEqManage" data-options="fit:true">
         </table>
     </div>
-    <div id="user" style="width: 315px; height: calc(100% - 10px); padding: 2px 2px 2px 2px; margin-top: 2px; float: right;overflow-y:scroll;">
+    <div id="user" style="width: 315px; height: calc(100% - 10px); padding: 2px 2px 2px 2px; margin-top: 2px; float: right; overflow-y: scroll;">
         <% int i = 0;
-           foreach (System.Data.DataRow dr in RepairmanList.Rows)
-           { %>
+            foreach (System.Data.DataRow dr in RepairmanList.Rows)
+            { %>
         <div style="float: left; height: 140px; width: 140px; margin-left: 2px; margin-top: 2px; background-color: #F6F6F6;">
             <div style="width: 100%; height: 100px;">
                 <div style="width: 63px; height: 100px; float: left;">
@@ -209,7 +233,7 @@
             </div>
         </div>
         <% i = i + 1;
-           } %>
+            } %>
     </div>
 </body>
 </html>

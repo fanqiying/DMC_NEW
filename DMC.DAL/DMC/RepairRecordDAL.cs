@@ -92,7 +92,7 @@ namespace DMC.DAL
         {
             StringBuilder sbSql = new StringBuilder();
             sbSql.Append("Update t_RepairRecord ");
-            sbSql.Append("   SET RepairETime=GETDATE(),RepairStatus=50,IPQCNumber=@IPQCNumber,IsRest=(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and GetDate()>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end) ");
+            sbSql.Append("   SET QCConfirmTime=GETDATE(),RepairStatus=50,IPQCNumber=@IPQCNumber,IsRest=(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and GetDate()>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end) ");
             sbSql.Append(" WHERE RepairFormNO=@RepairFormNO AND AutoId=@AutoId ");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("RepairFormNO", DbType.String, RepairFormNO));
@@ -123,15 +123,16 @@ namespace DMC.DAL
         /// </summary>
         /// <param name="RepairFormNO"></param>
         /// <returns></returns>
-        public bool LeaderReject(int AutoId, string RepairFormNO, string RebackReason, string newStatus, Trans t)
+        public bool LeaderReject(int AutoId, string RepairFormNO, string LeaderID,string RebackReason, string newStatus, Trans t)
         {
             StringBuilder sbSql = new StringBuilder();
             sbSql.Append("Update t_RepairRecord ");
-            sbSql.Append("   SET RepairETime=GETDATE(),RepairStatus=@newStatus,RebackReason=@RebackReason,IsRest=(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and GetDate()>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end) ");
+            sbSql.Append("   SET confirmtime=GETDATE(),confirmuser=@LeaderID,RepairStatus=@newStatus,RebackReason=@RebackReason,IsRest=(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and GetDate()>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end) ");
             sbSql.Append(" WHERE RepairFormNO=@RepairFormNO AND AutoId=@AutoId ");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("RepairFormNO", DbType.String, RepairFormNO));
             param.Add(DBFactory.Helper.FormatParameter("RebackReason", DbType.String, RebackReason));
+            param.Add(DBFactory.Helper.FormatParameter("LeaderID", DbType.String, LeaderID));
             param.Add(DBFactory.Helper.FormatParameter("newStatus", DbType.String, newStatus));
             param.Add(DBFactory.Helper.FormatParameter("AutoId", DbType.Int32, AutoId));
             return DBFactory.Helper.ExecuteNonQuery(sbSql.ToString(), param.ToArray(), t) > 0;
@@ -146,7 +147,7 @@ namespace DMC.DAL
         {
             StringBuilder sbSql = new StringBuilder();
             sbSql.Append("Update t_RepairRecord ");
-            sbSql.Append("   SET RepairETime=GETDATE(),RepairStatus=64,RebackReason=@RebackReason,IPQCNumber=@IPQCNumber,IsRest=(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and GetDate()>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end) ");
+            sbSql.Append("   SET  QCConfirmTime=GETDATE(),RepairStatus=64,RebackReason=@RebackReason,IPQCNumber=@IPQCNumber,IsRest=(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and GetDate()>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end) ");
             sbSql.Append(" WHERE RepairFormNO=@RepairFormNO AND AutoId=@AutoId ");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("RepairFormNO", DbType.String, RepairFormNO));
@@ -174,14 +175,14 @@ namespace DMC.DAL
             sbSql.Append("INSERT INTO t_RepairForm(RepairFormNO,ApplyUserId,FaultTime,DeviceId,PositionId,PositionText,PositionId1,PhenomenaId,");
             sbSql.Append("PhenomenaText,PhenomenaId1,FaultStatus,FaultCode,FaultReason,FaultAnalysis,Intime,FormStatus,RebackType,RebackReason,IPQCNumber,RepairmanId,RepairmanName,PhenomenaText1,PositionText1,MouldId,NewMouldId,MouldId1,NewMouldId1)");
             sbSql.Append("SELECT @NewRepairFormNO RepairFormNO,ApplyUserId,FaultTime,DeviceId,PositionId,PositionText,PositionId1,PhenomenaId,");
-            sbSql.Append("        PhenomenaText,PhenomenaId1,FaultStatus,FaultCode,FaultReason,FaultAnalysis,GetDate() Intime,");
+            sbSql.Append("        PhenomenaText,PhenomenaId1,FaultStatus,FaultCode,(select distinct ' '+  isnull(RebackReason,'') from t_RepairForm t where left(t.RepairFormNO,13) = left(t_RepairForm.RepairFormNO,13) and t.RebackReason is not null for xml path('')) FaultReason,FaultAnalysis,GetDate() Intime,");
             sbSql.Append("        @newStatus FormStatus,RebackType,RebackReason,IPQCNumber,RepairmanId,RepairmanName,PhenomenaText1,PositionText1,MouldId,NewMouldId,MouldId1,NewMouldId1 ");
             sbSql.Append("   FROM t_RepairForm");
             sbSql.Append("  WHERE RepairFormNO=@OldRepairFormNO;");
             //创建维修记录
-            sbSql.Append("INSERT INTO t_RepairRecord(RepairFormNO,RebackReason,ApplyUserId,IPQCNumber,RepairmanId,RepairmanName,DeviceId,PositionId,PositionText,PhenomenaId,");
+            sbSql.Append("INSERT INTO t_RepairRecord(RepairFormNO,RebackReason,ApplyUserId,RepairmanId,RepairmanName,DeviceId,PositionId,PositionText,PhenomenaId,");
             sbSql.Append("PhenomenaText,FaultCode,FaultReason,FaultAnalysis,RepairSTime,RepairStatus,FaultTime,PhenomenaText1,PositionText1,MouldId,NewMouldId,MouldId1,NewMouldId1)");
-            sbSql.Append("SELECT @NewRepairFormNO RepairFormNO,RebackReason,ApplyUserId,@IPQCNumber IPQCNumber,RepairmanId,RepairmanName,DeviceId,PositionId,PositionText,PhenomenaId,");
+            sbSql.Append("SELECT @NewRepairFormNO RepairFormNO,(select distinct ' '+  isnull(RebackReason,'') from t_RepairRecord t where left(t.RepairFormNO,13) = left(t_RepairRecord.RepairFormNO,13) and t.RebackReason is not null for xml path('')) RebackReason,ApplyUserId,RepairmanId,RepairmanName,DeviceId,PositionId,PositionText,PhenomenaId,");
             sbSql.Append("       PhenomenaText,FaultCode,FaultReason,FaultAnalysis,GetDate() RepairSTime,@newStatus RepairStatus,FaultTime,PhenomenaText1,PositionText1,MouldId,NewMouldId,MouldId1,NewMouldId1 ");
             sbSql.Append("  FROM t_RepairRecord");
             sbSql.Append(" WHERE AutoId=@AutoId;");

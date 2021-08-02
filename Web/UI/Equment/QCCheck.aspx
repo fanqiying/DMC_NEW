@@ -192,6 +192,10 @@
                                     if (result.success) {
                                         $('#tbQCCheck').datagrid('reload');
                                         $("#auserid").textbox("setValue", "");
+                                        $("#aipqcnumber").textbox("setValue", "");
+                                        $("#aipqcnumberConfirm").textbox("setValue", "");
+                                        $("#arebackreason").textbox("setValue", "");
+                                        
                                         $.messager.alert({ title: '成功提示', msg: '维修单已提交给生产员！' });
                                     } else {
                                         $.messager.alert({
@@ -245,6 +249,9 @@
                                         closeWindow('divNew');                                        
                                         closeWindow('divIPConfirm');
                                         $("#auserid").textbox("setValue", "");
+                                        $("#aipqcnumber").textbox("setValue", "");
+                                        $("#aipqcnumberConfirm").textbox("setValue", "");
+                                        $("#arebackreason").textbox("setValue", "");
                                         $.messager.alert({ title: '成功提示', msg: '维修单已提交给生产员！' });
                                     } else {
                                         $.messager.alert({
@@ -278,6 +285,9 @@
                         closeWindow('divNew');
                         closeWindow('divIPQC');
                         $("#auserid").textbox("setValue", "");
+                        $("#aipqcnumber").textbox("setValue", "");
+                        $("#aipqcnumberConfirm").textbox("setValue", "");
+                        $("#arebackreason").textbox("setValue", "");
                         $.messager.alert({ title: '成功提示', msg: '返修成功' });
                     } else {
                         $.messager.alert({

@@ -167,9 +167,10 @@ namespace Web.ASHX.DMC
                         strWhere.AppendFormat(" AND a.RepairmanName = N'{0}'", context.Request.Params["RepairmanName"]);
                     }
 
-                    if (!string.IsNullOrEmpty(context.Request.Params["YearMonth"]))
+                    if (!string.IsNullOrEmpty(context.Request.Params["YearMonth"]) && !string.IsNullOrEmpty(context.Request.Params["EYearMonth"]))
                     {
-                        strWhere.AppendFormat(" AND CONVERT(varchar(7),a.RepairETime,120)   = N'{0}'", context.Request.Params["YearMonth"]);
+                        strWhere.AppendFormat(" AND RepairSTime  >= '{0}'", context.Request.Params["YearMonth"]);
+                        strWhere.AppendFormat(" AND RepairSTime   <= '{0}'", context.Request.Params["EYearMonth"]);
                     }
 
                     break;
@@ -400,9 +401,9 @@ namespace Web.ASHX.DMC
                 dr["故障位置"] = item["positiontext"].ToString();
                 dr["故障现象"] = item["phenomenatext"].ToString();
                 dr["故障时间"] = item["faulttime"].ToString();
-                dr["指派时间"] = Convert.ToDateTime(item["repairstime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss");
-                dr["完成时间"] = (Convert.IsDBNull(item["confirmtime"]) ? "" : Convert.ToDateTime(item["confirmtime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
-                dr["IPQC确认时间"] = item["repairetime"].ToString();// item.lenovo_part_no;//联想料号
+                dr["指派时间"] =  (Convert.IsDBNull(item["repairstime"]) ? "" : Convert.ToDateTime(item["repairstime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
+                dr["完成时间"] = (Convert.IsDBNull(item["repairetime"]) ? "" : Convert.ToDateTime(item["repairetime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
+                dr["IPQC确认时间"] =  (Convert.IsDBNull(item["qcconfirmtime"]) ? "" : Convert.ToDateTime(item["qcconfirmtime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
                 dr["生产确认时间"] = item["confirmtime"].ToString();
                 
                 dr["IPQC确认"] = item["ipqcnumber"].ToString();// item.lenovo_part_no;//联想料号
@@ -639,11 +640,12 @@ namespace Web.ASHX.DMC
                         strWhere.AppendFormat(" AND a.RepairmanName = N'{0}'", context.Request.Params["RepairmanName"]);
                     }
 
-                    if (!string.IsNullOrEmpty(context.Request.Params["YearMonth"]))
+                     
+                    if (!string.IsNullOrEmpty(context.Request.Params["YearMonth"]) && !string.IsNullOrEmpty(context.Request.Params["EYearMonth"]))
                     {
-                        strWhere.AppendFormat(" AND CONVERT(varchar(7),a.RepairETime,120)   = N'{0}'", context.Request.Params["YearMonth"]);
+                        strWhere.AppendFormat(" AND RepairSTime  >= '{0}'", context.Request.Params["YearMonth"]);
+                        strWhere.AppendFormat(" AND RepairSTime   <= '{0}'", context.Request.Params["EYearMonth"]);
                     }
-
                     break;
             }
             //strWhere.AppendFormat(" AND a.RepairStatus in(20,23,4,5)");
@@ -833,7 +835,8 @@ namespace Web.ASHX.DMC
                 string RepairFormNO = context.Request["RepairFormNO"];
                 string RebackReason = context.Request["RebackReason"];
                 int AutoId = Convert.ToInt32(context.Request["AutoId"]);
-                string msg = rrs.LeaderReject(AutoId, RepairFormNO, RebackReason, "50", "65", "25");
+                string LeaderID = context.Request["LeaderID"];
+                string msg = rrs.LeaderReject(AutoId, RepairFormNO, RebackReason, LeaderID, "50", "65", "25");
                 if (string.IsNullOrWhiteSpace(msg))
                 {
                     context.Response.Write("{\"success\":true,\"msg\":\"QC返修成功\"}");
@@ -859,7 +862,8 @@ namespace Web.ASHX.DMC
                 string RepairFormNO = context.Request["RepairFormNO"];
                 string RebackReason = context.Request["RebackReason"];
                 int AutoId = Convert.ToInt32(context.Request["AutoId"]);
-                string msg = rrs.LeaderReject(AutoId, RepairFormNO, RebackReason, "30", "63", "23");
+                string LeaderID = context.Request["LeaderID"];
+                string msg = rrs.LeaderReject(AutoId, RepairFormNO, RebackReason, LeaderID, "30", "63", "23");
                 if (string.IsNullOrWhiteSpace(msg))
                 {
                     context.Response.Write("{\"success\":true,\"msg\":\"QC返修成功\"}");
@@ -1068,7 +1072,7 @@ namespace Web.ASHX.DMC
             int total = 0;
             int pageCount = 0;
             StringBuilder strWhere = new StringBuilder();
-            strWhere.Append(" isnull(repairstatus,0)<60 ");
+            strWhere.Append(" isnull(FormStatus,0)<60 ");
             //获取待排单的数量
             DataTable dt = rrs.KanBan(pagesize, pageindex, out pageCount, out total, strWhere.ToString());
             StringHelper.JsonGZipResponse(context, JsonHelper.DataTableToJSON(dt, total, true));
