@@ -77,13 +77,13 @@
                                             text = "50-待组长确认";
                                             break;
                                         case "61":
-                                            text = "23-待维修(返修)";
+                                            text = "维修反修";
                                             break;
                                         case "62":
                                             text = "12-待指派(挂单)";
                                             break;
                                         case "64":
-                                            text = "维修完成";
+                                            text = "维修反修";
                                             break;
                                         case "63":
                                             text = "维修完成";
@@ -92,11 +92,9 @@
                                             text = "维修完成";
                                             break;
                                         case "65":
-                                            text = "维修完成";
+                                            text = "维修反修";
                                             break;
-                                        case "50":
-                                            text = "50-待组长确认";
-                                            break;
+                                       
                                         default:
                                             text = row.repairstatus + "维修完成";
                                             break;
@@ -346,7 +344,7 @@
             <div class="r rightSearch">
             </div>
         </div>
-        <div style="clear: both">
+        <div style="clear: both" >
         </div>
         <div class="squery" id="divSearch">
             <div class="sinquery">

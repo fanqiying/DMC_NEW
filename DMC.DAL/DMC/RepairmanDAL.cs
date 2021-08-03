@@ -35,7 +35,8 @@ select a.RepairmanId,a.RepairmanName,
   from dbo.t_Repairman a left join
        dbo.t_RepairRecord b on a.RepairmanId=b.RepairmanId and b.RepairSTime between Convert(varchar(10),GetDate(),121)+' 07:30:00' and Convert(varchar(10),GetDate(),121)+' 19:45:00'
 where YearMonth=Convert(varchar(7),GetDate(),121) and
-      ClassType=1 and IsWorking=1      
+     -- ClassType=1 and IsWorking=1    
+IsWorking=1 AND  (WorkRangeTimeBegin<GetDate() and WorkRangeTimeEnd>GetDate())   
       ) tp
 group by RepairmanId,RepairmanName,workedtime,totaltime ");
             //List<DbParameter> param = new List<DbParameter>();
@@ -63,7 +64,8 @@ select a.RepairmanId,
   from dbo.t_Repairman a left join
        dbo.t_RepairRecord b on a.RepairmanId=b.RepairmanId and b.RepairSTime between Convert(varchar(10),DATEADD(dd,-1,GetDate()),121)+' 19:30:00' and Convert(varchar(10),GetDate(),121)+' 07:45:00'
 where YearMonth=Convert(varchar(7),GetDate(),121) and
-      ClassType=0 and IsWorking=1 
+      --ClassType=0 and IsWorking=1 
+IsWorking=1 AND  (WorkRangeTimeBegin<GetDate() and WorkRangeTimeEnd>GetDate()) 
       ) tp
 group by RepairmanId,workedtime,totaltime ");
             //List<DbParameter> param = new List<DbParameter>();

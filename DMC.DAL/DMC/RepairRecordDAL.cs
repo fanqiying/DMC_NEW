@@ -91,11 +91,14 @@ namespace DMC.DAL
         public bool QCConfirm(int AutoId, string RepairFormNO, string IPQCNumber, Trans t)
         {
             StringBuilder sbSql = new StringBuilder();
+            
             sbSql.Append("Update t_RepairRecord ");
             sbSql.Append("   SET QCConfirmTime=GETDATE(),RepairStatus=50,IPQCNumber=@IPQCNumber,IsRest=(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and GetDate()>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end) ");
-            sbSql.Append(" WHERE RepairFormNO=@RepairFormNO AND AutoId=@AutoId ");
+            sbSql.Append(" WHERE RepairFormNO=@RepairFormNO AND AutoId=@AutoId; ");
+           
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("RepairFormNO", DbType.String, RepairFormNO));
+            
             param.Add(DBFactory.Helper.FormatParameter("AutoId", DbType.Int32, AutoId));
             param.Add(DBFactory.Helper.FormatParameter("IPQCNumber", DbType.String, IPQCNumber));
             return DBFactory.Helper.ExecuteNonQuery(sbSql.ToString(), param.ToArray(), t) > 0;
@@ -211,8 +214,20 @@ namespace DMC.DAL
             sbSql.Append("Update t_RepairRecord ");
             sbSql.Append("  set RepairStatus=60,ConfirmUser=@ConfirmUser,ConfirmTime=GETDATE() ");
             sbSql.Append(" WHERE RepairFormNO=@RepairFormNO AND AutoId=@AutoId ");
+
+            //最后一个返修单确认时，返修单状态完成
+            string RepairFormNO1 = RepairFormNO.Substring(0, 13);
+            sbSql.Append("Update t_RepairRecord ");
+            sbSql.Append("   SET  RepairStatus=60");
+            sbSql.AppendFormat(" WHERE  RepairFormNO  like  N'%{0}%' ",RepairFormNO1);
+            //strWhere.AppendFormat(" AND (ApplyUserId like N'%{0}%')", context.Request.Params["ApplyUserId"]);
+            sbSql.Append("Update t_RepairForm ");
+            sbSql.Append("   SET  FormStatus=60");
+            sbSql.AppendFormat(" WHERE  RepairFormNO  like  N'%{0}%' ", RepairFormNO1);
+            //sbSql.Append(" WHERE CHARINDEX(RepairFormNO , @RepairFormNO1)>1 and RepairFormNO!=@RepairFormNO1; ");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("RepairFormNO", DbType.String, RepairFormNO));
+            param.Add(DBFactory.Helper.FormatParameter("RepairFormNO1", DbType.String, RepairFormNO1));
             param.Add(DBFactory.Helper.FormatParameter("ConfirmUser", DbType.String, ConfirmUser));
             param.Add(DBFactory.Helper.FormatParameter("AutoId", DbType.Int32, AutoId));
             return DBFactory.Helper.ExecuteNonQuery(sbSql.ToString(), param.ToArray(), t) > 0;

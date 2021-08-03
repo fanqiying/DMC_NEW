@@ -125,7 +125,7 @@
                 { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
                 { field: 'manhoure', title: '维修时长(分钟)', width: 70, align: 'left' },
                 { field: 'gradetime', title: '标准工时(分钟)', width: 70, align: 'left' },
-                { field: 'rowcolor', title: '颜色', width: 70, align: 'left', hidden: true }
+               // { field: 'rowcolor', title: '颜色', width: 70, align: 'left', hidden: true }
                 
                 ]],
             rowStyler: function (index, row) {

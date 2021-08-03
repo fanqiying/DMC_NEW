@@ -43,10 +43,10 @@ namespace DMC.BLL
             StringBuilder sbTable = new StringBuilder();
             sbTable.Append(@" t_RepairForm a left join 
                               t_RepairRecord b on a.RepairFormNO=b.RepairFormNO left join 
-                              t_FaultPosition c on  b.PositionId=c.PPositionId and b.PhenomenaId=c.PositionId left join 
+                              t_FaultPosition c on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId left join 
                               t_Device d on a.DeviceId=d.DeviceId ");
             StringBuilder sbShow = new StringBuilder();
-            sbShow.Append(" A.*,isnull(repairstatus,0)repairstatus,c.GradeTime,c.Grade StandGrade,datediff(minute ,b.faulttime, GetDate()) manhoure,d.KeepUserId ");
+            sbShow.Append(" A.*,isnull(repairstatus,0)repairstatus,c.GradeTime,c.Grade StandGrade,datediff(minute ,a.faulttime, GetDate()) manhoure,d.KeepUserId ");
             sbShow.Append(" ,(case   FormStatus when 10 then datediff(minute,a.Intime,GETDATE())    when 40 then  datediff(minute, b.RepairSTime, GETDATE())   when 30 then datediff(minute, b.RepairETime, GETDATE())    when 50 then datediff(minute, b.QCConfirmTime, GETDATE())	else 0    end) rowcolor");
             return pageView.PageView(sbTable.ToString(), "a.AutoId", pageIndex, pageSize, sbShow.ToString(), "a.AutoId DESC", Where, out total, out pageCount);
         }
@@ -189,7 +189,7 @@ namespace DMC.BLL
                             msg = "QC确认失败";
                         }
                     }
-                    catch
+                    catch(Exception ex)
                     {
                         msg = "QC确认异常";
                         isSuccess = false;
@@ -279,7 +279,7 @@ namespace DMC.BLL
                             msg = "返修失败";
                         }
                     }
-                    catch
+                    catch(Exception ex)
                     {
                         msg = "返修异常";
                         isSuccess = false;
