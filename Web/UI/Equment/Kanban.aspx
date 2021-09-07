@@ -381,7 +381,7 @@
                 RefershQTY(data.RefershQTY);
             },
             'json');
-        RefershQTY();
+         
     }
 
     function RefershQTY(data) {
