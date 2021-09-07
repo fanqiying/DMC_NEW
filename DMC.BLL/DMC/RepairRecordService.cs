@@ -26,7 +26,7 @@ namespace DMC.BLL
         /// <returns></returns>
         public DataTable Search(int pageSize, int pageIndex, out int pageCount, out int total, string Where = "")
         {
-            return pageView.PageView("t_RepairRecord", "AutoId", pageIndex, pageSize, "*", "AutoId DESC", Where, out total, out pageCount);
+            return pageView.PageView("t_RepairRecord with(nolock) ", "AutoId", pageIndex, pageSize, "*", "AutoId DESC", Where, out total, out pageCount);
         }
 
         /// <summary>
@@ -41,14 +41,35 @@ namespace DMC.BLL
         public DataTable KanBan(int pageSize, int pageIndex, out int pageCount, out int total, string Where = "")
         {
             StringBuilder sbTable = new StringBuilder();
-            sbTable.Append(@" t_RepairForm a left join 
-                              t_RepairRecord b on a.RepairFormNO=b.RepairFormNO left join 
+            sbTable.Append(@" t_RepairForm  a with(nolock) left join 
+                              t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
                               t_FaultPosition c on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId left join 
-                              t_Device d on a.DeviceId=d.DeviceId ");
+                              t_Device d on a.DeviceId=d.DeviceId left join
+                              t_Employee e on a.repairmanid=e.empID");
             StringBuilder sbShow = new StringBuilder();
-            sbShow.Append(" A.*,isnull(repairstatus,0)repairstatus,c.GradeTime,c.Grade StandGrade,datediff(minute ,a.faulttime, GetDate()) manhoure,d.KeepUserId ");
-            sbShow.Append(" ,(case   FormStatus when 10 then datediff(minute,a.Intime,GETDATE())    when 40 then  datediff(minute, b.RepairSTime, GETDATE())   when 30 then datediff(minute, b.RepairETime, GETDATE())    when 50 then datediff(minute, b.QCConfirmTime, GETDATE())	else 0    end) rowcolor");
+            sbShow.Append(" A.*,isnull(b.FaultTime,a.FaultTime) bFaultTime,isnull(repairstatus,10)repairstatus,c.GradeTime,c.Grade StandGrade,datediff(minute ,isnull(b.FaultTime,a.FaultTime), GetDate()) manhoure,d.KeepUserId,isnull(e.empName,'')as repairmanname ");
+            sbShow.Append(" ,(case   FormStatus when 10 then datediff(minute,isnull(b.FaultTime,a.FaultTime),GETDATE())    when 40 then  datediff(minute, b.RepairSTime, GETDATE())   when 30 then datediff(minute, b.RepairETime, GETDATE())    when 50 then datediff(minute, b.QCConfirmTime, GETDATE())	else 0    end) rowcolor");
             return pageView.PageView(sbTable.ToString(), "a.AutoId", pageIndex, pageSize, sbShow.ToString(), "a.AutoId DESC", Where, out total, out pageCount);
+        }
+        public DataTable GetKanbanQty()
+        {
+            StringBuilder sbSql = new StringBuilder();
+            sbSql.Append(@"select SUM(case when ISNULL(RepairStatus,0)<20 or RepairStatus=62 THEN 1 ELSE 0 END) WaitQty, 
+       SUM(case when ISNULL(RepairStatus,0)>=20 AND ISNULL(RepairStatus,0)<30 THEN 1 ELSE 0 END) WorkQty,
+        SUM(case when (( RepairStatus!=30 and RepairStatus!=50) or ISNULL(RepairStatus,0)<20 or RepairStatus=62)and  c.GradeTime<datediff(minute ,a.faulttime, GetDate()) THEN 1 ELSE 0 END)  CHAOSHIQty,
+	   SUM(case when RepairStatus=40  THEN 1 ELSE 0 END) QCQty,
+	   SUM(case when RepairStatus=30 or RepairStatus=50  THEN 1 ELSE 0 END) SCQty
+  from t_RepairForm a with(nolock) left join 
+       t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
+       t_FaultPosition c  with(nolock) on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId
+ where (isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20) ");
+
+            return _dal.ExecSQLTODT(sbSql);
+        }
+
+        public DataTable ExecSQLTODT(StringBuilder sql)
+        {
+            return _dal.ExecSQLTODT(sql);
         }
 
         public DataTable SearchHoure(int pageSize, int pageIndex, out int pageCount, out int total, string Where = "")
@@ -189,7 +210,7 @@ namespace DMC.BLL
                             msg = "QC确认失败";
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         msg = "QC确认异常";
                         isSuccess = false;
@@ -279,7 +300,7 @@ namespace DMC.BLL
                             msg = "返修失败";
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         msg = "返修异常";
                         isSuccess = false;
@@ -303,7 +324,7 @@ namespace DMC.BLL
         /// <param name="newStatus">驳回返修newStatus=61 生产员返修，newStatus=65生产组长返修</param>
         /// <param name="newRStatus">12 待指派(挂单),14 待指派(IPQC返修),15 待指派(组长返修)</param>
         /// <returns></returns>
-        public string LeaderReject(int AutoId, string RepairFormNO, string RebackReason, string LeaderID,string oldStatus, string newStatus, string newRStatus)
+        public string LeaderReject(int AutoId, string RepairFormNO, string RebackReason, string LeaderID, string oldStatus, string newStatus, string newRStatus)
         {
             string msg = string.Empty;
             if (string.IsNullOrWhiteSpace(RepairFormNO) ||
@@ -325,7 +346,7 @@ namespace DMC.BLL
                         //1.组长返修，原单状态也更改为已确认
                         isSuccess = _dal.SetFormStatus(RepairFormNO, oldStatus, newStatus, "", RebackReason, "", t);
                         //2.组长返修
-                        isSuccess = isSuccess && rrDal.LeaderReject(AutoId, RepairFormNO, LeaderID,RebackReason, newStatus, t);
+                        isSuccess = isSuccess && rrDal.LeaderReject(AutoId, RepairFormNO, LeaderID, RebackReason, newStatus, t);
                         //3.创建新的报修与维修信息
                         isSuccess = isSuccess && rrDal.NewRepairRecord(AutoId, RepairFormNO, NewRepairFormNO, "", newRStatus, t);
                         if (!isSuccess)
@@ -372,7 +393,7 @@ namespace DMC.BLL
                             msg = "评价失败";
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         msg = "评价异常";
                         isSuccess = false;

@@ -195,10 +195,13 @@
                 //定時獲取信息，不處理響應
             })
         };
-
+        var lastTimeId = "";
         $(function () {//间隔60s自动加载一次   
-            getData(); //首次立即加载   
-            window.setInterval(getData, 60 * 1000); //循环执行！！   
+            getData(); //首次立即加载 
+            if (!!lastTimeId) {
+                window.clearInterval(lastTimeId);
+            }
+            lastTimeId=window.setInterval(getData, 60 * 1000); //循环执行！！   
         });
 
         //修改用户密码

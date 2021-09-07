@@ -326,10 +326,13 @@
             //重新加载数据
             $('#tbAppraise').datagrid('reload');
         }
-
-        $(function () {//间隔60s自动加载一次   
+        var lastTimeId = "";
+        $(function () {//间隔300s自动加载一次   
             Refersh(); //首次立即加载   
-            window.setInterval(Refersh, 60 * 1000); //循环执行！！   
+            if (!!lastTimeId) {
+                window.clearInterval(lastTimeId);
+            }
+            lastTimeId = window.setInterval(Refersh, 300 * 1000); //循环执行！！   
         });
     </script>
 </head>

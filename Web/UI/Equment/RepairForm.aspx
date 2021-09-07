@@ -15,6 +15,7 @@
     <script src="../../easyUI15/locale/easyui-lang-zh_TW.js" type="text/javascript"></script>
 
     <script type="text/javascript">
+        var positionshow = 0;
         $(document).ready(function () {
             $('#aapplyuserid').combogrid({
                 //是否折叠
@@ -759,10 +760,10 @@
                            { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
                            { field: 'faulttime', title: '故障时间', width: 70, align: 'left' },
                            { field: 'intime', title: '报修时间', width: 70, align: 'left' },
-                           { field: 'mouldid', title: '模具编号1', width: 70, align: 'left' },
-                           { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left' },
+                           { field: 'mouldid', title: '模具编号1', width: 90, align: 'left' },
+                           { field: 'mouldid1', title: '模具编号2', width: 90, align: 'left' },
                            {
-                               field: 'newmouldid', title: '新模编号1', width: 70, align: 'left',
+                               field: 'newmouldid', title: '新模编号1', width: 90, align: 'left',
                                styler: function (value, row, index) {
                                    if (row.newmouldid != '') {
                                        return 'background-color:#4cae4c;color: #fff;border: 0px'
@@ -771,7 +772,7 @@
                                }
                            },
                            {
-                               field: 'newmouldid1', title: '新模编号2', width: 70, align: 'left',
+                               field: 'newmouldid1', title: '新模编号2', width: 90, align: 'left',
                                styler: function (value, row, index) {
                                    if (row.newmouldid1 != '') {
                                        return 'background-color:#4cae4c;color: #fff;border: 0px'
@@ -857,6 +858,8 @@
                 }
             });
             $('#trnewmould').hide();
+            $('#trpositionid').hide();
+            
         });
         function LoadHisRecord() {
             //设备
@@ -929,7 +932,20 @@
         function closeWindow(id) {
             $('#' + id).dialog('close')
         }
-
+        //显示故障位置1
+        positionshow = 1;
+        function showposition() {
+             
+            if (positionshow == 0)
+            {
+                $('#trpositionid').hide();
+                positionshow = 1;
+            }
+            else {
+                $('#trpositionid').show();
+                positionshow = 0;
+            }
+        }
         //查看
         function View(index) {
             $('#fmView').form('clear');
@@ -1113,6 +1129,13 @@
         .auto-style1 {
             height: 100%;
         }
+        .auto-style2 {
+            height: 25px;
+            width: 92px;
+        }
+        .auto-style3 {
+            width: 92px;
+        }
     </style>
 </head>
 <body style="width: 100%; height: 100%;">
@@ -1148,7 +1171,7 @@
                         </colgroup>
                         <tbody>
                             <tr>
-                                <td style="height: 25px;">申请人:</td>
+                                <td class="auto-style2">申请人:</td>
                                 <td>
                                     <input data-options="prompt:'请填写申请人'" class="easyui-combogrid" name="applyuserid" id="aapplyuserid" style="width: 100px;" />
                                 </td>
@@ -1165,10 +1188,14 @@
                                     <input data-options="prompt:'如需参考历史故障，请选择'" class="easyui-combogrid" style="width: 150px;" name="hisrepairform" /></td>--%>
                             </tr>
                             <tr>
-                                <td style="height: 25px;">故障位置:</td>
+                                <td class="auto-style2">故障位置:
+                                    <a class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" href="javascript:void(0)" onclick='showposition()'></a>
+                                </td>
                                 <td>
                                     <input data-options="prompt:'请选择故障位置'" class="easyui-combobox" style="width: 100%;" id="apositionid" name="positionid" />
+
                                 </td>
+                                 
                                 <td>故障现象:</td>
                                 <td>
                                     <input data-options="prompt:'请选择故障现象'" class="easyui-combobox" style="width: 100%;" id="aphenomenaid" name="phenomenaid" />
@@ -1199,8 +1226,8 @@
                                     <input disabled="disabled" data-options="prompt:'请输入瑕疵代码'" id="afaultcode" name="faultcode" class="easyui-textbox" style="width: 100px;" />
                                 </td>
                             </tr>
-                            <tr>
-                                <td style="height: 25px;">故障位置1:</td>
+                            <tr id="trpositionid">
+                                <td class="auto-style2">故障位置1:</td>
                                 <td>
                                     <input data-options="prompt:'请选择故障位置1'" class="easyui-combobox" style="width: 100%;" id="apositionid1" name="positionid1" />
                                 </td>
@@ -1208,11 +1235,11 @@
                                 <td>
                                     <input data-options="prompt:'请选择故障现象1'" class="easyui-combobox" style="width: 100%;" id="aphenomenaid1" name="phenomenaid1" />
                                 </td>
-                                <td>&nbsp;</td>
+                                <td></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td style="height: 25px;background-color:#e33030;color: #fff">模具编号1</td>
+                                <td style="background-color:#e33030;color: #fff" class="auto-style2">模具编号1</td>
                                 <td>
                                     <input data-options="prompt:'请填入模具编号'" class="easyui-textbox"  id="amouldid" name="mouldid1" style="width: 100px" size="20" /></td>
                                 <td style="height: 25px;background-color:#e33030;color: #fff">模具编号2</td>
@@ -1222,7 +1249,7 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr id="trnewmould">
-                                <td style="height: 25px;;background-color:#4cae4c;color: #fff">新模编号1</td>
+                                <td style=";background-color:#4cae4c;color: #fff" class="auto-style2">新模编号1</td>
                                 <td>
                                     <input data-options="prompt:'请填入模具编号'" class="easyui-textbox" id="anewmouldid" name="mouldid3" style="width: 100px;" /></td>
 
@@ -1233,7 +1260,7 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td>历史故障原因:</td>
+                                <td class="auto-style3">历史故障原因:</td>
                                 <td colspan="5">
                                     <input data-options="multiline:true,prompt:'请输入故障原因'" class="easyui-textbox" readonly="true" name="faultreason" id="afaultreason" style="width: 90%; height: 40px;" />
                                 </td>

@@ -21,7 +21,7 @@ namespace DMC.DAL
             sbSql.Append(@"select SUM(case when FormStatus='10' THEN 1 ELSE 0 END) WaitQty, 
        SUM(case when FormStatus='23' OR  FormStatus='24' OR  FormStatus='25' THEN 1 ELSE 0 END) RebackQty,
        SUM(case when FormStatus='12' THEN 1 ELSE 0 END) ChangeQty
-  from dbo.t_RepairForm
+  from dbo.t_RepairForm with(nolock)
  where formstatus in('10','12','23','24','25') ");
             return DBFactory.Helper.ExecuteDataSet(sbSql.ToString(), null).Tables[0];
         }
@@ -101,7 +101,7 @@ where isnull(repairstatus,0)<60 ");
         public bool IsRepair(string DeviceId)
         {
             StringBuilder sbSql = new StringBuilder();
-            sbSql.Append("SELECT COUNT(1) FROM t_RepairForm WHERE DeviceId=@DeviceId AND FormStatus<60 ");
+            sbSql.Append("SELECT COUNT(1) FROM t_RepairForm WHERE DeviceId=@DeviceId and DeviceId!='模具' AND FormStatus<60 ");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("DeviceId", DbType.String, DeviceId));
             int result = Convert.ToInt32(DBFactory.Helper.ExecuteScalar(sbSql.ToString(), param.ToArray()));
@@ -263,15 +263,17 @@ where isnull(repairstatus,0)<60 ");
         /// <param name="RepairmanId"></param>
         /// <param name="t"></param>
         /// <returns></returns>
-        public bool RepairAssign(string RepairFormNO, string oldFormStatus, string newFormStatus, string RepairmanId, Trans t = null)
+        public bool RepairAssign(string RepairFormNO, string oldFormStatus, string newFormStatus, string RepairmanId, int RepairRecordId, Trans t = null)
         {
             StringBuilder sbSql = new StringBuilder();
             sbSql.Append("Update t_RepairForm");
-            sbSql.Append("   SET FormStatus=@newFormStatus,RepairmanId=@RepairmanId ,RepairmanName=(select top 1 RepairmanName from  t_Repairman where RepairmanId=@RepairmanId and RepairmanName is not null )");
+            sbSql.Append("   SET FormStatus=@newFormStatus,RepairmanId=@RepairmanId ,RepairmanName=(select top 1 RepairmanName from  t_Repairman where RepairmanId=@RepairmanId and RepairmanName is not null ),");
+            sbSql.Append("       RepairRecordId=@RepairRecordId ");
             sbSql.Append(" WHERE RepairFormNO=@RepairFormNO AND FormStatus=@oldFormStatus");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("RepairFormNO", DbType.String, RepairFormNO));
             param.Add(DBFactory.Helper.FormatParameter("RepairmanId", DbType.String, RepairmanId));
+            param.Add(DBFactory.Helper.FormatParameter("RepairRecordId", DbType.Int32, RepairRecordId));
 
             param.Add(DBFactory.Helper.FormatParameter("oldFormStatus", DbType.String, oldFormStatus));
             param.Add(DBFactory.Helper.FormatParameter("newFormStatus", DbType.String, newFormStatus));
@@ -289,7 +291,7 @@ where isnull(repairstatus,0)<60 ");
         {
             StringBuilder sbSql = new StringBuilder();
             sbSql.Append("Update t_RepairForm");
-            sbSql.Append("   SET FormStatus=@newFormStatus,RebackReason=@RebackReason,RebackType=@RebackType,RepairmanId=null ");
+            sbSql.Append("   SET FormStatus=@newFormStatus,RebackReason=@RebackReason,RebackType=@RebackType,RepairmanId=null,RejectDate=getdate()  ");
             sbSql.Append(" WHERE RepairFormNO=@RepairFormNO AND FormStatus=@oldFormStatus");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("RepairFormNO", DbType.String, RepairFormNO));
@@ -353,6 +355,18 @@ where isnull(repairstatus,0)<60 ");
             param.Add(DBFactory.Helper.FormatParameter("LeaderUserId", DbType.String, entity.LeaderUserId));
             param.Add(DBFactory.Helper.FormatParameter("AssignUser", DbType.String, entity.AssignUser));
             return DBFactory.Helper.ExecuteNonQuery(sbSql.ToString(), param.ToArray(), t) > 0;
+        }
+        /// <summary>
+        /// 执行sql
+        /// </summary>
+        /// <param name="param">传入参数</param>
+        /// <param name="sql">sql语句</param>
+        /// <returns></returns>
+        public DataTable ExecSQLTODT(StringBuilder sql)
+        {
+             
+            return DBFactory.Helper.ExecuteDataSet(sql.ToString(), null).Tables[0];
+
         }
 
     }

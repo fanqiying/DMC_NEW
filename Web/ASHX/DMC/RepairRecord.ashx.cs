@@ -89,6 +89,14 @@ namespace Web.ASHX.DMC
                     case "downloadhour":
                         DownloadHour(context);
                         break;
+                    case "getkanbanqty":
+                        GetKanbanQty(context);
+                        break;
+                    case "searchreport":
+                        SearchReport(context);
+                        break;
+
+
                 }
             }
             else
@@ -342,6 +350,8 @@ namespace Web.ASHX.DMC
             dtSns.Columns.Add("设备编号", typeof(string));
             dtSns.Columns.Add("故障位置", typeof(string));
             dtSns.Columns.Add("故障现象", typeof(string));
+            dtSns.Columns.Add("故障分析", typeof(string));
+
             dtSns.Columns.Add("故障时间", typeof(string));
             dtSns.Columns.Add("指派时间", typeof(string));
             dtSns.Columns.Add("完成时间", typeof(string));
@@ -351,7 +361,7 @@ namespace Web.ASHX.DMC
             dtSns.Columns.Add("生产确认", typeof(string));
             dtSns.Columns.Add("模具编号1", typeof(string));
             dtSns.Columns.Add("模具编号2", typeof(string));
-            dtSns.Columns.Add("新模编号1", typeof(string));           
+            dtSns.Columns.Add("新模编号1", typeof(string));
             dtSns.Columns.Add("新模编号2", typeof(string));
             dtSns.Columns.Add("返修原因", typeof(string));
             dtSns.Columns.Add("故障位置1", typeof(string));
@@ -392,6 +402,24 @@ namespace Web.ASHX.DMC
                     case "50":
                         text = "50-待组长确认";
                         break;
+                    case "61":
+                        text = "61-生产员返修";
+                        break;
+                    case "62":
+                        text = "62 -挂单完结";
+                        break;
+                    case "64":
+                        text = "64-QC返修";
+                        break;
+                    case "63":
+                        text = "63-生产员返修";
+                        break;
+                    case "60":
+                        text = "维修完成";
+                        break;
+                    case "65":
+                        text = "65-生产组长返修";
+                        break;
                     default:
                         text = item["repairstatus"].ToString() + "-维修完成";
                         break;
@@ -400,21 +428,22 @@ namespace Web.ASHX.DMC
                 dr["设备编号"] = item["deviceid"].ToString();
                 dr["故障位置"] = item["positiontext"].ToString();
                 dr["故障现象"] = item["phenomenatext"].ToString();
+                dr["故障分析"] = item["faultanalysis"].ToString();
                 dr["故障时间"] = item["faulttime"].ToString();
-                dr["指派时间"] =  (Convert.IsDBNull(item["repairstime"]) ? "" : Convert.ToDateTime(item["repairstime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
+                dr["指派时间"] = (Convert.IsDBNull(item["repairstime"]) ? "" : Convert.ToDateTime(item["repairstime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
                 dr["完成时间"] = (Convert.IsDBNull(item["repairetime"]) ? "" : Convert.ToDateTime(item["repairetime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
-                dr["IPQC确认时间"] =  (Convert.IsDBNull(item["qcconfirmtime"]) ? "" : Convert.ToDateTime(item["qcconfirmtime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
+                dr["IPQC确认时间"] = (Convert.IsDBNull(item["qcconfirmtime"]) ? "" : Convert.ToDateTime(item["qcconfirmtime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
                 dr["生产确认时间"] = item["confirmtime"].ToString();
-                
+
                 dr["IPQC确认"] = item["ipqcnumber"].ToString();// item.lenovo_part_no;//联想料号
                 dr["生产确认"] = item["confirmuser"].ToString();// item.lenovo_part_no;//联想料号
-               
+
                 dr["模具编号1"] = item["mouldid"].ToString();
                 dr["模具编号2"] = item["mouldid1"].ToString();
-                dr["新模编号1"] = item["newmouldid"].ToString();                
+                dr["新模编号1"] = item["newmouldid"].ToString();
                 dr["新模编号2"] = item["newmouldid1"].ToString();
                 dr["返修原因"] = item["rebackreason"].ToString();
-                
+
                 dr["故障位置1"] = item["positiontext1"].ToString();// item.product_line;//产品类别 
                 dr["故障现象1"] = item["phenomenatext1"].ToString(); //item.test_station;//产品类别 
                 dr["申请人"] = item["applyuserid"].ToString(); //item.product_type;//产品类别  
@@ -640,7 +669,7 @@ namespace Web.ASHX.DMC
                         strWhere.AppendFormat(" AND a.RepairmanName = N'{0}'", context.Request.Params["RepairmanName"]);
                     }
 
-                     
+
                     if (!string.IsNullOrEmpty(context.Request.Params["YearMonth"]) && !string.IsNullOrEmpty(context.Request.Params["EYearMonth"]))
                     {
                         strWhere.AppendFormat(" AND RepairSTime  >= '{0}'", context.Request.Params["YearMonth"]);
@@ -1072,13 +1101,167 @@ namespace Web.ASHX.DMC
             int total = 0;
             int pageCount = 0;
             StringBuilder strWhere = new StringBuilder();
-            strWhere.Append(" isnull(FormStatus,0)<60 ");
+            strWhere.Append(" (isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20) ");
             //获取待排单的数量
             DataTable dt = rrs.KanBan(pagesize, pageindex, out pageCount, out total, strWhere.ToString());
             StringHelper.JsonGZipResponse(context, JsonHelper.DataTableToJSON(dt, total, true));
 
         }
+        /// <summary>
+        /// 获取看板任务数量
+        /// </summary>
+        /// <param name="context"></param>
+        public void GetKanbanQty(HttpContext context)
+        {
+            //获取待排单的数量
+            StringBuilder sbSql = new StringBuilder();
+            sbSql.Append(@"select SUM(case when ISNULL(RepairStatus,0)<20 THEN 1 ELSE 0 END) WaitQty, 
+       SUM(case when ISNULL(RepairStatus,0)>=20 AND ISNULL(RepairStatus,0)<30 THEN 1 ELSE 0 END) WorkQty,
+       SUM(case when (( RepairStatus!=30 and RepairStatus!=50) or ISNULL(RepairStatus,0)<20)and  c.GradeTime<datediff(minute ,a.faulttime, GetDate()) THEN 1 ELSE 0 END)  CHAOSHIQty,
+	   SUM(case when RepairStatus=40  THEN 1 ELSE 0 END) QCQty,
+	   SUM(case when RepairStatus=30 or RepairStatus=50  THEN 1 ELSE 0 END) SCQty
+  from t_RepairForm a with(nolock) left join 
+       t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
+       t_FaultPosition c  with(nolock) on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId
+ where (isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20) ");
+            DataTable dt = rrs.ExecSQLTODT(sbSql);
+            StringHelper.JsonGZipResponse(context, JsonHelper.DataTableToJSON(dt));
+        }
 
+        public void SearchReport(HttpContext context)
+        {
+
+            int total = 0;
+            int pageCount = 0;
+            StringBuilder strWhere = new StringBuilder();
+            strWhere.Append(" 1=1 ");
+            string type = context.Request.Params["SearchType"];
+
+            string key = string.Empty;
+            key = context.Request.Params["KeyWord"];
+            if (!string.IsNullOrEmpty(context.Request.Params["phenomenaid"]))
+            {
+                strWhere.AppendFormat(" AND a.phenomenaid = N'{0}'", context.Request.Params["phenomenaid"]);
+            }
+
+
+            if (!string.IsNullOrEmpty(context.Request.Params["RepairmanId"]))
+            {
+                strWhere.AppendFormat(" AND a.RepairmanId = N'{0}'", context.Request.Params["RepairmanId"]);
+            }
+
+
+            if (!string.IsNullOrEmpty(context.Request.Params["YearMonth"]) && !string.IsNullOrEmpty(context.Request.Params["EYearMonth"]))
+            {
+                strWhere.AppendFormat(" AND a.RepairETime  >= '{0}'", context.Request.Params["YearMonth"]);
+                strWhere.AppendFormat(" AND a.RepairETime   <= '{0}'", context.Request.Params["EYearMonth"]);
+            }
+            StringBuilder sql = new StringBuilder();
+
+            switch (type)
+            {
+                case "chart1":
+                    sql.Append(@"select top 10 username,count(RepairFormNO) rfnum,sum(cast(StandGrade as numeric)) standgrade from (
+                               select a.ApplyUserId,c.userName, 
+                                b.GradeTime,RepairSTime,RepairETime,b.Grade StandGrade,a.RepairFormNO,
+                                datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
+                                 from 
+                                t_RepairRecord a left join t_FaultPosition b on a.PhenomenaId=b.PositionId
+                                left join t_User c on a.RepairmanId=c.userID
+                                where " + strWhere);
+                    sql.Append(@")t group by username order by 2 desc");
+                    break;
+                case "chart2":
+
+                    sql.Append(@"select top 10 DeviceId,sum(manhoure) manhoure from (
+                                select a.DeviceId,
+                                b.GradeTime,RepairSTime,RepairETime,b.Grade StandGrade,
+                                datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
+                                 from 
+                                t_RepairRecord a left join t_FaultPosition b on a.PhenomenaId=b.PositionId
+                                left join t_User c on a.RepairmanId=c.userID where " + strWhere);
+                    sql.Append(@")t group by DeviceId order by 2 desc");
+                    break;
+                case "chart3":
+                    sql.Append(@"select userName,PositionText,sum(manhoure) manhoure from (
+                               select a.RepairmanId,c.userName, 
+                                b.GradeTime,RepairSTime,RepairETime,b.Grade StandGrade,b.PositionText,
+                                datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
+                                 from 
+                                t_RepairRecord a left join t_FaultPosition b on a.PhenomenaId=b.PositionId
+                                left join t_User c on a.RepairmanId=c.userID
+                                where " + strWhere);
+                    sql.Append(" and b.PositionText in (");
+                    sql.Append(@"select top 10 PositionText from (
+                                select a.DeviceId,b.PositionText,
+                                b.GradeTime,RepairSTime,RepairETime,b.Grade StandGrade,
+                                datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
+                                 from 
+                                t_RepairRecord a left join t_FaultPosition b on a.PhenomenaId=b.PositionId
+                                left join t_User c on a.RepairmanId=c.userID
+                                where " + strWhere);
+                    sql.Append(@") t1 group by PositionText order by sum(manhoure) desc)");
+                    sql.Append(" and a.RepairmanId in(");
+                    sql.Append(@"select top 6 RepairmanId from (
+                                select a.DeviceId,b.PositionText,a.RepairmanId,
+                                b.GradeTime,RepairSTime,RepairETime,b.Grade StandGrade,
+                                datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
+                                 from 
+                                t_RepairRecord a left join t_FaultPosition b on a.PhenomenaId=b.PositionId
+                                left join t_User c on a.RepairmanId=c.userID
+                                where " + strWhere);
+                    sql.Append(@") t1 group by RepairmanId order by sum(manhoure) desc)");
+                    sql.Append(@")t group by userName,PositionText order by 2 desc");
+                    break;
+                case "chart4":
+                    sql.Append(@"select top 10 PositionText,sum(manhoure) manhoure from (
+                                select a.DeviceId,b.PositionText,
+                                b.GradeTime,RepairSTime,RepairETime,b.Grade StandGrade,
+                                datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
+                                 from 
+                                t_RepairRecord a left join t_FaultPosition b on a.PhenomenaId=b.PositionId
+                                left join t_User c on a.RepairmanId=c.userID
+                                where " + strWhere);
+                    sql.Append(@")t group by PositionText order by 2 desc");
+                    break;
+
+            }
+            //strWhere.AppendFormat(" AND a.RepairStatus in(20,23,4,5)");
+            //取得相關查詢條件下的數據列表
+            DataTable dt = rrs.ExecSQLTODT(sql);
+            if (type != "chart3")
+            {
+                StringHelper.JsonGZipResponse(context, JsonHelper.DataTableToJSON(dt));
+            }
+            else
+            {
+                //格式化数据
+                DataView dv = dt.DefaultView;
+                DataTable dtPositionText = dv.ToTable(true, new string[] { "PositionText" });
+                DataTable dtUserName = dv.ToTable(true, new string[] { "userName" });
+                //获取所有故障原因
+                List<string> listPosition = dtPositionText.Select().Select(row => row["PositionText"].ToString()).ToList();
+                List<string> listUserName = dtUserName.Select().Select(row => row["userName"].ToString()).ToList();
+                List<Object> listPositionUserName = new List<object>();
+                foreach (string Position in listPosition)
+                {
+                    List<int> houres = new List<int>();
+                    foreach (string userName in listUserName)
+                    {
+                        houres.Add(dt.Select(string.Format("PositionText='{0}' and userName='{1}'", Position, userName)).Sum(row => Convert.IsDBNull(row["manhoure"]) ? 0 : Convert.ToInt32(row["manhoure"])));
+                    }
+                    listPositionUserName.Add(new { PositionText = Position, Datas = houres });
+                }
+                //组织JSON
+                var obj = new
+                {
+                    PositionText = listPosition,
+                    UserName = listUserName,
+                    Series = listPositionUserName
+                };
+                StringHelper.JsonGZipResponse(context, new StringBuilder(obj.ObjectToJsonstring()));
+            }
+        }
         public bool IsReusable
         {
             get

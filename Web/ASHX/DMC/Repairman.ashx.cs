@@ -12,7 +12,7 @@ using Utility.HelpClass;
 using DMC.DAL;
 using System.Globalization;
 
-namespace Web.ASHX.DMC  
+namespace Web.ASHX.DMC
 {
     /// <summary>
     /// Repairman 的摘要描述
@@ -21,7 +21,7 @@ namespace Web.ASHX.DMC
     {
         //變量定義以及相關類的實例化
         string UserId = "a10857";
-        string DeptId = "IT600";  
+        string DeptId = "IT600";
         string CompanyId = "avccn";
         UserInfo currentUser = null;
         LanguageManageService languageManage = new LanguageManageService();
@@ -79,6 +79,7 @@ namespace Web.ASHX.DMC
                 context.Response.Write("{\"success\": false ,\"msg\":\"登录失效\"}");
             }
         }
+        RepairRecordService rrs = new RepairRecordService();
         /// <summary>
         /// 获取工作状况
         /// </summary>
@@ -86,8 +87,42 @@ namespace Web.ASHX.DMC
         public void GetRepairmWorking(HttpContext context)
         {
             DataTable dt = ds.GetRepairmWorking();
-            StringBuilder sb = JsonHelper.DataTableToJSON(dt);
-            StringHelper.JsonGZipResponse(context, sb);
+            List<object> mans = new List<object>();
+            foreach (DataRow dr in dt.Rows)
+            {
+                mans.Add(new
+                {
+                    repairmanid = dr["RepairmanId"].ToString(),
+                    repairmanname = dr["RepairmanName"].ToString(),
+                    workedtime = Convert.ToInt32(dr["workedtime"]),
+                    totaltime = Convert.ToInt32(dr["totaltime"]),
+                    resttime = Convert.ToInt32(dr["resttime"]),
+                    workingtime = Convert.ToInt32(dr["workingtime"]),
+                    surplustime = Convert.ToInt32(dr["surplustime"])
+                });
+            }
+            //获取待排单的数量
+            DataTable dtQty = rrs.GetKanbanQty();
+            var obj = new { waitqty = 0, workqty = 0, chaoshiqty = 0, qcqty = 0, scqty = 0 };
+            if (dtQty != null && dtQty.Rows.Count >= 0)
+            {
+                DataRow dr = dtQty.Rows[0];
+                obj = new
+                {
+                    waitqty = Convert.ToInt32(dr["waitqty"]),
+                    workqty = Convert.ToInt32(dr["workqty"]),
+                    chaoshiqty = Convert.ToInt32(dr["chaoshiqty"]),
+                    qcqty = Convert.ToInt32(dr["qcqty"]),
+                    scqty = Convert.ToInt32(dr["scqty"])
+                };
+            }
+            //StringBuilder sb = JsonHelper.DataTableToJSON(dt);
+            var objData = new
+            {
+                ReportData = mans,
+                RefershQTY = obj
+            };
+            StringHelper.JsonGZipResponse(context, new StringBuilder(objData.ObjectToJsonstring()));
         }
         /// <summary>
         /// 
@@ -97,7 +132,7 @@ namespace Web.ASHX.DMC
         {
             string ClassType = "0";
             RepairmanEntity entity = new RepairmanEntity();
-            
+
             UserManageService umserive = new UserManageService();
             var currentUser = umserive.GetUserMain();
             entity.RepairmanId = currentUser.userID;
@@ -323,7 +358,7 @@ namespace Web.ASHX.DMC
                         date = DateTime.Now.Year.ToString() + "-" + DateTime.Now.Month.ToString().PadLeft(2, '0');
                     }
                     ds.DeleteRepairman_WordDate(date);
-                     
+
                     for (int i = 2; i < tbExcel.Rows.Count; i++)
                     {
                         try
@@ -347,7 +382,7 @@ namespace Web.ASHX.DMC
                                 {
                                     break;
                                 }
-                                 
+
                                 date = tbExcel.Rows[0][0].ToString();
                                 item.YearMonth = date;
                                 date = date + "-" + tbExcel.Rows[0][j].ToString().PadLeft(2, '0');
@@ -366,7 +401,7 @@ namespace Web.ASHX.DMC
                                     else
                                     {
                                         item.IsWorking = "1";
-                                        item.WorkRangeTimeBegin = date + " 07:30:00";
+                                        item.WorkRangeTimeBegin = date + " 07:15:00";
                                         if (Convert.ToDouble(dr[j]) > 8)
                                         {
                                             datenum = Convert.ToDouble(dr[j]);
@@ -375,7 +410,7 @@ namespace Web.ASHX.DMC
                                         {
                                             datenum = Convert.ToDouble(dr[j]) + 8;
                                         }
-                                        dtDay = DateTime.ParseExact(date + " 07:30:00", "yyyy-MM-dd HH:mm:ss", null).AddHours(datenum).AddMinutes(45);
+                                        dtDay = DateTime.ParseExact(date + " 07:15:00", "yyyy-MM-dd HH:mm:ss", null).AddHours(datenum).AddMinutes(45);
                                         item.WorkNum = datenum;
                                         item.WorkRangeTimeEnd = dtDay.ToString();
                                     }
@@ -391,7 +426,7 @@ namespace Web.ASHX.DMC
                                     else
                                     {
                                         item.IsWorking = "1";
-                                        item.WorkRangeTimeBegin = date + " 19:30:00";
+                                        item.WorkRangeTimeBegin = date + " 19:15:00";
 
                                         if (Convert.ToDouble(dr[j]) > 8)
                                         {
@@ -404,9 +439,9 @@ namespace Web.ASHX.DMC
                                             datenum = Convert.ToDouble(dr[j]) + 8;
 
                                         }
-                                        
-                                            dtDay = DateTime.ParseExact(date + " 19:30:00", "yyyy-MM-dd HH:mm:ss", null).AddHours(datenum).AddMinutes(45);
-                                        
+
+                                        dtDay = DateTime.ParseExact(date + " 19:15:00", "yyyy-MM-dd HH:mm:ss", null).AddHours(datenum).AddMinutes(45);
+
                                         item.WorkNum = datenum;
                                         item.WorkRangeTimeEnd = dtDay.ToString();
 
@@ -427,7 +462,7 @@ namespace Web.ASHX.DMC
                                 }
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             msg = ex.ToString();
                             fails.Add(i);

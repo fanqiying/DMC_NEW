@@ -231,8 +231,8 @@
         $.post("ASHX/DMC/Repairman.ashx?M=GetRepairmWorking",
             {},
             function (data) {
-                for (var i = 0; i < data.ReportData.length; i++) {
-                    loadChart(i, data.ReportData[i]);
+                for (var i = 0; i < data.length; i++) {
+                    loadChart(i, data[i]);
                 }
             },
             'json');
@@ -252,8 +252,8 @@
         $.post("ASHX/DMC/Repairman.ashx?M=GetRepairmWorking",
             {},
             function (data) {
-                for (var i = 0; i < data.ReportData.length; i++) {
-                    RefreshChartData(i, data.ReportData[i]);
+                for (var i = 0; i < data.length; i++) {
+                    RefreshChartData(i, data[i]);
                 }
             },
             'json');

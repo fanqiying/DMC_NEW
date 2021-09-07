@@ -949,7 +949,7 @@
     <Compile Include="ASHX\SystemManage\LanguageManage.ashx.cs">
       <DependentUpon>LanguageManage.ashx</DependentUpon>
     </Compile>
-    <Compile Include="ASHX\LogManage.ashx.cs">
+    <Compile Include="css\LogManage.ashx.cs">
       <DependentUpon>LogManage.ashx</DependentUpon>
     </Compile>
     <Compile Include="ASHX\SystemManage\MenuManage.ashx.cs">
@@ -1356,7 +1356,7 @@
     <Content Include="ASHX\Permission\GetFunctionList.ashx" />
     <Content Include="ASHX\Permission\GetUserInfo.ashx" />
     <Content Include="ASHX\SystemManage\LanguageManage.ashx" />
-    <Content Include="ASHX\LogManage.ashx" />
+    <Content Include="css\LogManage.ashx" />
     <Content Include="ASHX\SystemManage\MenuManage.ashx" />
     <Content Include="ASHX\Permission\ModPwd.ashx" />
     <Content Include="ASHX\SystemManage\SysParaSetting.ashx" />

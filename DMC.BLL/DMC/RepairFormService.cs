@@ -34,7 +34,7 @@ namespace DMC.BLL
         /// <returns></returns>
         public DataTable Search(int pageSize, int pageIndex, out int pageCount, out int total, string Where = "")
         {
-            return pageView.PageView("t_RepairForm", "AutoId", pageIndex, pageSize, "*", "AutoId DESC", Where, out total, out pageCount);
+            return pageView.PageView("t_RepairForm  with(nolock) ", "AutoId", pageIndex, pageSize, "*", "AutoId DESC", Where, out total, out pageCount);
         }
 
         /// <summary>
@@ -165,17 +165,22 @@ namespace DMC.BLL
                 {
                     try
                     {
-                        //1.更新状态
-                        isSuccess = _dal.RepairAssign(RepairFormNO, oldFormStatus, "20", AssignUser, t);
-                        //2.写指派记录
-                        isSuccess = isSuccess && _dal.AddRepairAssignLog(new RepairAssignLogEntity()
-                        {
-                            RepairFormNO = RepairFormNO,
-                            AssignUser = AssignUser,
-                            LeaderUserId = LeaderUserId
-                        }, t);
+                        //1.创建维修记录
+                        int RepairRecordId = rrdal.NewRepairRecod(RepairFormNO, AssignUser, t);
+                        isSuccess = RepairRecordId > 0;
+                        //2.更新状态
+                        if (isSuccess)
+                            isSuccess = _dal.RepairAssign(RepairFormNO, oldFormStatus, "20", AssignUser, RepairRecordId, t);
+                        //3.写指派记录
+                        if (isSuccess)
+                            isSuccess = _dal.AddRepairAssignLog(new RepairAssignLogEntity()
+                            {
+                                RepairFormNO = RepairFormNO,
+                                AssignUser = AssignUser,
+                                LeaderUserId = LeaderUserId
+                            }, t);
                         //3.创建维修记录
-                        isSuccess = isSuccess && rrdal.NewRepairRecod(RepairFormNO, AssignUser, t);
+                        //isSuccess = isSuccess && rrdal.NewRepairRecod(RepairFormNO, AssignUser, t);
                         if (!isSuccess)
                         {
                             msg = "指派数据保存失败";

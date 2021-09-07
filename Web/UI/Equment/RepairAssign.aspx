@@ -109,10 +109,10 @@
                            { field: 'rebackreason', title: '重排原因', width: 150, align: 'left' },
                            { field: 'faulttime', title: '故障时间', width: 150, align: 'left' },
                            { field: 'ipqcnumber', title: 'IPQC工号', width: 100, align: 'left' },
-                           { field: 'mouldid', title: '模具编号1', width: 70, align: 'left' },
-                           { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left' },
+                           { field: 'mouldid', title: '模具编号1', width: 90, align: 'left' },
+                           { field: 'mouldid1', title: '模具编号2', width: 90, align: 'left' },
                            {
-                               field: 'newmouldid', title: '新模编号1', width: 70, align: 'left',
+                               field: 'newmouldid', title: '新模编号1', width: 90, align: 'left',
                                styler: function (value, row, index) {
                                    if (row.newmouldid != '') {
                                        return 'background-color:#4cae4c;color: #fff;border: 0px'
@@ -121,7 +121,7 @@
                                }
                            },
                            {
-                               field: 'newmouldid1', title: '新模编号2', width: 70, align: 'left',
+                               field: 'newmouldid1', title: '新模编号2', width: 90, align: 'left',
                                styler: function (value, row, index) {
                                    if (row.newmouldid1 != '') {
                                        return 'background-color:#4cae4c;color: #fff;border: 0px'
@@ -259,10 +259,13 @@
                 },
                 'json');
         }
-
-        $(function () {//间隔60s自动加载一次   
+        var lastTimeId = "";
+        $(function () {//间隔300s自动加载一次   
             Refersh(); //首次立即加载   
-            window.setInterval(Refersh, 1 * 60 * 1000); //循环执行！！   
+            if (!!lastTimeId) {
+                window.clearInterval(lastTimeId);
+            }
+            lastTimeId = window.setInterval(Refersh, 1 * 300 * 1000); //循环执行！！   
         });
     </script>
     <style type="text/css">

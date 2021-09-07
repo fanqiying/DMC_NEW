@@ -615,7 +615,7 @@
                     <tr>
                         <td style="height: 25px;">班别时间:</td>
                         <td colspan="3">
-                            <input name="workrangetime" id="aworkrangetime" data-options="prompt:'早班:07:30-19:45;晚班19:30-*07:45'" class="easyui-textbox" style="width: 400px;" /></td>
+                            <input name="workrangetime" id="aworkrangetime" data-options="prompt:'早班:07:15-19:30;晚班19:15-*07:30'" class="easyui-textbox" style="width: 400px;" /></td>
                     </tr>
                 </tbody>
             </table>

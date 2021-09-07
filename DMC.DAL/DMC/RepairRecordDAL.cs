@@ -20,20 +20,21 @@ namespace DMC.DAL
         /// <param name="RepairmanId"></param>
         /// <param name="t"></param>
         /// <returns></returns>
-        public bool NewRepairRecod(string RepairFormNO, string RepairmanId, Trans t)
+        public int NewRepairRecod(string RepairFormNO, string RepairmanId, Trans t)
         {
             StringBuilder sbSql = new StringBuilder();
             sbSql.Append("Insert into t_RepairRecord(RepairFormNO,ApplyUserId,RepairmanId,RepairmanName,DeviceId,FaultTime,PositionId,PositionText,PhenomenaId,PhenomenaText,PositionId1,PositionText1,PhenomenaId1,PhenomenaText1,");
             sbSql.Append("FaultStatus,FaultCode,FaultReason,RepairSTime,RepairStatus,MouldId,NewMouldId,MouldId1,NewMouldId1)");
-            sbSql.Append("SELECT RepairFormNO,ApplyUserId,@RepairmanId,(select top 1 RepairmanName from  t_Repairman where RepairmanId=@RepairmanId and RepairmanName is not null) ,DeviceId,FaultTime,PositionId,PositionText,PhenomenaId,PhenomenaText,PositionId1,PositionText1,PhenomenaId1,PhenomenaText1,");
+            sbSql.Append("SELECT RepairFormNO,ApplyUserId,@RepairmanId,(select top 1 RepairmanName from  t_Repairman where RepairmanId=@RepairmanId and RepairmanName is not null) ,DeviceId,isnull(RejectDate,FaultTime),PositionId,PositionText,PhenomenaId,PhenomenaText,PositionId1,PositionText1,PhenomenaId1,PhenomenaText1,");
             sbSql.Append("       FaultStatus,FaultCode,FaultReason,GETDATE(),'20',MouldId,NewMouldId,MouldId1,NewMouldId1 ");
             sbSql.Append("  FROM t_RepairForm ");
-            sbSql.Append(" WHERE RepairFormNO=@RepairFormNO ");
+            sbSql.Append(" WHERE RepairFormNO=@RepairFormNO;");
+            sbSql.Append(" select @@IDENTITY; ");//返回最新的自增序号
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("RepairFormNO", DbType.String, RepairFormNO));
             param.Add(DBFactory.Helper.FormatParameter("RepairmanId", DbType.String, RepairmanId));
 
-            return DBFactory.Helper.ExecuteNonQuery(sbSql.ToString(), param.ToArray(), t) > 0;
+            return Convert.ToInt32(DBFactory.Helper.ExecuteScalar(sbSql.ToString(), param.ToArray(), t));
         }
 
         /// <summary>
@@ -177,7 +178,7 @@ namespace DMC.DAL
             //创建报修记录
             sbSql.Append("INSERT INTO t_RepairForm(RepairFormNO,ApplyUserId,FaultTime,DeviceId,PositionId,PositionText,PositionId1,PhenomenaId,");
             sbSql.Append("PhenomenaText,PhenomenaId1,FaultStatus,FaultCode,FaultReason,FaultAnalysis,Intime,FormStatus,RebackType,RebackReason,IPQCNumber,RepairmanId,RepairmanName,PhenomenaText1,PositionText1,MouldId,NewMouldId,MouldId1,NewMouldId1)");
-            sbSql.Append("SELECT @NewRepairFormNO RepairFormNO,ApplyUserId,FaultTime,DeviceId,PositionId,PositionText,PositionId1,PhenomenaId,");
+            sbSql.Append("SELECT @NewRepairFormNO RepairFormNO,ApplyUserId,getdate(),DeviceId,PositionId,PositionText,PositionId1,PhenomenaId,");
             sbSql.Append("        PhenomenaText,PhenomenaId1,FaultStatus,FaultCode,(select distinct ' '+  isnull(RebackReason,'') from t_RepairForm t where left(t.RepairFormNO,13) = left(t_RepairForm.RepairFormNO,13) and t.RebackReason is not null for xml path('')) FaultReason,FaultAnalysis,GetDate() Intime,");
             sbSql.Append("        @newStatus FormStatus,RebackType,RebackReason,IPQCNumber,RepairmanId,RepairmanName,PhenomenaText1,PositionText1,MouldId,NewMouldId,MouldId1,NewMouldId1 ");
             sbSql.Append("   FROM t_RepairForm");
@@ -186,7 +187,7 @@ namespace DMC.DAL
             sbSql.Append("INSERT INTO t_RepairRecord(RepairFormNO,RebackReason,ApplyUserId,RepairmanId,RepairmanName,DeviceId,PositionId,PositionText,PhenomenaId,");
             sbSql.Append("PhenomenaText,FaultCode,FaultReason,FaultAnalysis,RepairSTime,RepairStatus,FaultTime,PhenomenaText1,PositionText1,MouldId,NewMouldId,MouldId1,NewMouldId1)");
             sbSql.Append("SELECT @NewRepairFormNO RepairFormNO,(select distinct ' '+  isnull(RebackReason,'') from t_RepairRecord t where left(t.RepairFormNO,13) = left(t_RepairRecord.RepairFormNO,13) and t.RebackReason is not null for xml path('')) RebackReason,ApplyUserId,RepairmanId,RepairmanName,DeviceId,PositionId,PositionText,PhenomenaId,");
-            sbSql.Append("       PhenomenaText,FaultCode,FaultReason,FaultAnalysis,GetDate() RepairSTime,@newStatus RepairStatus,FaultTime,PhenomenaText1,PositionText1,MouldId,NewMouldId,MouldId1,NewMouldId1 ");
+            sbSql.Append("       PhenomenaText,FaultCode,FaultReason,FaultAnalysis,GetDate() RepairSTime,@newStatus RepairStatus,getdate(),PhenomenaText1,PositionText1,MouldId,NewMouldId,MouldId1,NewMouldId1 ");
             sbSql.Append("  FROM t_RepairRecord");
             sbSql.Append(" WHERE AutoId=@AutoId;");
             List<DbParameter> param = new List<DbParameter>();

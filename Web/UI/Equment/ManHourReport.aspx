@@ -58,10 +58,10 @@
                                    return (((row.gradetime - row.manhoure) / row.gradetime) * 100).toFixed(0) + "%";
                                }
                            },
-                    { field: 'mouldid', title: '模具编号1', width: 70, align: 'left' },
-                           { field: 'mouldid1', title: '模具编号2', width: 70, align: 'left' },
+                    { field: 'mouldid', title: '模具编号1', width: 90, align: 'left' },
+                           { field: 'mouldid1', title: '模具编号2', width: 90, align: 'left' },
                            {
-                               field: 'newmouldid', title: '新模编号1', width: 70, align: 'left',
+                               field: 'newmouldid', title: '新模编号1', width: 90, align: 'left',
                                styler: function (value, row, index) {
                                    if (row.newmouldid != '') {
                                        return 'background-color:#4cae4c;color: #fff;border: 0px'
@@ -70,7 +70,7 @@
                                }
                            },
                            {
-                               field: 'newmouldid1', title: '新模编号2', width: 70, align: 'left',
+                               field: 'newmouldid1', title: '新模编号2', width: 90, align: 'left',
                                styler: function (value, row, index) {
                                    if (row.newmouldid1 != '') {
                                        return 'background-color:#4cae4c;color: #fff;border: 0px'
@@ -100,7 +100,7 @@
             //請輸入關鍵字            
             queryParams.KeyWord = $('#txtKeyword').textbox("getValue");
             queryParams.SearchType = SearchType;
-            queryParams.EqumentId = $("#qequmentid").textbox("getValue");
+            queryParams.DeviceId = $("#qequmentid").textbox("getValue");
             queryParams.RepairFormNO = $('#qrepairformno').textbox("getValue");
             queryParams.RepairmanId = $("#repairmanid").textbox("getValue");
             queryParams.RepairmanName = $('#repairmanname').textbox("getValue");
@@ -114,7 +114,7 @@
             //請輸入關鍵字            
             queryParams.KeyWord = $('#txtKeyword').textbox("getValue");
             queryParams.SearchType = "ByAdvanced";//SearchType;
-            queryParams.EqumentId = $("#qequmentid").textbox("getValue");
+            queryParams.DeviceId = $("#qequmentid").textbox("getValue");
             queryParams.RepairFormNO = $('#qrepairformno').textbox("getValue");
             queryParams.RepairmanId = $("#repairmanid").textbox("getValue");
             queryParams.RepairmanName = $('#repairmanname').textbox("getValue");
