@@ -226,7 +226,20 @@
             queryParams.RepairmanName = $('#repairmanname').textbox("getValue");
             queryParams.YearMonth = $('#qyearmonth').datebox("getValue");
             queryParams.EYearMonth = $('#eqyearmonth').datebox("getValue");
-            $('#tbEqManage').datagrid('reload');
+            console.log(SearchType);
+            if (SearchType == "ByAdvanced") {
+                if (queryParams.YearMonth && queryParams.EYearMonth) {
+                    console.log(queryParams);
+                    $('#tbEqManage').datagrid('reload');
+                }
+                else {
+                    $.messager.alert({ title: '错误提示', msg: "请录入报修时间查询:" });
+                    return;
+                }
+            }
+            else {
+                $('#tbEqManage').datagrid('reload');
+            }
         }
         //單擊高級查詢按鈕
         function openSearch(obj) {
@@ -352,7 +365,7 @@
             <div class="sinquery">
                 <table class="addCoyTB" style="height: 30px; border: 0px;">
                     <tr>
-                        <td style="width: 70px;">报修单号:</td>
+                        <td style="width: 70px;" >报修单号:</td>
                         <td style="width: 165px;">
                             <input class="easyui-textbox" id="qrepairformno" name="repairformno" data-options="prompt:'请输入报修单号'" style="width: 150px;" />
                         </td>

@@ -10,7 +10,7 @@
 namespace Web.UI.Equment {
     
     
-    public partial class RepairAssign {
+    public partial class TingjiFenxi {
         
         /// <summary>
         /// Head1 控件。

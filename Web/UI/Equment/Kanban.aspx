@@ -53,7 +53,7 @@
                         field: 'repairstatus', title: '状态', width: 50, align: 'left', sortable: true,
                         formatter: function (value, row, index) {
                             var text = "N/A";
-                            switch (row.repairstatus) {
+                            switch (row.formstatus) {
                                 case "10":
                                     text = "待指派";
                                     break;
@@ -104,7 +104,7 @@
                                     break;
 
                                 default:
-                                    text = row.repairstatus + "维修完成";
+                                    text = row.formstatus + "维修完成";
                                     break;
                             }
                             return text;
@@ -113,6 +113,7 @@
                     { field: 'deviceid', title: '设备信息', width: 50, align: 'left', sortable: true },
                     //{ field: 'applyuserid', title: '申请生产员', width: 50, align: 'left', sortable: true },
                     { field: 'bfaulttime', title: '故障时间', width: 100, align: 'left', sortable: true },
+                    { field: 'repairetime', title: '完成时间', width: 100, align: 'left', sortable: "true" },
                     { field: 'positiontext', title: '故障位置', width: 100, align: 'left', sortable: true },
                   //  { field: 'phenomenatext', title: '故障现象', width: 70, align: 'left', sortable: true },
                     {
@@ -143,7 +144,7 @@
                            },
                   //  { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
                    // { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
-                    { field: 'manhoure', title: '停机(时长)', width: 50, align: 'left' },
+                    { field: 'manhoure', title: '停机时长(分钟)', width: 50, align: 'left' },
                     { field: 'gradetime', title: '标准工时(分钟)', width: 70, align: 'left' },
                    // { field: 'rowcolor', title: '颜色', width: 70, align: 'left', hidden: true }
 
@@ -159,10 +160,10 @@
                             return 'background-color:#db861e;color:blue;font-weight:bold;';
                         }
                         else if (row.formstatus == "30" && parseInt(row.rowcolor) > 20) {
-                            return 'background-color:#d5d51a;color:blue;font-weight:bold;';
+                            return 'background-color:LightGreen;color:blue;font-weight:bold;';
                         }
                         else if (row.formstatus == "50" && parseInt(row.rowcolor) > 20) {
-                            return 'background-color:#27c890;color:blue;font-weight:bold;';
+                            return 'background-color:LightGreen;color:blue;font-weight:bold;';
                         }
                         else { return "" }
                     }
@@ -414,7 +415,7 @@
     function Refersh() {
         //分页显示
         pageTurring(-1);
-        RefershQTY();
+         
         //人员状态刷新
         $.post("../../ASHX/DMC/Repairman.ashx?M=GetRepairmWorking",
             {},

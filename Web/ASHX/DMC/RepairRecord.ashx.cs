@@ -95,7 +95,12 @@ namespace Web.ASHX.DMC
                     case "searchreport":
                         SearchReport(context);
                         break;
-
+                    case "tingjifenxi":
+                        TingjiFenxi(context);
+                        break;
+                    case "tingjifenxinew":
+                        TingjiFenxiNew(context);
+                        break;
 
                 }
             }
@@ -754,14 +759,17 @@ namespace Web.ASHX.DMC
                         strWhere.AppendFormat(" AND RepairSTime  >= '{0}'", context.Request.Params["YearMonth"]);
                         strWhere.AppendFormat(" AND RepairSTime   <= '{0}'", context.Request.Params["EYearMonth"]);
                     }
-
+                    if (!string.IsNullOrEmpty(context.Request.Params["RepairmanId"]))
+                    {
+                        strWhere.AppendFormat(" AND RepairmanId = '{0}'", context.Request.Params["RepairmanId"]);
+                    }
+                    if (!string.IsNullOrEmpty(context.Request.Params["RepairmanName"]))
+                    {
+                        strWhere.AppendFormat(" and RepairmanId =(select top 1 t_Repairman.RepairmanId from t_Repairman where t_Repairman.RepairmanName= '{0}' )", context.Request.Params["RepairmanName"]);
+                    }
                     break;
             }
             //UserId维修员
-            if (!string.IsNullOrEmpty(context.Request.Params["RepairmanId"]))
-            {
-                //strWhere.AppendFormat(" AND RepairmanId = '{0}'", context.Request.Params["RepairmanId"]);
-            }
 
 
             if (!string.IsNullOrEmpty(context.Request.Params["RepairStatus"]))
@@ -1115,11 +1123,20 @@ namespace Web.ASHX.DMC
         {
             //获取待排单的数量
             StringBuilder sbSql = new StringBuilder();
-            sbSql.Append(@"select SUM(case when ISNULL(RepairStatus,0)<20 THEN 1 ELSE 0 END) WaitQty, 
-       SUM(case when ISNULL(RepairStatus,0)>=20 AND ISNULL(RepairStatus,0)<30 THEN 1 ELSE 0 END) WorkQty,
-       SUM(case when (( RepairStatus!=30 and RepairStatus!=50) or ISNULL(RepairStatus,0)<20)and  c.GradeTime<datediff(minute ,a.faulttime, GetDate()) THEN 1 ELSE 0 END)  CHAOSHIQty,
-	   SUM(case when RepairStatus=40  THEN 1 ELSE 0 END) QCQty,
-	   SUM(case when RepairStatus=30 or RepairStatus=50  THEN 1 ELSE 0 END) SCQty
+            //           sbSql.Append(@"select SUM(case when ISNULL(RepairStatus,0)<20 THEN 1 ELSE 0 END) WaitQty, 
+            //      SUM(case when ISNULL(RepairStatus,0)>=20 AND ISNULL(RepairStatus,0)<30 THEN 1 ELSE 0 END) WorkQty,
+            //      SUM(case when (( RepairStatus!=30 and RepairStatus!=50) or ISNULL(RepairStatus,0)<20)and  c.GradeTime<datediff(minute ,a.faulttime, GetDate()) THEN 1 ELSE 0 END)  CHAOSHIQty,
+            //   SUM(case when RepairStatus=40  THEN 1 ELSE 0 END) QCQty,
+            //   SUM(case when RepairStatus=30 or RepairStatus=50  THEN 1 ELSE 0 END) SCQty
+            // from t_RepairForm a with(nolock) left join 
+            //      t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
+            //      t_FaultPosition c  with(nolock) on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId
+            //where (isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20) ");
+            sbSql.Append(@"select SUM(case when FormStatus in(10,12) THEN 1 ELSE 0 END) WaitQty, 
+       SUM(case when FormStatus in(20,23,24,25,61,65) THEN 1 ELSE 0 END) WorkQty,
+       SUM(case when FormStatus not in(30,40,50) and  c.GradeTime+60<datediff(minute ,a.faulttime, GetDate()) THEN 1 ELSE 0 END)  CHAOSHIQty,
+	   SUM(case when FormStatus=40  THEN 1 ELSE 0 END) QCQty,
+	   SUM(case when FormStatus=30 or FormStatus=50  THEN 1 ELSE 0 END) SCQty
   from t_RepairForm a with(nolock) left join 
        t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
        t_FaultPosition c  with(nolock) on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId
@@ -1161,7 +1178,7 @@ namespace Web.ASHX.DMC
             switch (type)
             {
                 case "chart1":
-                    sql.Append(@"select top 10 username,count(RepairFormNO) rfnum,sum(cast(StandGrade as numeric)) standgrade from (
+                    sql.Append(@"select top 20 username,count(RepairFormNO) rfnum,sum(cast(StandGrade as numeric)) standgrade from (
                                select a.ApplyUserId,c.userName, 
                                 b.GradeTime,RepairSTime,RepairETime,b.Grade StandGrade,a.RepairFormNO,
                                 datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
@@ -1179,7 +1196,7 @@ namespace Web.ASHX.DMC
                                 datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
                                  from 
                                 t_RepairRecord a left join t_FaultPosition b on a.PhenomenaId=b.PositionId
-                                left join t_User c on a.RepairmanId=c.userID where " + strWhere);
+                                left join t_User c on a.RepairmanId=c.userID where a.DeviceId!='模具' and " + strWhere);
                     sql.Append(@")t group by DeviceId order by 2 desc");
                     break;
                 case "chart3":
@@ -1262,6 +1279,319 @@ namespace Web.ASHX.DMC
                 StringHelper.JsonGZipResponse(context, new StringBuilder(obj.ObjectToJsonstring()));
             }
         }
+
+        
+
+        public void TingjiFenxiNew(HttpContext context)
+        {
+            string startDate = context.Request.Params["startDate"];
+            string endDate = context.Request.Params["endDate"];
+
+            StringBuilder sbSql = new StringBuilder();
+
+            sbSql.AppendFormat(@"with t as (
+            select    (case when a.DeviceId='模具' then 'PM' ELSE
+	              (case when a.PositionText ='其它' then a.PhenomenaText else a.PositionText end) 
+	            END) PositionText,
+      ( case when a.DeviceId='模具' or   a.PositionText ='其它' then 0 else   datediff(minute,b.Intime, a.RepairSTime) end) ddsj,
+            
+		 ( case when a.DeviceId='模具' or   a.PositionText ='其它' then 0 else  	(case when a.QCConfirmTime is null then 0 else datediff(minute,a.FaultTime,RepairETime) end) end)  wxys,
+         ( case when a.DeviceId='模具' or   a.PositionText ='其它' then 0 else      (case when a.QCConfirmTime is null then 0 else datediff(minute,RepairETime, a.QCConfirmTime) end) end) qcqr ,
+ 
+          ( case when a.DeviceId!='模具' or   a.PositionText !='其它' then 0 else     (case when a.confirmtime is null then 0 else datediff(minute,RepairETime, a.confirmtime) end) end)  gzsj,
+ 
+             CONVERT(varchar(10),RepairSTime,120) dayName,
+			 left(a.RepairFormNO,13) RepairFormNO 
+            from t_RepairRecord a inner join t_RepairForm b on a.RepairFormNO=b.RepairFormNO
+            inner join t_FaultPosition c on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId 
+            where  a.RepairSTime between '{0}' and '{1}'
+            )
+             select   PositionText,dayName,cast(1.0*SUM(DDSJ)/60 as decimal(18,1)) as ddys,cast(1.0*SUM(wxys)/60 as decimal(18,1)) as wxys,cast(1.0*SUM(qcqr)/60 as decimal(18,1)) as qcys,
+             cast(1.0*SUM(gzsj)/60 as decimal(18,1)) as gzsj,count(distinct RepairFormNO) rownum  from t
+             GROUP BY  PositionText,dayName
+             ORDER BY  dayName asc ", startDate, endDate);
+
+            List<object> head = new List<object>();
+            head.Add(new { field = "type", title = "故障位置", width = 120, align = "center" });
+            head.Add(new { field = "ys", title = "类别", width = 120, align = "center" });
+            DateTime dtStart = Convert.ToDateTime(startDate);
+            DateTime dtEnd = Convert.ToDateTime(endDate);
+            DateTime dtCur;
+            List<string> listdayName1 = new List<string>();
+            for (int i = 1; i < 1000; i++)
+            {
+                dtCur = dtStart.AddDays(i - 1);
+                if (dtCur.Date <= dtEnd.Date)
+                {
+                    head.Add(new { field = "d" + i.ToString(), title = dtCur.ToString("yyyy-MM-dd"), width = 120, align = "center" });
+                    listdayName1.Add(dtCur.ToString("yyyy-MM-dd"));
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            DataTable dt = rrs.ExecSQLTODT(sbSql);
+            DataView dv = dt.DefaultView;
+            DataTable dtPositionText = dv.ToTable(true, new string[] { "dayName" });
+            List<string> listdayName = dtPositionText.Select().Select(row => row["dayName"].ToString()).ToList();
+            string[] aPositionText = { "转模", "修模", "MP6", "MP1", "NP1", "NP2", "NP4", "NP5", "PM" };
+            List<object> data = new List<object>();
+
+            List<Object> aDay = new List<Object>();
+            double ddyssum = 0.0;
+            double wxyssum = 0.0;
+            double gzsjsum = 0.0;
+            double qcyssum = 0.0;
+            double sum = 0.0;
+            List<object> aSum = new List<Object>();
+
+
+            for (int i = 0; i < aPositionText.Length; i++)
+            {
+                aDay.Clear();
+                foreach (string dayName in listdayName1)
+                {
+                    DataRow[] drs = dt.Select("PositionText='" + aPositionText[i] + "'" + " and dayName ='" + dayName + "'");
+                    if (drs.Length > 0)
+                    {
+                        aDay.Add(new { ddys = drs[0][2], wxys = drs[0][3], qcys = drs[0][4], gzsj = drs[0][5], rownum = drs[0][6] });
+                    }
+                    else
+                    {
+                        aDay.Add(new { ddys = "0", wxys = "0", qcys = "0", gzsj = "0", rownum = "0" });
+                    }
+                }
+
+                if (i < 4)
+                {
+                    Dictionary<string, string> dcWait = new Dictionary<string, string>();
+                    dcWait.Add("type", aPositionText[i]);
+                    dcWait.Add("ys", "等待用时(h)");
+                    Dictionary<string, string> dcWRepair = new Dictionary<string, string>();
+                    dcWRepair.Add("type", aPositionText[i]);
+                    dcWRepair.Add("ys", "维修用时(h)");
+                    Dictionary<string, string> dcQC = new Dictionary<string, string>();
+                    dcQC.Add("type", aPositionText[i]);
+                    dcQC.Add("ys", "QC用时(h)");
+                    Dictionary<string, string> dcNumber = new Dictionary<string, string>();
+                    dcNumber.Add("type", aPositionText[i]);
+                    dcNumber.Add("ys", "次数");
+                    for (int di = 1; di <= listdayName1.Count; di++)
+                    {
+                        dcWait.Add("d" + di.ToString(), (((dynamic)aDay[di - 1]).ddys).ToString());
+                        dcWRepair.Add("d" + di.ToString(), ((dynamic)aDay[di - 1]).wxys.ToString());
+                        dcQC.Add("d" + di.ToString(), ((dynamic)aDay[di - 1]).qcys.ToString());
+                        dcNumber.Add("d" + di.ToString(), ((dynamic)aDay[di - 1]).rownum.ToString());
+                    }
+                    data.Add(dcWait);
+                    data.Add(dcWRepair);
+                    data.Add(dcQC);
+                    data.Add(dcNumber);
+                }
+                else
+                {
+                    Dictionary<string, string> dcOther = new Dictionary<string, string>();
+                    dcOther.Add("type", "其他");
+                    dcOther.Add("ys", aPositionText[i]);
+                    for (int di = 1; di <= listdayName1.Count; di++)
+                    {
+                        dcOther.Add("d" + di.ToString(), ((dynamic)aDay[di - 1]).gzsj.ToString());
+                    }
+                    data.Add(dcOther);
+                }
+            }
+            sum = 0.0;
+            foreach (string dayName in listdayName1)
+            {
+                ddyssum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["ddys"]) ? 0 : Convert.ToDouble(row["ddys"]));
+                wxyssum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["wxys"]) ? 0 : Convert.ToDouble(row["wxys"]));
+                gzsjsum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
+                qcyssum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["qcys"]) ? 0 : Convert.ToDouble(row["qcys"]));
+                sum = ddyssum + wxyssum + qcyssum + gzsjsum;
+                aSum.Add(new { sum = sum.ToString("0.0") });
+            }
+            Dictionary<string, string> dcTotal = new Dictionary<string, string>();
+            dcTotal.Add("type", "总维修时间");
+            dcTotal.Add("ys", "总维修时间");
+            for (int di = 1; di <= listdayName1.Count; di++)
+            {
+                dcTotal.Add("d" + di.ToString(), ((dynamic)aSum[di - 1]).sum.ToString());
+            }
+            data.Add(dcTotal);
+            Object allObject = new { Columns = head, Rows = data };
+            StringHelper.JsonGZipResponse(context, new StringBuilder(allObject.ObjectToJsonstring()));
+        }
+
+        /// <summary>
+        /// 停机分析
+        /// </summary>
+        /// <param name="context"></param>
+        public void TingjiFenxi(HttpContext context)
+        {
+            StringBuilder sbSql = new StringBuilder();
+
+            sbSql.Append(@"with t as (
+            select    (case when a.DeviceId='模具' then 'PM' ELSE
+	              (case when a.PositionText ='其它' then a.PhenomenaText else a.PositionText end) 
+	            END) PositionText,
+      ( case when a.DeviceId='模具' or   a.PositionText ='其它' then 0 else   datediff(minute,b.Intime, a.RepairSTime) end) ddsj,
+            
+		 ( case when a.DeviceId='模具' or   a.PositionText ='其它' then 0 else  	(case when a.QCConfirmTime is null then 0 else datediff(minute,a.FaultTime,RepairETime) end) end)  wxys,
+         ( case when a.DeviceId='模具' or   a.PositionText ='其它' then 0 else      (case when a.QCConfirmTime is null then 0 else datediff(minute,RepairETime, a.QCConfirmTime) end) end) qcqr ,
+ 
+          ( case when a.DeviceId!='模具' or   a.PositionText !='其它' then 0 else     (case when a.confirmtime is null then 0 else datediff(minute,RepairETime, a.confirmtime) end) end)  gzsj,
+ 
+             CONVERT(varchar(10),RepairSTime,120) dayName,
+			 left(a.RepairFormNO,13) RepairFormNO 
+            from t_RepairRecord a inner join t_RepairForm b on a.RepairFormNO=b.RepairFormNO
+            inner join t_FaultPosition c on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId 
+            where  DateDiff(dd,a.RepairSTime,getdate()) <7
+            )
+             select   PositionText,dayName,cast(1.0*SUM(DDSJ)/60 as decimal(18,1)) as ddys,cast(1.0*SUM(wxys)/60 as decimal(18,1)) as wxys,cast(1.0*SUM(qcqr)/60 as decimal(18,1)) as qcys,
+             cast(1.0*SUM(gzsj)/60 as decimal(18,1)) as gzsj,count(distinct RepairFormNO) rownum  from t
+             GROUP BY  PositionText,dayName
+             ORDER BY  dayName asc
+      
+      ");
+            DataTable dt = rrs.ExecSQLTODT(sbSql);
+            DataView dv = dt.DefaultView;
+            DataTable dtPositionText = dv.ToTable(true, new string[] { "dayName" });
+            List<string> listdayName = dtPositionText.Select().Select(row => row["dayName"].ToString()).ToList();
+            string[] aPositionText = { "转模", "修模", "MP6", "MP1", "NP1", "NP2", "NP4", "NP5", "PM" };
+            List<object> data = new List<object>();
+
+            List<Object> aDay = new List<Object>();
+            double ddyssum = 0.0;
+            double wxyssum = 0.0;
+            double gzsjsum = 0.0;
+            double qcyssum = 0.0;
+            double sum = 0.0;
+            List<object> aSum = new List<Object>();
+
+            List<string> listdayName1 = new List<string>();
+            for (int i = -6; i < 1; i++)
+            {
+                listdayName1.Add(DateTime.Now.AddDays(i).ToString("yyyy-MM-dd"));
+            }
+            for (int i = 0; i < aPositionText.Length; i++)
+            {
+                aDay.Clear();
+                foreach (string dayName in listdayName1)
+                {
+                    DataRow[] drs = dt.Select("PositionText='" + aPositionText[i] + "'" + " and dayName ='" + dayName + "'");
+                    if (drs.Length > 0)
+                    {
+                        aDay.Add(new { ddys = drs[0][2], wxys = drs[0][3], qcys = drs[0][4], gzsj = drs[0][5], rownum = drs[0][6] });
+                    }
+                    else
+                    {
+                        aDay.Add(new { ddys = "0", wxys = "0", qcys = "0", gzsj = "0", rownum = "0" });
+                    }
+
+
+                }
+
+                if (i < 4)
+                {
+
+                    data.Add(new
+                    {
+                        type = aPositionText[i],
+                        ys = "等待用时(h)",
+                        d1 = ((dynamic)aDay[0]).ddys,
+                        d2 = ((dynamic)aDay[1]).ddys,
+                        d3 = ((dynamic)aDay[2]).ddys,
+                        d4 = ((dynamic)aDay[3]).ddys,
+                        d5 = ((dynamic)aDay[4]).ddys,
+                        d6 = ((dynamic)aDay[5]).ddys,
+                        d7 = ((dynamic)aDay[6]).ddys,
+                    });
+                    data.Add(new
+                    {
+                        type = aPositionText[i],
+                        ys = "维修用时(h)",
+                        d1 = ((dynamic)aDay[0]).wxys,
+                        d2 = ((dynamic)aDay[1]).wxys,
+                        d3 = ((dynamic)aDay[2]).wxys,
+                        d4 = ((dynamic)aDay[3]).wxys,
+                        d5 = ((dynamic)aDay[4]).wxys,
+                        d6 = ((dynamic)aDay[5]).wxys,
+                        d7 = ((dynamic)aDay[6]).wxys,
+                    });
+
+
+                    data.Add(new
+                    {
+                        type = aPositionText[i],
+                        ys = "QC用时(h)",
+                        d1 = ((dynamic)aDay[0]).qcys,
+                        d2 = ((dynamic)aDay[1]).qcys,
+                        d3 = ((dynamic)aDay[2]).qcys,
+                        d4 = ((dynamic)aDay[3]).qcys,
+                        d5 = ((dynamic)aDay[4]).qcys,
+                        d6 = ((dynamic)aDay[5]).qcys,
+                        d7 = ((dynamic)aDay[6]).qcys,
+                    });
+                    data.Add(new
+                    {
+                        type = aPositionText[i],
+                        ys = "次数",
+                        d1 = ((dynamic)aDay[0]).rownum,
+                        d2 = ((dynamic)aDay[1]).rownum,
+                        d3 = ((dynamic)aDay[2]).rownum,
+                        d4 = ((dynamic)aDay[3]).rownum,
+                        d5 = ((dynamic)aDay[4]).rownum,
+                        d6 = ((dynamic)aDay[5]).rownum,
+                        d7 = ((dynamic)aDay[6]).rownum,
+                    });
+
+
+                }
+                else
+                {
+                    data.Add(new
+                    {
+                        type = "其他",
+                        ys = aPositionText[i],
+                        d1 = ((dynamic)aDay[0]).gzsj,
+                        d2 = ((dynamic)aDay[1]).gzsj,
+                        d3 = ((dynamic)aDay[2]).gzsj,
+                        d4 = ((dynamic)aDay[3]).gzsj,
+                        d5 = ((dynamic)aDay[4]).gzsj,
+                        d6 = ((dynamic)aDay[5]).gzsj,
+                        d7 = ((dynamic)aDay[6]).gzsj,
+                    });
+                }
+
+            }
+            sum = 0.0;
+            foreach (string dayName in listdayName1)
+            {
+                ddyssum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["ddys"]) ? 0 : Convert.ToDouble(row["ddys"]));
+                wxyssum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["wxys"]) ? 0 : Convert.ToDouble(row["wxys"]));
+                gzsjsum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
+                qcyssum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["qcys"]) ? 0 : Convert.ToDouble(row["qcys"]));
+                sum = ddyssum + wxyssum + qcyssum + gzsjsum;
+                aSum.Add(new { sum = sum.ToString("0.0") });
+            }
+            data.Add(new
+            {
+                type = "总维修时间",
+                ys = "总维修时间",
+                d1 = ((dynamic)aSum[0]).sum,
+                d2 = ((dynamic)aSum[1]).sum,
+                d3 = ((dynamic)aSum[2]).sum,
+                d4 = ((dynamic)aSum[3]).sum,
+                d5 = ((dynamic)aSum[4]).sum,
+                d6 = ((dynamic)aSum[5]).sum,
+                d7 = ((dynamic)aSum[6]).sum,
+            });
+
+            StringHelper.JsonGZipResponse(context, new StringBuilder(data.ObjectToJsonstring()));
+        }
+
         public bool IsReusable
         {
             get
@@ -1270,4 +1600,5 @@ namespace Web.ASHX.DMC
             }
         }
     }
+
 }

@@ -41,7 +41,7 @@
                 //可動列
                 columns: [[
                            { field: 'repairstime', title: '指派时间', width: 90, align: 'left', },
-                    { field: 'repairformno', title: '维修单号', width: 90, align: 'left', sortable:"true" },
+                    { field: 'repairformno', title: '维修单号', width: 90, align: 'left', sortable: "true" },
                            { field: 'repairetime', title: '完成时间', width: 90, align: 'left' },
                            { field: 'positiontext', title: '故障位置', width: 60, align: 'left' },
                            { field: 'phenomenatext', title: '故障现象', width: 60, align: 'left' },
@@ -78,7 +78,7 @@
 
                                }
                            },
-                    
+
                 ]]
             });
             $(window).resize(function () {
@@ -106,7 +106,7 @@
             queryParams.RepairmanName = $('#repairmanname').textbox("getValue");
             queryParams.YearMonth = $('#qyearmonth').datebox("getValue");
             queryParams.EYearMonth = $('#eqyearmonth').datebox("getValue");
-            
+
             $('#tbEqManage').datagrid('reload');
         }
         function Export() {
@@ -264,7 +264,7 @@
             }
         }
     </script>
-</head> 
+</head>
 <body>
     <div id="funMain" style="background-color: transparent; margin-left: 5px; margin-right: 0px;">
         <div id="divOperation" class="Search">
@@ -273,7 +273,7 @@
                 <a class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="Search('ByKey')">搜索</a>
                 <a id="btnMore" class="easyui-linkbutton" data-options="iconCls:'icon-expand',plain:true" onclick="openSearch('divSearch');">高级搜索</a>
             </div>
-            
+
         </div>
         <div style="clear: both">
         </div>
@@ -300,18 +300,18 @@
                         <td style="width: 90px;">按报修时间查询:</td>
                         <td style="width: 150px;">
                             <input data-options="formatter: datetimeFormatter, parser: datetimeParser" class="easyui-datetimebox" name="yearmonth" id="qyearmonth" style="width: 150px;" />
-                         </td>
+                        </td>
                         <td style="width: 150px;">
                             <input data-options="formatter: datetimeFormatter, parser: datetimeParser" class="easyui-datetimebox" name="eyearmonth" id="eqyearmonth" style="width: 150px;" />
                         </td>
                         <td style="width: 150px;">
-                             <a class="easyui-linkbutton" data-options="iconCls:'icon-excel',plain:true" href="javascript:void(0)" onclick='Export()'>导出</a> &nbsp;&nbsp;                
+                            <a class="easyui-linkbutton" data-options="iconCls:'icon-excel',plain:true" href="javascript:void(0)" onclick='Export()'>导出</a> &nbsp;&nbsp;                
           
                         </td>
                     </tr>
                 </table>
             </div>
-             
+
             <div style="text-align: right; padding: 3px 0; padding-right: 8px; height: 26px; font-size: 12px;">
                 <a class="easyui-linkbutton" data-options="iconCls:'icon-enlarge',plain:true" onclick="Search('ByAdvanced')">高級搜索</a>
             </div>

@@ -190,6 +190,8 @@ namespace DMC.DAL
             sbSql.Append("       PhenomenaText,FaultCode,FaultReason,FaultAnalysis,GetDate() RepairSTime,@newStatus RepairStatus,getdate(),PhenomenaText1,PositionText1,MouldId,NewMouldId,MouldId1,NewMouldId1 ");
             sbSql.Append("  FROM t_RepairRecord");
             sbSql.Append(" WHERE AutoId=@AutoId;");
+            sbSql.Append("update t_RepairForm set RepairRecordId=(select max(autoid) from t_RepairRecord where t_RepairRecord.RepairFormNO=t_RepairForm.RepairFormNO)");
+            sbSql.Append(" where RepairFormNO=@NewRepairFormNO;");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("OldRepairFormNO", DbType.String, OldRepairFormNO));
             param.Add(DBFactory.Helper.FormatParameter("NewRepairFormNO", DbType.String, NewRepairFormNO));

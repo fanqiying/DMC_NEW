@@ -273,7 +273,6 @@
                         <a class="easyui-linkbutton" data-options="toggle:true,group:'g1'" onclick="Search()">查询</a></td>
                 </tr>
             </table>
-
         </div>
         <div class="easyui-panel" style="width: 50%; height: calc(50% - 30px); padding: 2px 2px 2px 2px; background-color: #F6F6F6;" id="divwait">
             <div style="width: calc(100% - 4px); height: calc(100% - 4px); float: left;" class="chart-chart" id="chart1"></div>
@@ -303,7 +302,9 @@
         var workedtime = [];
         var app = {};
         var url = "../../ASHX/DMC/RepairRecord.ashx?M=SearchReport&SearchType=chart1";
-
+        if (RepairmanId) {
+            url = url + "&RepairmanId=" + RepairmanId;
+        }
         if (phenomenaid) {
             url = url + "&phenomenaid=" + phenomenaid;
         }

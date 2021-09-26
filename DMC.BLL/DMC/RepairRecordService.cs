@@ -47,22 +47,22 @@ namespace DMC.BLL
                               t_Device d on a.DeviceId=d.DeviceId left join
                               t_Employee e on a.repairmanid=e.empID");
             StringBuilder sbShow = new StringBuilder();
-            sbShow.Append(" A.*,isnull(b.FaultTime,a.FaultTime) bFaultTime,isnull(repairstatus,10)repairstatus,c.GradeTime,c.Grade StandGrade,datediff(minute ,isnull(b.FaultTime,a.FaultTime), GetDate()) manhoure,d.KeepUserId,isnull(e.empName,'')as repairmanname ");
+            sbShow.Append(" A.*,b.RepairETime,isnull(b.FaultTime,a.FaultTime) bFaultTime,isnull(repairstatus,10)repairstatus,c.GradeTime,c.Grade StandGrade,datediff(minute ,isnull(b.FaultTime,a.FaultTime), GetDate()) manhoure,d.KeepUserId,isnull(e.empName,'')as repairmanname ");
             sbShow.Append(" ,(case   FormStatus when 10 then datediff(minute,isnull(b.FaultTime,a.FaultTime),GETDATE())    when 40 then  datediff(minute, b.RepairSTime, GETDATE())   when 30 then datediff(minute, b.RepairETime, GETDATE())    when 50 then datediff(minute, b.QCConfirmTime, GETDATE())	else 0    end) rowcolor");
             return pageView.PageView(sbTable.ToString(), "a.AutoId", pageIndex, pageSize, sbShow.ToString(), "a.AutoId DESC", Where, out total, out pageCount);
         }
         public DataTable GetKanbanQty()
         {
             StringBuilder sbSql = new StringBuilder();
-            sbSql.Append(@"select SUM(case when ISNULL(RepairStatus,0)<20 or RepairStatus=62 THEN 1 ELSE 0 END) WaitQty, 
-       SUM(case when ISNULL(RepairStatus,0)>=20 AND ISNULL(RepairStatus,0)<30 THEN 1 ELSE 0 END) WorkQty,
-        SUM(case when (( RepairStatus!=30 and RepairStatus!=50) or ISNULL(RepairStatus,0)<20 or RepairStatus=62)and  c.GradeTime<datediff(minute ,a.faulttime, GetDate()) THEN 1 ELSE 0 END)  CHAOSHIQty,
-	   SUM(case when RepairStatus=40  THEN 1 ELSE 0 END) QCQty,
-	   SUM(case when RepairStatus=30 or RepairStatus=50  THEN 1 ELSE 0 END) SCQty
+            sbSql.Append(@"select SUM(case when FormStatus in(10,12) THEN 1 ELSE 0 END) WaitQty, 
+       SUM(case when FormStatus in(20,23,24,25,61,65) THEN 1 ELSE 0 END) WorkQty,
+       SUM(case when FormStatus not in(30,40,50) and  c.GradeTime+60<datediff(minute ,a.faulttime, GetDate()) THEN 1 ELSE 0 END)  CHAOSHIQty,
+	   SUM(case when FormStatus=40  THEN 1 ELSE 0 END) QCQty,
+	   SUM(case when FormStatus=30 or FormStatus=50  THEN 1 ELSE 0 END) SCQty
   from t_RepairForm a with(nolock) left join 
        t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
        t_FaultPosition c  with(nolock) on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId
- where (isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20) ");
+ where (isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20)");
 
             return _dal.ExecSQLTODT(sbSql);
         }

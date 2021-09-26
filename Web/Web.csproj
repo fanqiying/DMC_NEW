@@ -858,6 +858,7 @@
     <Content Include="UI\Equment\BarcodePhoto.aspx" />
     <Content Include="UI\Equment\Calendar.aspx" />
     <Content Include="UI\Equment\DeviceManage.aspx" />
+    <Content Include="UI\Equment\TingjiFenxi.aspx" />
     <Content Include="UI\Equment\ProductionCheck.aspx" />
     <Content Include="UI\Equment\MRepairAssign.aspx" />
     <Content Include="UI\Equment\RepairRecordSearch.aspx" />
@@ -1156,6 +1157,13 @@
     </Compile>
     <Compile Include="UI\Equment\DeviceManage.aspx.designer.cs">
       <DependentUpon>DeviceManage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Equment\TingjiFenxi.aspx.cs">
+      <DependentUpon>TingjiFenxi.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UI\Equment\TingjiFenxi.aspx.designer.cs">
+      <DependentUpon>TingjiFenxi.aspx</DependentUpon>
     </Compile>
     <Compile Include="UI\Equment\ProductionCheck.aspx.cs">
       <DependentUpon>ProductionCheck.aspx</DependentUpon>

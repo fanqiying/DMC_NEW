@@ -318,6 +318,11 @@
                 <h1 class="pf-user-name ellipsis"><a href="#" onclick="window.open('UI/Equment/Kanban.aspx');">数据屏</a></h1>
                 <%--<input class="easyui-combobox" id="SComanyType" style="height: 30px; width: 120px;" />--%>
             </div>
+            <div class="pf-user">
+                
+                <h1 class="pf-user-name ellipsis"><a href="#" onclick="window.open('UI/Equment/TingjiFenxi.aspx');">停机分析</a></h1>
+                <%--<input class="easyui-combobox" id="SComanyType" style="height: 30px; width: 120px;" />--%>
+            </div>
         </div>
         <div id="pf-bd" style="height: calc(100% - 77px);">
             <div id="pf-sider">
