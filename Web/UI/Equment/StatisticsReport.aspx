@@ -274,10 +274,10 @@
                 </tr>
             </table>
         </div>
-        <div class="easyui-panel" style="width: 50%; height: calc(50% - 30px); padding: 2px 2px 2px 2px; background-color: #F6F6F6;" id="divwait">
+        <div class="easyui-panel" style="width: 60%; height: calc(50% - 30px); padding: 2px 2px 2px 2px; background-color: #F6F6F6;" id="divwait">
             <div style="width: calc(100% - 4px); height: calc(100% - 4px); float: left;" class="chart-chart" id="chart1"></div>
         </div>
-        <div class="easyui-panel" style="width: 50%; height: calc(50% - 30px); padding: 2px 2px 2px 2px; background-color: #F6F6F6;" id="divdo">
+        <div class="easyui-panel" style="width: 40%; height: calc(50% - 30px); padding: 2px 2px 2px 2px; background-color: #F6F6F6;" id="divdo">
             <div style="width: calc(100% - 4px); height: calc(100% - 4px); float: left;" class="chart-chart" id="chart2"></div>
         </div>
         <div class="easyui-panel" style="width: 60%; height: calc(50% - 30px); padding: 2px 2px 2px 2px; background-color: #F6F6F6;" id="divdoing">
@@ -300,6 +300,7 @@
         var name = [];
         var totaltime = [];
         var workedtime = [];
+        var opt = [];
         var app = {};
         var url = "../../ASHX/DMC/RepairRecord.ashx?M=SearchReport&SearchType=chart1";
         if (RepairmanId) {
@@ -316,6 +317,10 @@
         var interval = 0;
         var xnmax = 0;
         var xinterval = 0;
+        var nopt = 0;
+        var noptmax = 0;
+        var ninterval = 0;
+        var minopt = 0;
         $.post(url,
             {},
             function (data) {
@@ -323,8 +328,10 @@
                     name[i] = data[i].username;
                     workedtime[i] = data[i].standgrade;
                     totaltime[i] = data[i].rfnum;
+                    opt[i]=data[i].opt;
                     nmax = nmax + data[i].standgrade;
                     xnmax = xnmax + data[i].rfnum;
+                    noptmax = noptmax + data[i].opt
 
                 }
                 interval = Math.ceil(nmax / data.length);
@@ -333,6 +340,12 @@
                 xinterval = Math.ceil(xnmax / data.length);
                 xnmax = Math.max.apply(null, totaltime) + xinterval;
 
+                ninterval = Math.ceil(noptmax / data.length);
+                noptmax = Math.max.apply(null, opt) + ninterval;
+                minopt = Math.min.apply(null, opt) + ninterval;
+
+                console.log([ninterval, noptmax, minopt]);
+                console.log(opt);
                 option = {
                     title: {
                         text: '维修员工单统计',
@@ -355,6 +368,21 @@
                             crossStyle: {
                                 color: '#999'
                             }
+                        },
+                        formatter: function (params, ticket, callback) {
+                            var showHtm = params[0].name + "<br>";
+                            for (var i = 0; i < params.length; i++) {
+                                if (params[i].seriesName == "总得分") {
+                                    showHtm += params[i].seriesName + ':' + params[i].value + ' 分<br>'
+                                } else if (params[i].seriesName == "维修单数量") {
+                                    showHtm += params[i].seriesName + ':' + params[i].value + ' 单<br>'
+                                }
+                                else
+                                {
+                                    showHtm += params[i].seriesName + ':' + params[i].value + ' %<br>'
+                                }
+                            }
+                            return showHtm;
                         }
                     },
                     toolbox: {
@@ -365,12 +393,16 @@
                     color: ['HotPink', 'DeepSkyBlue', 'LawnGreen', 'Gold', 'Red', 'Green'],
                     legend: {
                         x: 'left',
-                        data: ['维修单数量', '总得分']
+                        data: ['维修单数量', '总得分', '绩效平均值']
                     },
                     xAxis: [
                         {
                             type: 'category',
                             data: name,
+                            axisLabel: {
+                                inside: false,
+                                textStyle: { colr: '#fff', fontSize: 8 }
+                            },
                             axisPointer: {
                                 type: 'shadow'
                             }
@@ -405,6 +437,24 @@
                             axisLabel: {
                                 formatter: '{value}'
                             }
+                        },
+                        {
+                            type: 'value',
+                            name: '绩效平均值',
+                            min: minopt,
+                            max: noptmax,
+                            interval: ninterval,
+                            splitLine: { show: false },
+                            show: false,
+                            axisTick: { //y轴刻度线
+                                show: false
+                            },
+                            axisLine: { //y轴
+                                show: false
+                            }, 
+                            axisLabel: {
+                                formatter: '{value}'
+                            }
                         }
                     ],
 
@@ -422,9 +472,19 @@
                             type: 'line',
                             label: {
                                 show: true
+                                
                             },
                             yAxisIndex: 1,
                             data: totaltime
+                        },
+                        {
+                            name: '绩效平均值',
+                            type: 'line',
+                            label: {
+                                show: true,
+                                formatter: '{value}'+'%'
+                            },
+                            data: opt
                         }
                     ]
                 };
@@ -478,14 +538,14 @@
                     },
                     grid: {
                         top: 50,
-                        left: 60,
-                        right: 40,
+                        left: 30,
+                        right: 20,
                         bottom: 20
                     },
                     color: ['HotPink', 'DeepSkyBlue', 'LawnGreen', 'Gold', 'Red', 'Green'],
                     tooltip: {
                         trigger: 'item',
-                        formatter: "{a} <br/>{b} : {c} 分"
+                        formatter: "{a} <br/>{b} : {c} 时"
                     },
                     toolbox: {
                         feature: {
@@ -692,7 +752,7 @@
                     },
                     tooltip: {
                         trigger: 'item',
-                        formatter: "{a} <br/>{b} : {c} 分"
+                        formatter: "{a} <br/>{b} : {c} 时"
                     },
                     toolbox: {
                         feature: {

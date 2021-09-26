@@ -177,6 +177,7 @@
                     $(th).css("width", "100%");
                 }
             });
+            $('.datagrid-cell').css('font-size', '20px');
         }
 
         function loadChart1(id) {

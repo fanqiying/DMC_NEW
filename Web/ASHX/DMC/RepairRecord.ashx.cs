@@ -1178,7 +1178,9 @@ namespace Web.ASHX.DMC
             switch (type)
             {
                 case "chart1":
-                    sql.Append(@"select top 20 username,count(RepairFormNO) rfnum,sum(cast(StandGrade as numeric)) standgrade from (
+                    sql.Append(@"select top 20 username,count(RepairFormNO) rfnum ,cast(1.0*sum(cast(StandGrade as numeric))/60 as decimal(18,1)) standgrade,
+                                cast(1.0*sum(1.0*(GradeTime-manhoure)/GradeTime)/count(RepairFormNO) as decimal(18,2))*100   opt 
+                                from (
                                select a.ApplyUserId,c.userName, 
                                 b.GradeTime,RepairSTime,RepairETime,b.Grade StandGrade,a.RepairFormNO,
                                 datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
@@ -1186,11 +1188,11 @@ namespace Web.ASHX.DMC
                                 t_RepairRecord a left join t_FaultPosition b on a.PhenomenaId=b.PositionId
                                 left join t_User c on a.RepairmanId=c.userID
                                 where " + strWhere);
-                    sql.Append(@")t group by username order by 2 desc");
+                    sql.Append(@")t group by username order by 3 desc");
                     break;
                 case "chart2":
 
-                    sql.Append(@"select top 10 DeviceId,sum(manhoure) manhoure from (
+                    sql.Append(@"select top 20 DeviceId, cast(1.0*sum(cast(manhoure as numeric))/60 as decimal(18,1))   manhoure from (
                                 select a.DeviceId,
                                 b.GradeTime,RepairSTime,RepairETime,b.Grade StandGrade,
                                 datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
@@ -1200,7 +1202,7 @@ namespace Web.ASHX.DMC
                     sql.Append(@")t group by DeviceId order by 2 desc");
                     break;
                 case "chart3":
-                    sql.Append(@"select userName,PositionText,sum(manhoure) manhoure from (
+                    sql.Append(@"select userName,PositionText, cast(1.0*sum(cast(manhoure as numeric))/60 as decimal(18,1))   manhoure from (
                                select a.RepairmanId,c.userName, 
                                 b.GradeTime,RepairSTime,RepairETime,b.Grade StandGrade,b.PositionText,
                                 datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
@@ -1231,7 +1233,7 @@ namespace Web.ASHX.DMC
                     sql.Append(@")t group by userName,PositionText order by 2 desc");
                     break;
                 case "chart4":
-                    sql.Append(@"select top 10 PositionText,sum(manhoure) manhoure from (
+                    sql.Append(@"select top 10 PositionText,cast(1.0*sum(cast(manhoure as numeric))/60 as decimal(18,1))   manhoure from (
                                 select a.DeviceId,b.PositionText,
                                 b.GradeTime,RepairSTime,RepairETime,b.Grade StandGrade,
                                 datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
@@ -1309,7 +1311,7 @@ namespace Web.ASHX.DMC
              select   PositionText,dayName,cast(1.0*SUM(DDSJ)/60 as decimal(18,1)) as ddys,cast(1.0*SUM(wxys)/60 as decimal(18,1)) as wxys,cast(1.0*SUM(qcqr)/60 as decimal(18,1)) as qcys,
              cast(1.0*SUM(gzsj)/60 as decimal(18,1)) as gzsj,count(distinct RepairFormNO) rownum  from t
              GROUP BY  PositionText,dayName
-             ORDER BY  dayName asc ", startDate, endDate);
+             ORDER BY  dayName desc ", startDate, endDate);
 
             List<object> head = new List<object>();
             head.Add(new { field = "type", title = "故障位置", width = 120, align = "center" });
@@ -1320,8 +1322,8 @@ namespace Web.ASHX.DMC
             List<string> listdayName1 = new List<string>();
             for (int i = 1; i < 1000; i++)
             {
-                dtCur = dtStart.AddDays(i - 1);
-                if (dtCur.Date <= dtEnd.Date)
+                dtCur = dtEnd.AddDays(1-i);
+                if (dtCur.Date >= dtStart.Date)
                 {
                     head.Add(new { field = "d" + i.ToString(), title = dtCur.ToString("yyyy-MM-dd"), width = 120, align = "center" });
                     listdayName1.Add(dtCur.ToString("yyyy-MM-dd"));
@@ -1331,6 +1333,8 @@ namespace Web.ASHX.DMC
                     break;
                 }
             }
+
+            
 
             DataTable dt = rrs.ExecSQLTODT(sbSql);
             DataView dv = dt.DefaultView;
