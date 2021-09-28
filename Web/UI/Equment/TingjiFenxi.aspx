@@ -137,8 +137,8 @@
             if ($("#qyearmonth").datebox("getValue") != "" && $("#eqyearmonth").datebox("getValue") != "") {
                 $.post("../../ASHX/DMC/RepairRecord.ashx?M=TingjiFenxiNew",
                 {
-                    startDate: $("#qyearmonth").datebox("getValue"),
-                    endDate: $("#eqyearmonth").datebox("getValue")
+                    startDate: $("#qyearmonth").datebox("getValue")+' 00:00:01',
+                    endDate: $("#eqyearmonth").datebox("getValue")+' 23:59:59'
                 },
                 function (data) {
                     setGridColumns(data.Columns);

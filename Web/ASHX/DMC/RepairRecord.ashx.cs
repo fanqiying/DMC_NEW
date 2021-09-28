@@ -1295,12 +1295,12 @@ namespace Web.ASHX.DMC
             select    (case when a.DeviceId='模具' then 'PM' ELSE
 	              (case when a.PositionText ='其它' then a.PhenomenaText else a.PositionText end) 
 	            END) PositionText,
-      ( case when a.DeviceId='模具' or   a.PositionText ='其它' then 0 else   datediff(minute,b.Intime, a.RepairSTime) end) ddsj,
+      ( case when a.DeviceId='模具' or   a.PositionText ='其它' then 0 else   datediff(minute,a.FaultTime, a.RepairSTime) end) ddsj,
             
-		 ( case when a.DeviceId='模具' or   a.PositionText ='其它' then 0 else  	(case when a.QCConfirmTime is null then 0 else datediff(minute,a.FaultTime,RepairETime) end) end)  wxys,
+		 ( case when a.DeviceId='模具' or   a.PositionText ='其它' then 0 else  	(case when a.RepairETime is null then 0 else datediff(minute,a.FaultTime,RepairETime) end) end)  wxys,
          ( case when a.DeviceId='模具' or   a.PositionText ='其它' then 0 else      (case when a.QCConfirmTime is null then 0 else datediff(minute,RepairETime, a.QCConfirmTime) end) end) qcqr ,
  
-          ( case when a.DeviceId!='模具' or   a.PositionText !='其它' then 0 else     (case when a.confirmtime is null then 0 else datediff(minute,RepairETime, a.confirmtime) end) end)  gzsj,
+          ( case when a.DeviceId!='模具' or   a.PositionText !='其它' then 0 else     (case when a.confirmtime is null then 0 else datediff(minute,a.FaultTime, a.confirmtime) end) end)  gzsj,
  
              CONVERT(varchar(10),RepairSTime,120) dayName,
 			 left(a.RepairFormNO,13) RepairFormNO 
@@ -1350,7 +1350,6 @@ namespace Web.ASHX.DMC
             double qcyssum = 0.0;
             double sum = 0.0;
             List<object> aSum = new List<Object>();
-
 
             for (int i = 0; i < aPositionText.Length; i++)
             {
