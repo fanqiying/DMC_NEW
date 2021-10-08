@@ -325,7 +325,7 @@
             {},
             function (data) {
                 for (var i = 0; i < data.length; i++) {
-                    name[i] = data[i].username;
+                    name[i] = data[i].repairmanname;
                     workedtime[i] = data[i].standgrade;
                     totaltime[i] = data[i].rfnum;
                     opt[i]=data[i].opt;
@@ -373,7 +373,7 @@
                             var showHtm = params[0].name + "<br>";
                             for (var i = 0; i < params.length; i++) {
                                 if (params[i].seriesName == "总得分") {
-                                    showHtm += params[i].seriesName + ':' + params[i].value + ' 分<br>'
+                                    showHtm += params[i].seriesName + ':' + params[i].value + ' <br>'
                                 } else if (params[i].seriesName == "维修单数量") {
                                     showHtm += params[i].seriesName + ':' + params[i].value + ' 单<br>'
                                 }
@@ -482,7 +482,8 @@
                             type: 'line',
                             label: {
                                 show: true,
-                                formatter: '{value}'+'%'
+                                formatter: function (data)
+                                { return data.value + '%'; }
                             },
                             data: opt
                         }

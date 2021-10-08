@@ -71,16 +71,16 @@
 
                     switch (modNum) {
                         case 0:
-                            return 'background-color:#fffac09e;color:blue;font-weight:bolder;font-size:18px;';
+                            return 'background-color:#fffac09e;color:blue;font-weight:bolder;font-size:14px;';
                             break;
                         case 1:
-                            return 'background-color:#fffac09e;color:red;font-weight:bolder;font-size:18px;';
+                            return 'background-color:#fffac09e;color:red;font-weight:bolder;font-size:14px;';
                             break;
                         case 2:
-                            return 'background-color:#fffac09e;color:green;font-weight:bolder;font-size:18px;';
+                            return 'background-color:#fffac09e;color:green;font-weight:bolder;font-size:14px;';
                             break;
                         case 3:
-                            return 'background-color:#fffac09e;color:black;font-weight:bolder;font-size:18px;';
+                            return 'background-color:#fffac09e;color:black;font-weight:bolder;font-size:14px;';
                             break;
                     }
                 },
@@ -107,7 +107,7 @@
                     },
                     {
                         index: 16,
-                        rowspan: 5
+                        rowspan: 4
                     }];
                     for (var i = 0; i < merges.length; i++)
                         $('#tbEqManage').datagrid('mergeCells', {
@@ -117,10 +117,14 @@
                         });
 
                     var merges = [{
+                        index: 20,
+                        rowspan: 2
+                    },
+                    {
                         index: 21,
                         rowspan: 2
                     }, {
-                        index: -1,
+                        index: 22,
                         rowspan: 2
                     }];
                     for (var i = 0; i < merges.length; i++)
@@ -151,7 +155,7 @@
         function setGridHead() {
             $(".datagrid-header-row td div span").each(function (i, th) {
                 var val = $(th).text();
-                $(th).html("<label style='font-weight:bolder;font-size:18px;'>" + val + "</label>");
+                $(th).html("<label style='font-weight:bolder;font-size:10px;'>" + val + "</label>");
 
                 //if (i == 0) {
                 //    var val = $(th).text();
@@ -177,7 +181,8 @@
                     $(th).css("width", "100%");
                 }
             });
-            $('.datagrid-cell').css('font-size', '20px');
+            $('.datagrid-cell').css('font-size', '16px');
+            $('.datagrid-row').css('height', '22px');
         }
 
         function loadChart1(id) {
@@ -207,11 +212,15 @@
                 backgroundColor: '#fffac09e',
                 xAxis: {
                     type: 'category',
-                    data: xName
+                    data: xName,
+                    axisLabel: {
+                        inside: false,
+                        textStyle: { colr: 'black', fontSize: 16 }
+                    },
                 },
                 yAxis: {
                     type: 'value',
-                    name: '总时长(h)',
+                    name: '总维修时间(h)'
 
                 },
                 tooltip: {
@@ -222,6 +231,15 @@
                   {
                       data: yName,
                       type: 'line',
+                      label: {
+                          show: true,
+                          textStyle: {
+                              color: 'black',
+                              fontSize: 14
+                          },
+                          formatter:function(data)
+                          {return data.value+'h';}
+                      },
                       showBackground: true,
                       backgroundStyle: {
                           color: 'white'
@@ -281,6 +299,32 @@
                 return new Date();
             }
         }
+        function Export() {
+
+           var  startDate=$("#qyearmonth").datebox("getValue") + ' 00:00:01';
+           var  endDate=$("#eqyearmonth").datebox("getValue") + ' 23:59:59';
+            if ($("#qyearmonth").datebox("getValue") != "" && $("#eqyearmonth").datebox("getValue") != "") {
+
+                var url = "../../ASHX/DMC/RepairRecord.ashx?M=TingjiFenxiNewdownload&fileName=停机分析.csv";
+                if (startDate) {
+                    url = url + "&startDate=" + startDate;
+                }
+                if (endDate) {
+                    url = url + "&endDate=" + endDate;
+                }
+                if ($("#downloadForm").length <= 0) {
+                    $("body").append("<form id='downloadForm' method='post' target='iframe'></form>");
+                    $("body").append("<iframe id='ifm' name='iframe' style='display:none;'></iframe>");
+                }
+                $("#downloadForm").attr('action', url);
+                $("#downloadForm").submit();
+            }
+            else {
+                $.messager.alert({ title: '错误提示', msg: "请录入时间查询:" });
+                return;
+            }
+
+        }
     </script>
     <style type="text/css">
         /*::-webkit-scrollbar { width:4px;}
@@ -298,12 +342,13 @@
         </div>
     </div>
 
-    <div id="tb">
+   <div id="tb">
         <label style="padding-left: 20px;" for="qyearmonth">报修时间:</label>
         <input data-options="formatter: dateFormatter, parser: dateParser" class="easyui-datebox" name="yearmonth" id="qyearmonth" style="width: 120px;" />
         <label for="eyearmonth">~</label>
         <input data-options="formatter: dateFormatter, parser: dateParser" class="easyui-datebox" name="eyearmonth" id="eqyearmonth" style="width: 120px;" />
-        <a class="easyui-linkbutton" data-options="iconCls:'icon-reload',plain:true" onclick="QueryData()">手动刷新</a>
+        <a class="easyui-linkbutton" style="margin-left:20px;" data-options="iconCls:'icon-reload',plain:true" onclick="QueryData()">手动刷新</ a>
+        <a class="easyui-linkbutton" style="margin-left:20px;" data-options="iconCls:'icon-excel',plain:true"   onclick='Export()'>导出</ a> 
     </div>
 </body>
 </html>
