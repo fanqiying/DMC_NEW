@@ -101,7 +101,7 @@ where isnull(repairstatus,0)<60 ");
         public bool IsRepair(string DeviceId)
         {
             StringBuilder sbSql = new StringBuilder();
-            sbSql.Append("SELECT COUNT(1) FROM t_RepairForm WHERE DeviceId=@DeviceId and DeviceId!='模具' AND FormStatus<60 ");
+            sbSql.Append("SELECT COUNT(1) FROM t_RepairForm WHERE DeviceId=@DeviceId and DeviceId!='模房' AND FormStatus<60 ");
             List<DbParameter> param = new List<DbParameter>();
             param.Add(DBFactory.Helper.FormatParameter("DeviceId", DbType.String, DeviceId));
             int result = Convert.ToInt32(DBFactory.Helper.ExecuteScalar(sbSql.ToString(), param.ToArray()));

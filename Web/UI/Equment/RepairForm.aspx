@@ -619,6 +619,8 @@
                 multiple: false,
                 onChange: function (newValue, oldValue) {
                     $('#aphenomenaid').combobox("loadData", []);
+                    $('#anewmouldid').combogrid('clear');
+                    $('#anewmouldid1').combogrid('clear');
                     if (newValue != "") {
                         $.post("../../ASHX/DMC/FaultPosition.ashx?M=GetFaultPositionNode", {
                             PPositionId: newValue
@@ -631,6 +633,7 @@
                                else {
                                    $('#aphenomenaid').combobox('select', result[0].positionid);
                                }
+                               
                            },
                            'json');
                     }

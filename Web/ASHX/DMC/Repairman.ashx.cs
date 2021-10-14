@@ -86,21 +86,21 @@ namespace Web.ASHX.DMC
         /// <param name="context"></param>
         public void GetRepairmWorking(HttpContext context)
         {
-            DataTable dt = ds.GetRepairmWorking();
-            List<object> mans = new List<object>();
-            foreach (DataRow dr in dt.Rows)
-            {
-                mans.Add(new
-                {
-                    repairmanid = dr["RepairmanId"].ToString(),
-                    repairmanname = dr["RepairmanName"].ToString(),
-                    workedtime = Convert.ToInt32(dr["workedtime"]),
-                    totaltime = Convert.ToInt32(dr["totaltime"]),
-                    resttime = Convert.ToInt32(dr["resttime"]),
-                    workingtime = Convert.ToInt32(dr["workingtime"]),
-                    surplustime = Convert.ToInt32(dr["surplustime"])
-                });
-            }
+            //DataTable dt = ds.GetRepairmWorking();
+            //List<object> mans = new List<object>();
+            //foreach (DataRow dr in dt.Rows)
+            //{
+            //    mans.Add(new
+            //    {
+            //        repairmanid = dr["RepairmanId"].ToString(),
+            //        repairmanname = dr["RepairmanName"].ToString(),
+            //        workedtime = Convert.ToInt32(dr["workedtime"]),
+            //        totaltime = Convert.ToInt32(dr["totaltime"]),
+            //        resttime = Convert.ToInt32(dr["resttime"]),
+            //        workingtime = Convert.ToInt32(dr["workingtime"]),
+            //        surplustime = Convert.ToInt32(dr["surplustime"])
+            //    });
+            //}
             //获取待排单的数量
             DataTable dtQty = rrs.GetKanbanQty();
             var obj = new { waitqty = 0, workqty = 0, chaoshiqty = 0, qcqty = 0, scqty = 0 };
@@ -119,7 +119,7 @@ namespace Web.ASHX.DMC
             //StringBuilder sb = JsonHelper.DataTableToJSON(dt);
             var objData = new
             {
-                ReportData = mans,
+                //ReportData = mans,
                 RefershQTY = obj
             };
             StringHelper.JsonGZipResponse(context, new StringBuilder(objData.ObjectToJsonstring()));

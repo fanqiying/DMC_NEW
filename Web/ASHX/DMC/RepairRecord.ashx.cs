@@ -13,6 +13,7 @@ using System.Text;
 using System.Web;
 using System.Web.SessionState;
 using Utility.HelpClass;
+using System.Text.RegularExpressions;
 
 namespace Web.ASHX.DMC
 {
@@ -435,10 +436,10 @@ namespace Web.ASHX.DMC
                         break;
                 }
                 dr["状态"] = text;
-                dr["设备编号"] = item["deviceid"].ToString();
+                dr["设备编号"] =Regex.Replace( item["deviceid"].ToString(), @"[\n\r]", "");
                 dr["故障位置"] = item["positiontext"].ToString();
                 dr["故障现象"] = item["phenomenatext"].ToString();
-                dr["故障分析"] = item["faultanalysis"].ToString();
+                dr["故障分析"] = Regex.Replace(item["faultanalysis"].ToString(), @"[\n\r]", ""); 
                 dr["故障时间"] = item["faulttime"].ToString();
                 dr["指派时间"] = (Convert.IsDBNull(item["repairstime"]) ? "" : Convert.ToDateTime(item["repairstime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
                 dr["完成时间"] = (Convert.IsDBNull(item["repairetime"]) ? "" : Convert.ToDateTime(item["repairetime"].ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
@@ -452,7 +453,7 @@ namespace Web.ASHX.DMC
                 dr["模具编号2"] = item["mouldid1"].ToString();
                 dr["新模编号1"] = item["newmouldid"].ToString();
                 dr["新模编号2"] = item["newmouldid1"].ToString();
-                dr["返修原因"] = item["rebackreason"].ToString();
+                dr["返修原因"] = Regex.Replace(item["rebackreason"].ToString(), @"[\n\r]", ""); 
 
                 dr["故障位置1"] = item["positiontext1"].ToString();// item.product_line;//产品类别 
                 dr["故障现象1"] = item["phenomenatext1"].ToString(); //item.test_station;//产品类别 
@@ -1203,7 +1204,7 @@ namespace Web.ASHX.DMC
                                 datediff(minute ,RepairSTime,isnull(RepairETime,GetDate()))-(case when RepairSTime<cast(convert(varchar(10),RepairSTime,121)+ ' 12:30:00' as datetime) and isnull(RepairETime,GetDate())>cast(convert(varchar(10),RepairSTime,121)+ ' 13:30:00' as datetime) then 1 else 0 end)*40 manhoure
                                  from 
                                 t_RepairRecord a left join t_FaultPosition b on a.PhenomenaId=b.PositionId
-                                left join t_User c on a.RepairmanId=c.userID where a.DeviceId!='模具' and " + strWhere);
+                                left join t_User c on a.RepairmanId=c.userID where a.DeviceId!='模房' and " + strWhere);
                     sql.Append(@")t group by DeviceId order by 2 desc");
                     break;
                 case "chart3":
@@ -1312,7 +1313,7 @@ namespace Web.ASHX.DMC
             from t_RepairRecord a inner join t_RepairForm b on a.RepairFormNO=b.RepairFormNO
             inner join t_FaultPosition c on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId 
 inner join t_Repairman d on a.RepairmanId=d.RepairmanId and CONVERT(varchar(10),RepairSTime,120) =d.WorkDate
-            where  a.RepairSTime between '{0}' and '{1}' and a.DeviceId!='模具' and a.PositionText !='PM'
+            where  a.RepairSTime between '{0}' and '{1}' and a.DeviceId!='模房' and a.PhenomenaText !='PM'
  
             )
              select   PositionText,dayName,cast(1.0*SUM(DDSJ)/60 as decimal(18,1)) as ddys,cast(1.0*SUM(wxys)/60 as decimal(18,1)) as wxys,cast(1.0*SUM(qcqr)/60 as decimal(18,1)) as qcys,
@@ -1669,11 +1670,11 @@ inner join t_Repairman d on a.RepairmanId=d.RepairmanId and CONVERT(varchar(10),
             from t_RepairRecord a inner join t_RepairForm b on a.RepairFormNO=b.RepairFormNO
             inner join t_FaultPosition c on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId 
 inner join t_Repairman d on a.RepairmanId=d.RepairmanId and CONVERT(varchar(10),RepairSTime,120) =d.WorkDate
-            where  a.RepairSTime between '{0}' and '{1}' and a.DeviceId!='模具' and a.PositionText !='PM'
+            where  a.RepairSTime between '{0}' and '{1}' and a.DeviceId!='模房' and a.PhenomenaText !='PM'
  
             )
              select   PositionText,dayName,cast(1.0*SUM(DDSJ)/60 as decimal(18,1)) as ddys,cast(1.0*SUM(wxys)/60 as decimal(18,1)) as wxys,cast(1.0*SUM(qcqr)/60 as decimal(18,1)) as qcys,
-             cast(1.0*SUM(gzsj)/60 as decimal(18,1)) as gzsj,count(distinct RepairFormNO) rownum,classtype  from t
+             cast(1.0*SUM(gzsj)/60 as decimal(18,1)) as gzsj,count(distinct RepairFormNO) rown,classtype  from t
              GROUP BY  PositionText,dayName,classtype
              ORDER BY  dayName desc ", startDate, endDate);
 
