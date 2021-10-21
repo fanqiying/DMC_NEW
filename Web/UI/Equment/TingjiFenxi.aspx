@@ -19,8 +19,10 @@
     <script type="text/javascript">
         var lastTimeId = "";
         $(document).ready(function () {
-            $("#qyearmonth").datebox("setValue", "<%= DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd")%>");
-            $("#eqyearmonth").datebox("setValue", "<%= DateTime.Now.ToString("yyyy-MM-dd")%>");
+            
+            $('#qyearmonth').datetimebox("setValue", "<%= DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd")+" 00:00:01"%>");
+            $("#eqyearmonth").datetimebox("setValue", datetimeFormatter(new Date()));
+            
             QueryData();
             if (!!lastTimeId) {
                 window.clearInterval(lastTimeId);
@@ -141,8 +143,8 @@
             if ($("#qyearmonth").datebox("getValue") != "" && $("#eqyearmonth").datebox("getValue") != "") {
                 $.post("../../ASHX/DMC/RepairRecord.ashx?M=TingjiFenxiNew",
                 {
-                    startDate: $("#qyearmonth").datebox("getValue")+' 00:00:01',
-                    endDate: $("#eqyearmonth").datebox("getValue")+' 23:59:59'
+                    startDate: $("#qyearmonth").datebox("getValue"),
+                    endDate: $("#eqyearmonth").datebox("getValue") 
                 },
                 function (data) {
                     setGridColumns(data.Columns);
@@ -258,12 +260,11 @@
         }
 
         /**
-        * 时间格式化
-        * @param value
-        * @returns {string}
-       */
-        var isDay = true;
-        function dateFormatter(value) {
+         * 时间格式化
+         * @param value
+         * @returns {string}
+        */
+        function datetimeFormatter(value) {
             var date;
             if (value == "") {
                 date = new Date();
@@ -274,35 +275,40 @@
             var year = date.getFullYear().toString();
             var month = date.getMonth() + 1;
             var day = date.getDate();
+            var hour = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
             month = month < 10 ? '0' + month : month;
             day = day < 10 ? '0' + day : day;
-            if (isDay)
-                return year + "-" + month + "-" + day;
-            else
-                return year + "-" + month;
+            hour = hour < 10 ? '0' + hour : hour;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            return year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds;
         }
-
-        function dateParser(s) {
+        /**
+         * 解析时间
+         */
+        function datetimeParser(s) {
             if (s != "") {
                 var dt = s.split(" ");
-                var arr = dt[0].split("-");
-                var y = parseInt(arr[0], 10);
-                var m = parseInt(arr[1], 10) - 1;
-                var d = null;
-                if (isDay) {
-                    d = parseInt(arr[2], 10);
-                } else {
-                    d = 1;
-                }
-                return new Date(y, m, d);
+                var d = dt[0].split("-");
+                var t = dt[1].split(":");
+                var y = parseInt(d[0], 10);
+                var m = parseInt(d[1], 10) - 1;
+                var d = parseInt(d[2], 10);
+                var hh = parseInt(t[0], 10);
+                var mm = parseInt(t[1], 10);
+                var ss = parseInt(t[2], 10);
+                return new Date(y, m, d, hh, mm, ss);
             } else {
                 return new Date();
             }
         }
         function Export() {
 
-           var  startDate=$("#qyearmonth").datebox("getValue") + ' 00:00:01';
-           var  endDate=$("#eqyearmonth").datebox("getValue") + ' 23:59:59';
+           var  startDate=$("#qyearmonth").datebox("getValue") ;
+           var  endDate=$("#eqyearmonth").datebox("getValue") ;
+            
             if ($("#qyearmonth").datebox("getValue") != "" && $("#eqyearmonth").datebox("getValue") != "") {
 
                 var url = "../../ASHX/DMC/RepairRecord.ashx?M=TingjiFenxiNewdownload&fileName=停机分析.csv";
@@ -312,6 +318,7 @@
                 if (endDate) {
                     url = url + "&endDate=" + endDate;
                 }
+                 
                 if ($("#downloadForm").length <= 0) {
                     $("body").append("<form id='downloadForm' method='post' target='iframe'></form>");
                     $("body").append("<iframe id='ifm' name='iframe' style='display:none;'></iframe>");
@@ -333,20 +340,21 @@
 </head>
 <body style="width: 100%; height: 100%;">
     <div style="padding: 1px 1px 1px 1px; height: calc(100% - 2px); width: 100%; background-color: white;" data-options="fit:true">
-        <div class="easyui-panel" style="width: 100%; height: 80%; padding: 2px 2px 2px 2px; background-color: #F6F6F6;" id="divd1">
+        <div class="easyui-panel" style="width: 100%; height: 86.5%; padding: 2px 2px 2px 2px; background-color: #F6F6F6;" id="divd1">
             <table id="tbEqManage" data-options="fit:false" toolbar="#tb" style="width:98%;">
             </table>
         </div>
-        <div class="easyui-panel" style="width: 100%; height: 20%; padding: 2px 2px 2px 2px; background-color: #F6F6F6;" id="divd4">
+        <div class="easyui-panel" style="width: 100%; height: 13.5%; padding: 2px 2px 2px 2px; background-color: #F6F6F6;" id="divd4">
             <div style="width: 100%; height: 100%; float: left;" class="chart-chart" id="chart1"></div>
         </div>
     </div>
 
    <div id="tb">
         <label style="padding-left: 20px;" for="qyearmonth">报修时间:</label>
-        <input data-options="formatter: dateFormatter, parser: dateParser" class="easyui-datebox" name="yearmonth" id="qyearmonth" style="width: 120px;" />
+        <input data-options="formatter: datetimeFormatter, parser: datetimeParser" class="easyui-datetimebox" name="yearmonth" id="qyearmonth" style="width: 180px;" />
         <label for="eyearmonth">~</label>
-        <input data-options="formatter: dateFormatter, parser: dateParser" class="easyui-datebox" name="eyearmonth" id="eqyearmonth" style="width: 120px;" />
+        <input data-options="formatter: datetimeFormatter, parser: datetimeParser" class="easyui-datetimebox" name="eyearmonth" id="eqyearmonth" style="width: 180px;" />
+        
         <a class="easyui-linkbutton" style="margin-left:20px;" data-options="iconCls:'icon-reload',plain:true" onclick="QueryData()">手动刷新</ a>
         <a class="easyui-linkbutton" style="margin-left:20px;" data-options="iconCls:'icon-excel',plain:true"   onclick='Export()'>导出</ a> 
     </div>

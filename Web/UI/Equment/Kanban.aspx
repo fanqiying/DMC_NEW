@@ -44,14 +44,14 @@
                 //可動列
                 columns: [[
                     {
-                        field: 'repairformno', title: '维修单号', width: 70, align: 'left', sortable: true,
+                        field: 'repairformno', title: '维修单号', width: 65, align: 'left', sortable: true,
                         formatter: function (value, row, index) {
                             return "<span style='font-weight:bold;font-size:18px;'>" + value.substring(3, value.length) + "</span>";
                         }
 
                     },
                     {
-                        field: 'repairstatus', title: '状态', width: 100, align: 'left', sortable: true,
+                        field: 'repairstatus', title: '状态', width: 70, align: 'left', sortable: true,
 
                         formatter: function (value, row, index) {
                             var text = "N/A";
@@ -114,53 +114,53 @@
                         }
                     },
                     {
-                        field: 'deviceid', title: '设备信息', width: 40, align: 'left', sortable: true,
+                        field: 'deviceid', title: '设备信息', width: 50, align: 'left', sortable: true,
                         formatter: function (value, row, index) {
                             return "<span style='font-weight:bold;font-size:18px;'>" + value + "</span>";
                         }
                     },
                     //{ field: 'applyuserid', title: '申请生产员', width: 50, align: 'left', sortable: true },
                     {
-                        field: 'bfaulttime', title: '故障时间', width: 100, align: 'left', sortable: true,
+                        field: 'bfaulttime', title: '故障时间', width: 90, align: 'left', sortable: true,
                         formatter: function (value, row, index) {
                             return "<span style='font-weight:bold;font-size:18px;'>" + value + "</span>";
                         }
                     },
                     {
-                        field: 'repairetime', title: '完成时间', width: 100, align: 'left', sortable: "true",
+                        field: 'repairetime', title: '完成时间', width: 90, align: 'left', sortable: "true",
                         formatter: function (value, row, index) {
                             return "<span style='font-weight:bold;font-size:18px;'>" + value + "</span>";
                         }
                     },
                     {
-                        field: 'positiontext', title: '故障位置', width: 40, align: 'left', sortable: true,
+                        field: 'positiontext', title: '故障位置', width: 50, align: 'left', sortable: true,
                         formatter: function (value, row, index) {
                             return "<span style='font-weight:bold;font-size:18px;'>" + value + "</span>";
                         }
                     },
                   //  { field: 'phenomenatext', title: '故障现象', width: 70, align: 'left', sortable: true },
                     {
-                        field: 'repairmanname', title: '维修员', width: 40, align: 'left', sortable: true,
+                        field: 'repairmanname', title: '维修员', width: 55, align: 'left', sortable: true,
                         formatter: function (value, row, index) {
                             return "<span style='font-weight:bold;font-size:18px;'>" + value + "</span>";
                         }
                     },
                     {
-                        field: 'mouldid', title: '模具编号1', width: 70, align: 'left',
+                        field: 'mouldid', title: '模具编号1', width: 60, align: 'left',
                         formatter: function (value, row, index) {
-                            return "<span style='font-weight:bold;font-size:18px;'>" + value + "</span>";
+                            return "<span style='font-weight:bold;font-size:12px;'>" + value + "</span>";
                         }
                     },
                            {
-                               field: 'mouldid1', title: '模具编号2', width: 70, align: 'left',
+                               field: 'mouldid1', title: '模具编号2', width: 55, align: 'left',
                                formatter: function (value, row, index) {
-                                   return "<span style='font-weight:bold;font-size:18px;'>" + value + "</span>";
+                                   return "<span style='font-weight:bold;font-size:12px;'>" + value + "</span>";
                                }
                            },
                            {
-                               field: 'newmouldid', title: '新模编号1', width: 70, align: 'left',
+                               field: 'newmouldid', title: '新模编号1', width: 60, align: 'left',
                                formatter: function (value, row, index) {
-                                   return "<span style='font-weight:bold;font-size:18px;'>" + value + "</span>";
+                                   return "<span style='font-weight:bold;font-size:12px;'>" + value + "</span>";
                                },
                                styler: function (value, row, index) {
                                    if (row.newmouldid != '') {
@@ -170,9 +170,9 @@
                                }
                            },
                            {
-                               field: 'newmouldid1', title: '新模编号2', width: 70, align: 'left',
+                               field: 'newmouldid1', title: '新模编号2', width: 55, align: 'left',
                                formatter: function (value, row, index) {
-                                   return "<span style='font-weight:bold;font-size:18px;'>" + value + "</span>";
+                                   return "<span style='font-weight:bold;font-size:12px;'>" + value + "</span>";
                                },
                                styler: function (value, row, index) {
                                    if (row.newmouldid1 != '') {
@@ -184,13 +184,13 @@
                   //  { field: 'positiontext1', title: '故障位置1', width: 70, align: 'left' },
                    // { field: 'phenomenatext1', title: '故障现象1', width: 70, align: 'left' },
                     {
-                        field: 'manhoure', title: '停机时长<br />(分钟)', width: 40, align: 'left',
+                        field: 'manhoure', title: '停机时长<br />(分钟)', width: 50, align: 'left',
                         formatter: function (value, row, index) {
                             return "<span style='font-weight:bold;font-size:18px;'>" + value + "</span>";
                         }
                     },
                     {
-                        field: 'gradetime', title: '标准工时<br />(分钟)', width: 40, align: 'left',
+                        field: 'gradetime', title: '标准工时<br />(分钟)', width: 45, align: 'left',
                         formatter: function (value, row, index) {
                             return "<span style='font-weight:bold;font-size:18px;'>" + value + "</span>";
                         }
@@ -298,19 +298,19 @@
     <div id="divOperation" style="width: 100%; height: 50px; padding: 2px 2px 2px 2px; margin-left: 5px; margin-top: 2px; float: left;">
         <div style="width: 100%; height: 100%; padding: 2px 2px 2px 2px; float: left;">
             <div id="dWaitQty" style="width: calc(20% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
-                <a style="margin-left: 5px; color: white; font-size: 18px; font-weight: bold; display: inline-block; text-align: center;" data-options="toggle:true,group:'g1',selected:true">待指派：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="WaitQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
+                <a style="margin-left: 5px; color: white; font-size: 24px; font-weight: bold; display: inline-block; text-align: center;" data-options="toggle:true,group:'g1',selected:true">待指派：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="WaitQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
             </div>
             <div id="dWorkQty" style="width: calc(20% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
-                <a style="margin-left: 5px; color: white; font-size: 18px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">维修中：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="WorkQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
+                <a style="margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">维修中：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="WorkQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
             </div>
             <div id="dCHAOSHIQty" style="width: calc(20% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
-                <a style="margin-left: 5px; color: white; font-size: 18px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">维修超时：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="CHAOSHIQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
+                <a style="margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">维修超时：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="CHAOSHIQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
             </div>
             <div id="dQCQty" style="width: calc(20% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
-                <a style="margin-left: 5px; color: white; font-size: 18px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">待QC确认：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="QCQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
+                <a style="margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">待QC确认：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="QCQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
             </div>
             <div id="dSCQty" style="width: calc(20% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
-                <a style="margin-left: 5px; color: white; font-size: 18px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">待生产确认：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="SCQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
+                <a style="margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">待生产确认：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="SCQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
             </div>
         </div>
         <%-- <div id="user" style="width: calc(100% - 400px); height: 100%; float: right; padding: 2px 2px 2px 2px;">

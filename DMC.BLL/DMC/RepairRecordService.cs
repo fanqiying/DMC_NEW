@@ -62,7 +62,8 @@ namespace DMC.BLL
   from t_RepairForm a with(nolock) left join 
        t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
        t_FaultPosition c  with(nolock) on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId
- where (isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20)");
+ where ((isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20))
+  and a.DeviceId!='模房'");
 
             return _dal.ExecSQLTODT(sbSql);
         }
