@@ -54,7 +54,7 @@
                 //可動列
                 columns: [Columns],
                 rowStyler: function (index, row) {
-                    var modNum = index % 4;
+                    var modNum = index % 6;
                     //switch (modNum)
                     //{
                     //    case 0:
@@ -84,6 +84,12 @@
                         case 3:
                             return 'background-color:#fffac09e;color:black;font-weight:bolder;font-size:14px;';
                             break;
+                        case 4:
+                            return 'background-color:#fffac09e;color:HotPink;font-weight:bolder;font-size:14px;';
+                            break;
+                        case 5:
+                            return 'background-color:#fffac09e;color:DeepSkyBlue;font-weight:bolder;font-size:14px;';
+                            break;
                     }
                 },
                 onLoadSuccess: function (data) {
@@ -91,24 +97,24 @@
                     loadChart1("chart1");
                     var merges = [{
                         index: 0,
-                        rowspan: 4
+                        rowspan: 6
                     },
                     {
-                        index: 4,
-                        rowspan: 4
+                        index: 6,
+                        rowspan: 6
                     }
                     ,
                     {
-                        index: 8,
-                        rowspan: 4
+                        index: 12,
+                        rowspan: 6
                     },
 
                     {
-                        index: 12,
-                        rowspan: 4
+                        index: 18,
+                        rowspan: 6
                     },
                     {
-                        index: 16,
+                        index: 24,
                         rowspan: 4
                     }];
                     for (var i = 0; i < merges.length; i++)
@@ -119,14 +125,14 @@
                         });
 
                     var merges = [{
-                        index: 20,
+                        index: 28,
                         rowspan: 2
                     },
                     {
-                        index: 21,
+                        index: 29,
                         rowspan: 2
                     }, {
-                        index: 22,
+                        index: 30,
                         rowspan: 2
                     }];
                     for (var i = 0; i < merges.length; i++)

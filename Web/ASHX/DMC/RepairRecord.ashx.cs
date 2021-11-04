@@ -1115,7 +1115,7 @@ namespace Web.ASHX.DMC
             int total = 0;
             int pageCount = 0;
             StringBuilder strWhere = new StringBuilder();
-            strWhere.Append(" ((isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20)) and a.DeviceId!='模房'");
+            strWhere.Append(" ((isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20)) and a.DeviceId!='模房' and a.PositionText !='其它'");
             //获取待排单的数量
             DataTable dt = rrs.KanBan(pagesize, pageindex, out pageCount, out total, strWhere.ToString());
             StringHelper.JsonGZipResponse(context, JsonHelper.DataTableToJSON(dt, total, true));
@@ -1318,22 +1318,30 @@ inner join t_Repairman d on a.RepairmanId=d.RepairmanId and CONVERT(varchar(10),
             where  a.RepairSTime between '{0}' and '{1}' and a.DeviceId!='模房' and a.PhenomenaText !='PM' {2}
  
             )
-             select   PositionText,dayName,cast(1.0*SUM(DDSJ)/60 as decimal(18,1)) as ddys,cast(1.0*SUM(wxys)/60 as decimal(18,1)) as wxys,cast(1.0*SUM(qcqr)/60 as decimal(18,1)) as qcys,
+              select   PositionText,dayName,cast(1.0*SUM(DDSJ)/60 as decimal(18,1)) as ddys,cast(1.0*SUM(wxys)/60 as decimal(18,1)) as wxys,cast(1.0*SUM(qcqr)/60 as decimal(18,1)) as qcys,
              cast(1.0*SUM(gzsj)/60 as decimal(18,1)) as gzsj,
-			 (select  ClassType+'：'+ convert(varchar(50),count(*))  from(
-select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and convert(varchar(10),e.ConfirmTime,108) <'07:30:00'  then '早班' else '晚班' end) ClassType,e.RepairFormNO 
+			 (select  ' '+  ClassType+':'+ convert(varchar(50),count( distinct left(RepairFormNO,13)))  from(
+select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and convert(varchar(10),e.ConfirmTime,108) >'07:30:00'  
+then 'M' else 'GY' end) ClassType ,e.RepairFormNO
  from t_RepairRecord e 
 			  inner join t_RepairForm F on e.RepairFormNO=F.RepairFormNO
 			  
-			 where     E.PositionText='转模' and e.ConfirmTime > T.dayName+' 07:30:00' and e.ConfirmTime <DATEADD(DAY,1, T.dayName)+' 07:30:00'
+			 where     E.PositionText=t.PositionText  and e.ConfirmTime > T.dayName+' 07:30:00' and e.ConfirmTime <DATEADD(DAY,1, T.dayName)+' 07:30:00'
 			  )t1
-			  group by ClassType for xml path('')) rown ,classtype  from t
+			  group by ClassType order by 1 desc for xml path('')) rown ,
+			  (select   count( distinct left(g.RepairFormNO,13)) 
+ from t_RepairRecord g 
+			  inner join t_RepairForm h on g.RepairFormNO=h.RepairFormNO
+			  
+			 where     g.PositionText=t.PositionText  and g.ConfirmTime > T.dayName+' 07:30:00' and g.ConfirmTime <DATEADD(DAY,1, T.dayName)+' 07:30:00'
+			  )t2   	  
+			  ,classtype from t
              GROUP BY  PositionText,dayName,classtype
              ORDER BY  dayName desc", startDate, endDate, strWhere);
 
             List<object> head = new List<object>();
-            head.Add(new { field = "type", title = "故障位置", width = 100, align = "center" });
-            head.Add(new { field = "ys", title = "类别", width = 100, align = "center" });
+            head.Add(new { field = "type", title = "故障位置", width = 120, align = "center" });
+            head.Add(new { field = "ys", title = "类别", width = 120, align = "center" });
             DateTime dtStart = Convert.ToDateTime(startDate);
             DateTime dtEnd = Convert.ToDateTime(endDate);
             DateTime dtCur;
@@ -1343,7 +1351,7 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
                 dtCur = dtEnd.AddDays(1 - i);
                 if (dtCur.Date >= dtStart.Date)
                 {
-                    head.Add(new { field = "d" + i.ToString(), title = dtCur.ToString("MM-dd"), width = 90, align = "center" });
+                    head.Add(new { field = "d" + i.ToString(), title = dtCur.ToString("MM-dd"), width = 60, align = "center" });
                     listdayName1.Add(dtCur.ToString("yyyy-MM-dd"));
                 }
                 else
@@ -1367,7 +1375,8 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
             double gzsjsum = 0.0;
             double qcyssum = 0.0;
             double sum = 0.0;
-             
+            string nCount = "";
+            float navg = 1;
             List<object> aSum = new List<Object>();
 
             for (int i = 0; i < aPositionText.Length; i++)
@@ -1381,11 +1390,11 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
                     {  
                          
                         
-                        aDay.Add(new { ddys = drs.Sum(x => x.Field<decimal>("ddys")), wxys = drs.Sum(x => x.Field<decimal>("wxys")), qcys = drs.Sum(x => x.Field<decimal>("qcys")), gzsj = drs.Sum(x => x.Field<decimal>("gzsj")), rownum = drs[0]["rown"] });
+                        aDay.Add(new { ddys = drs.Sum(x => x.Field<decimal>("ddys")), wxys = drs.Sum(x => x.Field<decimal>("wxys")), qcys = drs.Sum(x => x.Field<decimal>("qcys")), gzsj = drs.Sum(x => x.Field<decimal>("gzsj")), rownum = drs[0]["rown"],navg=drs[0]["t2"] });
                     }
                     else
                     {
-                        aDay.Add(new { ddys = "0", wxys = "0", qcys = "0", gzsj = "0", rownum = "0" });
+                        aDay.Add(new { ddys = "0", wxys = "0", qcys = "0", gzsj = "0", rownum = "0", navg="0" });
                     }
                     
                 }
@@ -1403,18 +1412,72 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
                     dcQC.Add("ys", "QC用时(h)");
                     Dictionary<string, string> dcNumber = new Dictionary<string, string>();
                     dcNumber.Add("type", aPositionText[i]);
-                    dcNumber.Add("ys", "次数");
+                    dcNumber.Add("ys", "早班次数");
+                    Dictionary<string, string> dcNumber1 = new Dictionary<string, string>();
+                    dcNumber1.Add("type", aPositionText[i]);
+                    dcNumber1.Add("ys", "晚班次数");
+
+
+                    Dictionary<string, string> dcAVG = new Dictionary<string, string>();
+                    dcAVG.Add("type", aPositionText[i]);
+                    dcAVG.Add("ys", "平均每次时间");
+
                     for (int di = 1; di <= listdayName1.Count; di++)
                     {
                         dcWait.Add("d" + di.ToString(), (((dynamic)aDay[di - 1]).ddys).ToString());
                         dcWRepair.Add("d" + di.ToString(), ((dynamic)aDay[di - 1]).wxys.ToString());
                         dcQC.Add("d" + di.ToString(), ((dynamic)aDay[di - 1]).qcys.ToString());
-                        dcNumber.Add("d" + di.ToString(), ((dynamic)aDay[di - 1]).rownum.ToString());
+                       // dcNumber.Add("d" + di.ToString(), ((dynamic)aDay[di - 1]).rownum.ToString());
+                        nCount = ((dynamic)aDay[di - 1]).rownum.ToString();
+                        var aCount = nCount.Split(' ');
+                        string sType = "";
+                        string dayCount = "0";
+                        foreach (string dayType in aCount)
+                        {
+                            if (dayType != " ")
+                            {
+                                var aDayType = dayType.Split(':');
+                                if (aDayType.Length == 2)
+                                {
+                                    sType = aDayType[0];
+                                    dayCount = aDayType[1];
+                                }
+                                if (sType == "M")
+                                {
+                                    dcNumber.Add("d" + di.ToString(), dayCount.ToString());
+                                }
+                                if (sType == "GY")
+                                {
+                                    dcNumber1.Add("d" + di.ToString(), dayCount.ToString());
+                                }
+                            }
+                        }
+                        if (nCount.IndexOf("M") <= 0)
+                        {
+                            dcNumber.Add("d" + di.ToString(), "0");
+                        }
+                        if (nCount.IndexOf("GY") <= 0)
+                        {
+                            dcNumber1.Add("d" + di.ToString(), "0");
+                        }
+
+                        navg = Convert.ToSingle(((dynamic)aDay[di - 1]).navg);
+                        if (navg == 0)
+                        {
+                            dcAVG.Add("d" + di.ToString(), "0");
+                        }
+                        else
+                        {
+                            dcAVG.Add("d" + di.ToString(), Convert.ToString(Math.Round((((Convert.ToSingle(((dynamic)aDay[di - 1]).ddys)) + Convert.ToSingle(((dynamic)aDay[di - 1]).wxys) + Convert.ToSingle(((dynamic)aDay[di - 1]).qcys)) / Convert.ToSingle(((dynamic)aDay[di - 1]).navg)),2)));
+
+                        }
                     }
                     data.Add(dcWait);
                     data.Add(dcWRepair);
                     data.Add(dcQC);
                     data.Add(dcNumber);
+                    data.Add(dcNumber1);
+                    data.Add(dcAVG);
                 }
                 else
                 {
@@ -1435,7 +1498,7 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
             {
                 ddyssum = dt.Select("dayName ='" + dayName + "' and classtype=1 ").Sum(row => Convert.IsDBNull(row["ddys"]) ? 0 : Convert.ToDouble(row["ddys"]));
                 wxyssum = dt.Select("dayName ='" + dayName + "' and classtype=1 ").Sum(row => Convert.IsDBNull(row["wxys"]) ? 0 : Convert.ToDouble(row["wxys"]));
-                gzsjsum = dt.Select("dayName ='" + dayName + "' and classtype=1 ").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
+                gzsjsum = 0;// dt.Select("dayName ='" + dayName + "' and classtype=1 ").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
                 qcyssum = dt.Select("dayName ='" + dayName + "' and classtype=1 ").Sum(row => Convert.IsDBNull(row["qcys"]) ? 0 : Convert.ToDouble(row["qcys"]));
                 sum = ddyssum + wxyssum + qcyssum + gzsjsum;
                 aSum.Add(new { sum = sum.ToString("0.0") });
@@ -1456,7 +1519,7 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
             {
                 ddyssum = dt.Select("dayName ='" + dayName + "'  and classtype=0 ").Sum(row => Convert.IsDBNull(row["ddys"]) ? 0 : Convert.ToDouble(row["ddys"]));
                 wxyssum = dt.Select("dayName ='" + dayName + "'  and classtype=0 ").Sum(row => Convert.IsDBNull(row["wxys"]) ? 0 : Convert.ToDouble(row["wxys"]));
-                gzsjsum = dt.Select("dayName ='" + dayName + "'  and classtype=0 ").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
+                gzsjsum = 0;// dt.Select("dayName ='" + dayName + "'  and classtype=0 ").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
                 qcyssum = dt.Select("dayName ='" + dayName + "'  and classtype=0 ").Sum(row => Convert.IsDBNull(row["qcys"]) ? 0 : Convert.ToDouble(row["qcys"]));
                 sum = ddyssum + wxyssum + qcyssum + gzsjsum;
                 aSum.Add(new { sum = sum.ToString("0.0") });
@@ -1476,7 +1539,7 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
             {
                 ddyssum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["ddys"]) ? 0 : Convert.ToDouble(row["ddys"]));
                 wxyssum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["wxys"]) ? 0 : Convert.ToDouble(row["wxys"]));
-                gzsjsum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
+                gzsjsum = 0;// dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
                 qcyssum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["qcys"]) ? 0 : Convert.ToDouble(row["qcys"]));
                 sum = ddyssum + wxyssum + qcyssum + gzsjsum;
                 aSum.Add(new { sum = sum.ToString("0.0") });
@@ -1692,14 +1755,22 @@ inner join t_Repairman d on a.RepairmanId=d.RepairmanId and CONVERT(varchar(10),
             )
                select   PositionText,dayName,cast(1.0*SUM(DDSJ)/60 as decimal(18,1)) as ddys,cast(1.0*SUM(wxys)/60 as decimal(18,1)) as wxys,cast(1.0*SUM(qcqr)/60 as decimal(18,1)) as qcys,
              cast(1.0*SUM(gzsj)/60 as decimal(18,1)) as gzsj,
-			 (select  ClassType+'：'+ convert(varchar(50),count(*))  from(
-select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and convert(varchar(10),e.ConfirmTime,108) <'07:30:00'  then '早班' else '晚班' end) ClassType,e.RepairFormNO 
+			 (select  ' '+  ClassType+':'+ convert(varchar(50),count( distinct left(RepairFormNO,13)))  from(
+select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and convert(varchar(10),e.ConfirmTime,108) >'07:30:00'  
+then 'M' else 'GY' end) ClassType ,e.RepairFormNO
  from t_RepairRecord e 
 			  inner join t_RepairForm F on e.RepairFormNO=F.RepairFormNO
 			  
-			 where     E.PositionText='转模' and e.ConfirmTime > T.dayName+' 07:30:00' and e.ConfirmTime <DATEADD(DAY,1, T.dayName)+' 07:30:00'
+			 where     E.PositionText=t.PositionText  and e.ConfirmTime > T.dayName+' 07:30:00' and e.ConfirmTime <DATEADD(DAY,1, T.dayName)+' 07:30:00'
 			  )t1
-			  group by ClassType for xml path('')) rown ,classtype  from t
+			  group by ClassType order by 1 desc for xml path('')) rown ,
+			  (select   count( distinct left(g.RepairFormNO,13)) 
+ from t_RepairRecord g 
+			  inner join t_RepairForm h on g.RepairFormNO=h.RepairFormNO
+			  
+			 where     g.PositionText=t.PositionText  and g.ConfirmTime > T.dayName+' 07:30:00' and g.ConfirmTime <DATEADD(DAY,1, T.dayName)+' 07:30:00'
+			  )t2   	  
+			  ,classtype from t
              GROUP BY  PositionText,dayName,classtype
              ORDER BY  dayName desc ", startDate, endDate, strWhere);
 
@@ -1738,6 +1809,8 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
             double gzsjsum = 0.0;
             double qcyssum = 0.0;
             double sum = 0.0;
+            float navg = 1;
+            string nCount = "";
             List<object> aSum = new List<Object>();
             DataTable dtSns = new DataTable();
             dtSns.Columns.Add("故障位置");
@@ -1754,8 +1827,11 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
                 ArrayList dcWait = new ArrayList();
                 ArrayList dcWRepair = new ArrayList();
                 ArrayList dcQC = new ArrayList();
+                ArrayList dcNumber1 = new ArrayList();
                 ArrayList dcNumber = new ArrayList();
                 ArrayList dcOther = new ArrayList();
+                ArrayList dcAVG = new ArrayList();
+
                 aDay.Clear();
 
                 foreach (string dayName in listdayName1)
@@ -1763,11 +1839,13 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
                     DataRow[] drs = dt.Select("PositionText='" + aPositionText[i] + "'" + " and dayName ='" + dayName + "'");
                     if (drs.Length > 0)
                     {
-                        aDay.Add(new { ddys = drs.Sum(x => x.Field<decimal>("ddys")), wxys = drs.Sum(x => x.Field<decimal>("wxys")), qcys = drs.Sum(x => x.Field<decimal>("qcys")), gzsj = drs.Sum(x => x.Field<decimal>("gzsj")), rownum = drs[0]["rown"] });
+
+
+                        aDay.Add(new { ddys = drs.Sum(x => x.Field<decimal>("ddys")), wxys = drs.Sum(x => x.Field<decimal>("wxys")), qcys = drs.Sum(x => x.Field<decimal>("qcys")), gzsj = drs.Sum(x => x.Field<decimal>("gzsj")), rownum = drs[0]["rown"], navg = drs[0]["t2"] });
                     }
                     else
                     {
-                        aDay.Add(new { ddys = "0", wxys = "0", qcys = "0", gzsj = "0", rownum = "0" });
+                        aDay.Add(new { ddys = "0", wxys = "0", qcys = "0", gzsj = "0", rownum = "0", navg = "0" });
                     }
                 }
 
@@ -1782,13 +1860,60 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
                     dcQC.Add(aPositionText[i]);
                     dcQC.Add("QC用时(h)");
                     dcNumber.Add(aPositionText[i]);
-                    dcNumber.Add("次数");
+                    dcNumber.Add("早班次数");
+
+                    dcNumber1.Add(aPositionText[i]);
+                    dcNumber1.Add("晚班次数");
+
+                    dcAVG.Add(aPositionText[i]);
+                    dcAVG.Add("平均每次时间");
                     for (int di = 1; di <= listdayName1.Count; di++)
                     {
                         dcWait.Add((((dynamic)aDay[di - 1]).ddys).ToString());
                         dcWRepair.Add(((dynamic)aDay[di - 1]).wxys.ToString());
                         dcQC.Add(((dynamic)aDay[di - 1]).qcys.ToString());
-                        dcNumber.Add(((dynamic)aDay[di - 1]).rownum.ToString());
+                        
+                        nCount = ((dynamic)aDay[di - 1]).rownum.ToString();
+                        var aCount = nCount.Split(' ');
+                        string sType = "";
+                        string dayCount = "0";
+                        foreach(string dayType in aCount)
+                        {
+                            if(dayType != " ")
+                            {
+                                var aDayType = dayType.Split(':');
+                                if(aDayType.Length == 2)
+                                {
+                                    sType = aDayType[0];
+                                    dayCount = aDayType[1];
+                                }
+                                if(sType == "M")
+                                {
+                                    dcNumber.Add(dayCount.ToString());
+                                }
+                                if (sType == "GY")
+                                {
+                                    dcNumber1.Add(dayCount.ToString());
+                                }
+                            }
+                        }
+                        if(nCount.IndexOf("M")<=0)
+                        {
+                            dcNumber.Add("0");
+                        }
+                        if (nCount.IndexOf("GY") <= 0)
+                        {
+                            dcNumber1.Add("0");
+                        }
+                        navg = Convert.ToSingle(((dynamic)aDay[di - 1]).navg);
+                        if (navg == 0)
+                        {
+                            dcAVG.Add("0");
+                        }
+                        else
+                        {
+                            dcAVG.Add(Convert.ToString(Math.Round((((Convert.ToSingle(((dynamic)aDay[di - 1]).ddys)) + Convert.ToSingle(((dynamic)aDay[di - 1]).wxys) + Convert.ToSingle(((dynamic)aDay[di - 1]).qcys)) / Convert.ToSingle(((dynamic)aDay[di - 1]).navg)), 2)));
+                        }
                     }
 
 
@@ -1800,6 +1925,10 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
                     dtSns.LoadDataRow(arrayQC, true);
                     object[] arrayDC = dcNumber.ToArray();
                     dtSns.LoadDataRow(arrayDC, true);
+                    object[] arrayDC1 = dcNumber1.ToArray();
+                    dtSns.LoadDataRow(arrayDC1, true);
+                    object[] arrayavg = dcAVG.ToArray();
+                    dtSns.LoadDataRow(arrayavg, true);
                 }
                 else
                 {
@@ -1822,7 +1951,7 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
             {
                 ddyssum = dt.Select("dayName ='" + dayName + "'  and classtype=1 ").Sum(row => Convert.IsDBNull(row["ddys"]) ? 0 : Convert.ToDouble(row["ddys"]));
                 wxyssum = dt.Select("dayName ='" + dayName + "'  and classtype=1 ").Sum(row => Convert.IsDBNull(row["wxys"]) ? 0 : Convert.ToDouble(row["wxys"]));
-                gzsjsum = dt.Select("dayName ='" + dayName + "'  and classtype=1 ").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
+                gzsjsum = 0;// dt.Select("dayName ='" + dayName + "'  and classtype=1 ").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
                 qcyssum = dt.Select("dayName ='" + dayName + "'  and classtype=1 ").Sum(row => Convert.IsDBNull(row["qcys"]) ? 0 : Convert.ToDouble(row["qcys"]));
                 sum = ddyssum + wxyssum + qcyssum + gzsjsum;
                 aSum.Add(new { sum = sum.ToString("0.0") });
@@ -1845,7 +1974,7 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
             {
                 ddyssum = dt.Select("dayName ='" + dayName + "'  and classtype=0 ").Sum(row => Convert.IsDBNull(row["ddys"]) ? 0 : Convert.ToDouble(row["ddys"]));
                 wxyssum = dt.Select("dayName ='" + dayName + "'  and classtype=0 ").Sum(row => Convert.IsDBNull(row["wxys"]) ? 0 : Convert.ToDouble(row["wxys"]));
-                gzsjsum = dt.Select("dayName ='" + dayName + "'  and classtype=0 ").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
+                gzsjsum = 0;// dt.Select("dayName ='" + dayName + "'  and classtype=0 ").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
                 qcyssum = dt.Select("dayName ='" + dayName + "'  and classtype=0 ").Sum(row => Convert.IsDBNull(row["qcys"]) ? 0 : Convert.ToDouble(row["qcys"]));
                 sum = ddyssum + wxyssum + qcyssum + gzsjsum;
                 aSum.Add(new { sum = sum.ToString("0.0") });
@@ -1868,7 +1997,7 @@ select  ( case when convert(varchar(10),e.ConfirmTime,108) <'19:30:00' and conve
             {
                 ddyssum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["ddys"]) ? 0 : Convert.ToDouble(row["ddys"]));
                 wxyssum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["wxys"]) ? 0 : Convert.ToDouble(row["wxys"]));
-                gzsjsum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
+                gzsjsum = 0;// dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["gzsj"]) ? 0 : Convert.ToDouble(row["gzsj"]));
                 qcyssum = dt.Select("dayName ='" + dayName + "'").Sum(row => Convert.IsDBNull(row["qcys"]) ? 0 : Convert.ToDouble(row["qcys"]));
                 sum = ddyssum + wxyssum + qcyssum + gzsjsum;
                 aSum.Add(new { sum = sum.ToString("0.0") });

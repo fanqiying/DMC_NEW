@@ -291,47 +291,41 @@
     </style>
 </head>
 <body style="width: 100%; height: 100%;">
-    <div id="repair" style="padding: 2px 2px 2px 2px; margin-left: 5px; margin-right: 0px; height: calc(100% - 50px); width: calc(100% - 10px); float: left;">
+    <div id="repair" style="padding: 2px 2px 2px 2px; margin-left: 5px; margin-right: 0px; height: calc(100% - 120px); width: calc(100% - 10px); float: left;">
         <table id="tbEqManage" data-options="fit:true">
         </table>
     </div>
-    <div id="divOperation" style="width: 100%; height: 50px; padding: 2px 2px 2px 2px; margin-left: 5px; margin-top: 2px; float: left;">
-        <div style="width: 100%; height: 100%; padding: 2px 2px 2px 2px; float: left;">
-            <div id="dWaitQty" style="width: calc(20% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
-                <a style="margin-left: 5px; color: white; font-size: 24px; font-weight: bold; display: inline-block; text-align: center;" data-options="toggle:true,group:'g1',selected:true">待指派：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="WaitQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
+    <div id="divOperation" style="width: 100%; height: 100px; padding: 2px 2px 2px 2px; margin-left: 5px; margin-top: 2px; float: left;">
+        <div style="width: 100%; height: calc(50% - 2px); padding: 2px 2px 2px 2px; float: left;">
+            <div id="dWaitQty" style="width: calc(25% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
+                <a style="padding-top:2px;margin-left: 5px; color: white; font-size: 24px; font-weight: bold; display: inline-block; text-align: center;" data-options="toggle:true,group:'g1',selected:true">待指派：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="WaitQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
             </div>
-            <div id="dWorkQty" style="width: calc(20% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
-                <a style="margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">维修中：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="WorkQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
+            <div id="dWorkQty" style="width: calc(25% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
+                <a style="padding-top:2px;margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">维修中：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="WorkQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
             </div>
-            <div id="dCHAOSHIQty" style="width: calc(20% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
-                <a style="margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">维修超时：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="CHAOSHIQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
+            <div id="dCHAOSHIQty" style="width: calc(25% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
+                <a style="padding-top:2px;margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">维修超时：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="CHAOSHIQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
             </div>
-            <div id="dQCQty" style="width: calc(20% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
-                <a style="margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">待QC确认：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="QCQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
+            <div id="dQCQty" style="width: calc(25% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
+                <a style="padding-top:2px;margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">待QC确认：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="QCQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
             </div>
-            <div id="dSCQty" style="width: calc(20% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
-                <a style="margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">待生产确认：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="SCQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
-            </div>
+            
         </div>
-        <%-- <div id="user" style="width: calc(100% - 400px); height: 100%; float: right; padding: 2px 2px 2px 2px;">
-            <% int i = 0;
-               foreach (System.Data.DataRow dr in RepairmanList.Rows)
-               { %>
-            <div style="float: left; height: 120px; width: 100px; margin-left: <%= (i==0?0:2) %>px; margin-top: 2px; background-color: #F6F6F6;">
-                <div style="width: 100%; height: 80px;">
-                    <div style="width: 43%; height: 80px; float: left;">
-                        <img style="width: 100%; height: 80px;" src="../../login_files/workman.jpg" alt="头像" />
-                    </div>
-                    <div style="width: 57%; height: 80px; float: left;" class="chart-chart" id="chart<%= i %>"></div>
-                </div>
-                <div style="width: 100%; height: 30px;">
-                    <div id="pworking<%= i %>" style="font-size: 16px; color: red; text-align: center; font-family: arial;">忙碌 02:30:00</div>
-                    <div id="preset<%= i %>" style="font-size: 16px; color: green; text-align: center; font-family: arial;">空闲 05:30:00</div>
-                </div>
+        <div style="width: 100%; height: calc(50% - 2px); padding: 2px 2px 2px 2px; float: left;padding-top:2px;">
+            <div id="dSCQty" style="width: calc(25% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
+                <a style="padding-top:2px;margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">待生产确认：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="SCQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
             </div>
-            <% i = i + 1;
-               } %>
-        </div>--%>
+            <div id="dwscQty" style="width: calc(25% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
+                <a style="padding-top:2px;margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">待料/无生产安排：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="wscQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
+            </div>
+            <div id="dscsyQty" style="width: calc(25% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
+                <a style="padding-top:2px;margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">生产试验：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="scsyQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
+            </div>
+            <div id="dpmQty" style="width: calc(25% - 2px); height: 45px; line-height: 45px; float: left; margin-left: 2px; background-color: cornflowerblue">
+                <a style="padding-top:2px;margin-left: 5px; color: white; font-size: 24px; font-weight: bold; flex-item-align: center;" data-options="toggle:true,group:'g1',selected:true">PM：(&nbsp;&nbsp;&nbsp;<span style="font-size: 25px;" id="pmQty">0</span>&nbsp;&nbsp;&nbsp;)</a>
+            </div>
+            </div>
+        
     </div>
     <%-- <div id="user" style="width: calc(100% - 200px); height: 200px; padding: 2px 2px 2px 2px; margin-top: 2px; float: right; overflow-y: scroll;">
         <% int i = 0;
@@ -440,6 +434,10 @@
         $("#CHAOSHIQty").html(data.chaoshiqty);
         $("#QCQty").html(data.qcqty);
         $("#SCQty").html(data.scqty);
+        $("#wscQty").html(data.wscqty);
+        $("#scsyQty").html(data.scsyqty);
+        $("#pmQty").html(data.pmqty);
+        
     }
 
     //根据参数的进行翻页(负数为下一页，)
