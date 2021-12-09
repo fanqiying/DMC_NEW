@@ -103,7 +103,7 @@ namespace Web.ASHX.DMC
             }
             //获取待排单的数量
             DataTable dtQty = rrs.GetKanbanQty();
-            var obj = new { waitqty = 0, workqty = 0, chaoshiqty = 0, qcqty = 0, scqty = 0 };
+            var obj = new { waitqty = 0, workqty = 0, chaoshiqty = 0, qcqty = 0, scqty = 0, wscqty = 0, scsyqty = 0, pmqty = 0 };
             if (dtQty != null && dtQty.Rows.Count >= 0)
             {
                 DataRow dr = dtQty.Rows[0];
@@ -113,7 +113,10 @@ namespace Web.ASHX.DMC
                     workqty = Convert.ToInt32(dr["workqty"]),
                     chaoshiqty = Convert.ToInt32(dr["chaoshiqty"]),
                     qcqty = Convert.ToInt32(dr["qcqty"]),
-                    scqty = Convert.ToInt32(dr["scqty"])
+                    scqty = Convert.ToInt32(dr["scqty"]),
+                    wscqty = Convert.ToInt32(dr["wscqty"]),
+                    scsyqty = Convert.ToInt32(dr["scsyqty"]),
+                    pmqty = Convert.ToInt32(dr["pmqty"])
                 };
             }
             //StringBuilder sb = JsonHelper.DataTableToJSON(dt);
@@ -410,7 +413,7 @@ namespace Web.ASHX.DMC
                                         {
                                             datenum = Convert.ToDouble(dr[j]) + 8;
                                         }
-                                        dtDay = DateTime.ParseExact(date + " 07:15:00", "yyyy-MM-dd HH:mm:ss", null).AddHours(datenum).AddMinutes(45);
+                                        dtDay = DateTime.ParseExact(date + " 07:15:00", "yyyy-MM-dd HH:mm:ss", null).AddHours(datenum).AddMinutes(90);
                                         item.WorkNum = datenum;
                                         item.WorkRangeTimeEnd = dtDay.ToString();
                                     }
@@ -440,7 +443,7 @@ namespace Web.ASHX.DMC
 
                                         }
 
-                                        dtDay = DateTime.ParseExact(date + " 19:15:00", "yyyy-MM-dd HH:mm:ss", null).AddHours(datenum).AddMinutes(45);
+                                        dtDay = DateTime.ParseExact(date + " 19:15:00", "yyyy-MM-dd HH:mm:ss", null).AddHours(datenum).AddMinutes(90);
 
                                         item.WorkNum = datenum;
                                         item.WorkRangeTimeEnd = dtDay.ToString();

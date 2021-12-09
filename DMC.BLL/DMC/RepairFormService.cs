@@ -83,6 +83,12 @@ namespace DMC.BLL
                 {
                     msg = "新增报修单保存数据库失败";
                 }
+                if (entity.PhenomenaText == "NP1" || entity.PhenomenaText == "NP2" || entity.PhenomenaText == "NP4")
+                {
+
+                    RepairAssignNP(entity.RepairFormNO, "50001418", "50001418", "10");
+                     
+                }
             }
             catch (Exception ex)
             {
@@ -171,6 +177,64 @@ namespace DMC.BLL
                         //2.更新状态
                         if (isSuccess)
                             isSuccess = _dal.RepairAssign(RepairFormNO, oldFormStatus, "20", AssignUser, RepairRecordId, t);
+                        //3.写指派记录
+                        if (isSuccess)
+                            isSuccess = _dal.AddRepairAssignLog(new RepairAssignLogEntity()
+                            {
+                                RepairFormNO = RepairFormNO,
+                                AssignUser = AssignUser,
+                                LeaderUserId = LeaderUserId
+                            }, t);
+                        //3.创建维修记录
+                        //isSuccess = isSuccess && rrdal.NewRepairRecod(RepairFormNO, AssignUser, t);
+                        if (!isSuccess)
+                        {
+                            msg = "指派数据保存失败";
+                        }
+                    }
+                    catch
+                    {
+                        msg = "指派异常";
+                        isSuccess = false;
+                    }
+                    if (isSuccess)
+                        t.Commit();
+                    else
+                        t.RollBack();
+                }
+            }
+            return msg;
+        }
+
+        /// <summary>
+        /// np1,np2,np4直接到生产确认
+        /// </summary>
+        /// <param name="RepairFormNO"></param>
+        /// <param name="AssignUser"></param>
+        /// <param name="LeaderUserId"></param>
+        /// <param name="oldFormStatus"></param>
+        /// <returns></returns>
+        public string RepairAssignNP(string RepairFormNO, string AssignUser, string LeaderUserId, string oldFormStatus)
+        {
+            string msg = string.Empty;
+            if (string.IsNullOrWhiteSpace(RepairFormNO) ||
+                string.IsNullOrWhiteSpace(AssignUser))
+            {
+                msg = "请指定维修单和维修员！";
+            }
+            else
+            {
+                bool isSuccess = true;
+                using (Trans t = new Trans())
+                {
+                    try
+                    {
+                        //1.创建维修记录
+                        int RepairRecordId = rrdal.NewRepairRecodNP(RepairFormNO, AssignUser, t);
+                        isSuccess = RepairRecordId > 0;
+                        //2.更新状态
+                        if (isSuccess)
+                            isSuccess = _dal.RepairAssign(RepairFormNO, oldFormStatus, "30", AssignUser, RepairRecordId, t);
                         //3.写指派记录
                         if (isSuccess)
                             isSuccess = _dal.AddRepairAssignLog(new RepairAssignLogEntity()

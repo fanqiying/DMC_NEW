@@ -874,6 +874,7 @@
     <Content Include="UI\Equment\QCCheck.aspx" />
     <Content Include="UI\Equment\Repairman.aspx" />
     <Content Include="UI\Equment\StatisticsReport.aspx" />
+    <Content Include="UI\Equment\tt.aspx" />
     <Content Include="UI\HtmlPage1.html" />
     <Content Include="UI\Organize\Company.aspx" />
     <Content Include="UI\Organize\Dept.aspx" />
@@ -1269,6 +1270,13 @@
     </Compile>
     <Compile Include="UI\Equment\StatisticsReport.aspx.designer.cs">
       <DependentUpon>StatisticsReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Equment\tt.aspx.cs">
+      <DependentUpon>tt.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UI\Equment\tt.aspx.designer.cs">
+      <DependentUpon>tt.aspx</DependentUpon>
     </Compile>
     <Compile Include="UI\Organize\Company.aspx.cs">
       <DependentUpon>Company.aspx</DependentUpon>

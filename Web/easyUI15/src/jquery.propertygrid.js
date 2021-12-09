@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.9.10
+ * EasyUI for jQuery 1.7.0
  * 
- * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -16,7 +16,7 @@
  */
 (function($){
 	var currTarget;
-	$(document)._unbind('.propertygrid')._bind('mousedown.propertygrid', function(e){
+	$(document).unbind('.propertygrid').bind('mousedown.propertygrid', function(e){
 		var p = $(e.target).closest('div.datagrid-view,div.combo-panel');
 		if (p.length){return;}
 		stopEditing(currTarget);
@@ -200,7 +200,7 @@
 			var dc = state.dc;
 			var body = dc.body1.add(dc.body2);
 			var clickHandler = ($.data(body[0],'events')||$._data(body[0],'events')).click[0].handler;
-			body._unbind('click')._bind('click', function(e){
+			body.unbind('click').bind('click', function(e){
 				var tt = $(e.target);
 				var expander = tt.closest('span.datagrid-row-expander');
 				if (expander.length){
@@ -272,7 +272,7 @@
 						'.datagrid-group-title,.datagrid-group-expander{display:inline-block;vertical-align:bottom;height:100%;line-height:'+opts.groupHeight+'px;padding:0 4px;}' +
 						'.datagrid-group-title{position:relative;}' +
 						'.datagrid-group-expander{width:'+opts.expanderWidth+'px;text-align:center;padding:0}' +
-						'.datagrid-group-expander .datagrid-row-expander{margin:'+Math.floor((opts.groupHeight-16)/2)+'px 0;display:inline-block;width:16px;height:16px;cursor:pointer}' +
+						'.datagrid-row-expander{margin:'+Math.floor((opts.groupHeight-16)/2)+'px 0;display:inline-block;width:16px;height:16px;cursor:pointer}' +
 						'</style>'
 					);
 				}

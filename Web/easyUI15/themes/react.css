@@ -49,22 +49,10 @@
 	-moz-align-items: center;
 	align-items: center;
 }
-.f-vcenter{
-	-webkit-box-align: center;
-	-ms-flex-align: center;
-	-webkit-align-items: center;
-	-moz-align-items: center;
-	align-items: center;
-}
 .f-full{
 	-webkit-box-flex: 1 1 auto;
 	-ms-flex: 1 1 auto;
 	flex: 1 1 auto;
-}
-.f-none{
-	-webkit-box-flex: none;
-	-ms-flex: none;
-	flex: none;
 }
 .f-hide{
 	display: none;
@@ -109,14 +97,7 @@
 	width: 12em;
 	height: 30px;
 }
-.f-vtitle{
-	-ms-writing-mode: tb-lr;
-	-webkit-writing-mode: vertical-lr;
-	writing-mode: vertical-lr;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
+
 .scroll-body{
 	overflow: auto;
 	position: relative;
@@ -367,13 +348,6 @@
 .tabs-header-right .tabs li .tabs-inner{
 	display: inherit;
 }
-.tabs-tool{
-	position: relative;
-}
-.tabs-header:not(.tabs-header-plain) .tabs-tool{
-	border-top-color: transparent;
-	border-right-color: transparent;
-}
 
 .combo-panel{
 	position: absolute;
@@ -467,7 +441,6 @@
 .datagrid-header td.datagrid-field-td{
 	border-bottom: 0;
 }
-  
 .datagrid-cell{
 	text-align: left;
 	height: auto;
@@ -683,22 +656,4 @@
 .layout-panel-south.layout-collapsed{
 	transform: translate3d(0, 100%, 0)
 }
-.layout-expand .panel-tool{
-	right: 6px;
-}
 
-.form-field{
-	margin-bottom: 28px;
-}
-.form-field-haserror{
-	margin-bottom: 4px;
-}
-.form-field-error{
-	font-size: 14px;
-	color: #ed4014;
-	height: 24px;
-	line-height: 24px;
-}
-.form-field .f-field{
-	width: auto;
-}

@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.9.10
+ * EasyUI for jQuery 1.7.0
  * 
- * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -9,7 +9,7 @@
  */
 (function($){
 function _1(){
-$(document)._unbind(".messager")._bind("keydown.messager",function(e){
+$(document).unbind(".messager").bind("keydown.messager",function(e){
 if(e.keyCode==27){
 $("body").children("div.messager-window").children("div.messager-body").each(function(){
 $(this).dialog("close");
@@ -40,7 +40,7 @@ _6(_5,_4.val());
 });
 };
 function _7(){
-$(document)._unbind(".messager");
+$(document).unbind(".messager");
 };
 function _8(_9){
 var _a=$.extend({},$.messager.defaults,{modal:false,shadow:false,draggable:false,resizable:false,closed:true,style:{left:"",top:"",right:0,zIndex:$.fn.window.defaults.zIndex++,bottom:-document.body.scrollTop-document.documentElement.scrollTop},title:"",width:300,height:150,minHeight:0,showType:"slide",showSpeed:600,content:_9.msg,timeout:4000},_9);

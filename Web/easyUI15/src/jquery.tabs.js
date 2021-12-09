@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.9.10
+ * EasyUI for jQuery 1.7.0
  * 
- * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -260,16 +260,11 @@
 			createTab(container, opts, $(this));
 		});
 		
-		// cc.children('div.tabs-header').find('.tabs-scroller-left, .tabs-scroller-right').hover(
-		// 		function(){$(this).addClass('tabs-scroller-over');},
-		// 		function(){$(this).removeClass('tabs-scroller-over');}
-		// );
-		cc.children('div.tabs-header').find('.tabs-scroller-left, .tabs-scroller-right')._bind('mouseenter', function(){
-			$(this).addClass('tabs-scroller-over');
-		})._bind('mouseleave', function(){
-			$(this).removeClass('tabs-scroller-over');
-		});
-		cc._bind('_resize', function(e,force){
+		cc.children('div.tabs-header').find('.tabs-scroller-left, .tabs-scroller-right').hover(
+				function(){$(this).addClass('tabs-scroller-over');},
+				function(){$(this).removeClass('tabs-scroller-over');}
+		);
+		cc.bind('_resize', function(e,force){
 			if ($(this).hasClass('easyui-fluid') || force){
 				setSize(container);
 				setSelectedSize(container);
@@ -281,7 +276,7 @@
 	function bindEvents(container){
 		var state = $.data(container, 'tabs')
 		var opts = state.options;
-		$(container).children('div.tabs-header')._unbind()._bind('click', function(e){
+		$(container).children('div.tabs-header').unbind().bind('click', function(e){
 			if ($(e.target).hasClass('tabs-scroller-left')){
 				$(container).tabs('scrollBy', -opts.scrollIncrement);
 			} else if ($(e.target).hasClass('tabs-scroller-right')){
@@ -304,7 +299,7 @@
 				}
 				return false;
 			}
-		})._bind('contextmenu', function(e){
+		}).bind('contextmenu', function(e){
 			var li = $(e.target).closest('li');
 			if (li.hasClass('tabs-disabled')){return;}
 			if (li.length){
@@ -541,7 +536,7 @@
 							var t = $('<a href="javascript:;"></a>').appendTo(p_tool);
 							t.addClass(opts.tools[i].iconCls);
 							if (opts.tools[i].handler){
-								t._bind('click', {handler:opts.tools[i].handler}, function(e){
+								t.bind('click', {handler:opts.tools[i].handler}, function(e){
 									if ($(this).parents('li').hasClass('tabs-disabled')){return;}
 									e.data.handler.call(this);
 								});

@@ -159,10 +159,6 @@
   background: #0081c2;
   color: #fff;
 }
-.tree-node-disabled {
-  opacity: 0.5;
-  cursor: default;
-}
 .tree-node-hidden {
   display: none;
 }

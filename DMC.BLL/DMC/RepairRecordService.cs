@@ -54,19 +54,47 @@ namespace DMC.BLL
         public DataTable GetKanbanQty()
         {
             StringBuilder sbSql = new StringBuilder();
+//            sbSql.Append(@"select SUM(case when FormStatus in(10,12) THEN 1 ELSE 0 END) WaitQty, 
+//       SUM(case when FormStatus in(20,23,24,25,61,65) THEN 1 ELSE 0 END) WorkQty,
+//       SUM(case when FormStatus not in(30,40,50) and  c.GradeTime+60<datediff(minute ,a.faulttime, GetDate()) THEN 1 ELSE 0 END)  CHAOSHIQty,
+//	   SUM(case when FormStatus=40  THEN 1 ELSE 0 END) QCQty,
+//	   SUM(case when FormStatus=30 or FormStatus=50  THEN 1 ELSE 0 END) SCQty,
+//SUM(case when a.phenomenatext in('NP1','NP2','NP4') THEN 1 ELSE 0 END) wscQty,
+//SUM(case when a.phenomenatext in('NP5')  THEN 1 ELSE 0 END) scsyQty,
+// (select count(a.RepairFormNO) from t_RepairForm a with(nolock) left join 
+//       t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
+//       t_FaultPosition c  with(nolock) on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId
+// where ((isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20)) and a.DeviceId='模房'   
+//  )  as pmQty
+//  from t_RepairForm a with(nolock) left join 
+//       t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
+//       t_FaultPosition c  with(nolock) on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId
+// where ((isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20))
+//  and a.DeviceId!='模房'  and a.PositionText !='其它'");
+
             sbSql.Append(@"select SUM(case when FormStatus in(10,12) THEN 1 ELSE 0 END) WaitQty, 
        SUM(case when FormStatus in(20,23,24,25,61,65) THEN 1 ELSE 0 END) WorkQty,
        SUM(case when FormStatus not in(30,40,50) and  c.GradeTime+60<datediff(minute ,a.faulttime, GetDate()) THEN 1 ELSE 0 END)  CHAOSHIQty,
 	   SUM(case when FormStatus=40  THEN 1 ELSE 0 END) QCQty,
 	   SUM(case when FormStatus=30 or FormStatus=50  THEN 1 ELSE 0 END) SCQty,
-SUM(case when a.phenomenatext in('NP1','NP2','NP4') THEN 1 ELSE 0 END) wscQty,
-SUM(case when a.phenomenatext in('NP5')  THEN 1 ELSE 0 END) scsyQty,
-SUM(case when a.phenomenatext in('PM')  THEN 1 ELSE 0 END) pmQty
+	   (select count(a.RepairFormNO) from t_RepairForm a with(nolock) left join 
+       t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
+       t_FaultPosition c  with(nolock) on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId
+ where ((isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20)) and a.phenomenatext in('NP1','NP2','NP4')) wscQty,
+(select count(a.RepairFormNO) from t_RepairForm a with(nolock) left join 
+       t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
+       t_FaultPosition c  with(nolock) on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId
+ where ((isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20)) and a.phenomenatext in('NP5')) scsyQty,
+ (select count(a.RepairFormNO) from t_RepairForm a with(nolock) left join 
+       t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
+       t_FaultPosition c  with(nolock) on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId
+ where ((isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20)) and a.DeviceId='模房'   
+  )  as pmQty
   from t_RepairForm a with(nolock) left join 
        t_RepairRecord b  with(nolock) on a.RepairFormNO=b.RepairFormNO and a.RepairRecordId=b.AutoId left join 
        t_FaultPosition c  with(nolock) on  a.PositionId=c.PPositionId and a.PhenomenaId=c.PositionId
  where ((isnull(FormStatus,0) between 20 and 60 and isnull(repairstatus,10)<60) or (isnull(FormStatus,0)<20))
-  and a.DeviceId!='模房'");
+  and a.DeviceId!='模房'  and a.PositionText !='其它'");
 
             return _dal.ExecSQLTODT(sbSql);
         }

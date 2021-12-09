@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.9.10
+ * EasyUI for jQuery 1.7.0
  * 
- * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -209,7 +209,7 @@
 			createPanel(container, pp, opts);
 		});
 		
-		cc._bind('_resize', function(e,force){
+		cc.bind('_resize', function(e,force){
 			if ($(this).hasClass('easyui-fluid') || force){
 				setSize(container);
 			}
@@ -274,7 +274,7 @@
 		var tool = header.children('div.panel-tool');
 		tool.children('a.panel-tool-collapse').hide();	// hide the old collapse button
 		var t = $('<a href="javascript:;"></a>').addClass('accordion-collapse accordion-expand').appendTo(tool);
-		t._bind('click', function(){
+		t.bind('click', function(){
 			togglePanel(pp);
 			return false;
 		});
@@ -283,10 +283,10 @@
 			t.hide();
 		}
 		
-		header._bind('click', function(){
+		header.click(function(){
 			togglePanel(pp);
 			return false;
-		})
+		});
 		
 		function togglePanel(p){
 			var popts = p.panel('options');

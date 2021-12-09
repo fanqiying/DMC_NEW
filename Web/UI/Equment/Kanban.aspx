@@ -429,6 +429,7 @@
     }
 
     function RefershQTY(data) {
+        console.log(data);
         $("#WaitQty").html(data.waitqty);
         $("#WorkQty").html(data.workqty);
         $("#CHAOSHIQty").html(data.chaoshiqty);

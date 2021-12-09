@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.9.10
+ * EasyUI for jQuery 1.7.0
  * 
- * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -13,7 +13,7 @@
  */
 (function($){
 	$(function(){
-		$(document)._unbind('.menu')._bind('mousedown.menu', function(e){
+		$(document).unbind('.menu').bind('mousedown.menu', function(e){
 			var m = $(e.target).closest('div.menu,div.combo-p');
 			if (m.length){return}
 			$('body>div.menu-top:visible').not('.menu-inline').menu('hide');
@@ -28,7 +28,7 @@
 		var opts = $.data(target, 'menu').options;
 		$(target).addClass('menu-top');	// the top menu
 		opts.inline ? $(target).addClass('menu-inline') : $(target).appendTo('body');
-		$(target)._bind('_resize', function(e, force){
+		$(target).bind('_resize', function(e, force){
 			if ($(this).hasClass('easyui-fluid') || force){
 				$(target).menu('resize', target);
 			}
@@ -188,9 +188,9 @@
 	function bindMenuEvent(target, menu){
 		var state = $.data(target, 'menu');
 		var opts = state.options;
-		menu._unbind('.menu');
+		menu.unbind('.menu');
 		for(var event in opts.events){
-			menu._bind(event+'.menu', {target:target}, opts.events[event]);
+			menu.bind(event+'.menu', {target:target}, opts.events[event]);
 		}
 	}
 	function mouseenterHandler(e){

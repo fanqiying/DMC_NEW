@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.9.10
+ * EasyUI for jQuery 1.7.0
  * 
- * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -13,11 +13,11 @@ $(_2).addClass("tooltip-f");
 };
 function _3(_4){
 var _5=$.data(_4,"tooltip").options;
-$(_4)._unbind(".tooltip")._bind(_5.showEvent+".tooltip",function(e){
+$(_4).unbind(".tooltip").bind(_5.showEvent+".tooltip",function(e){
 $(_4).tooltip("show",e);
-})._bind(_5.hideEvent+".tooltip",function(e){
+}).bind(_5.hideEvent+".tooltip",function(e){
 $(_4).tooltip("hide",e);
-})._bind("mousemove.tooltip",function(e){
+}).bind("mousemove.tooltip",function(e){
 if(_5.trackMouse){
 _5.trackMouseX=e.pageX;
 _5.trackMouseY=e.pageY;
@@ -171,7 +171,7 @@ if(_26._title){
 $(_24).attr("title",_26._title);
 }
 $.removeData(_24,"tooltip");
-$(_24)._unbind(".tooltip").removeClass("tooltip-f");
+$(_24).unbind(".tooltip").removeClass("tooltip-f");
 _26.onDestroy.call(_24);
 }
 };

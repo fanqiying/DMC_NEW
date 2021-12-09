@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.9.10
+ * EasyUI for jQuery 1.7.0
  * 
- * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -199,11 +199,6 @@
 			js:'jquery.timespinner.js',
 			dependencies:['spinner']
 		},
-		timepicker:{
-			js:'jquery.timepicker.js',
-			css:'timepicker.css',
-			dependencies:['combo']
-		},
 		tree:{
 			js:'jquery.tree.js',
 			css:'tree.css',
@@ -223,8 +218,7 @@
 			dependencies:['draggable']
 		},
 		parser:{
-			js:'jquery.parser.js',
-			css:'flex.css'
+			js:'jquery.parser.js'
 		},
 		mobile:{
 			js:'jquery.mobile.js'
@@ -350,7 +344,6 @@
 				add(name[i]);
 			}
 		}
-		mm.unshift('parser');
 		
 		function add(name){
 			if (!modules[name]) return;
@@ -365,9 +358,6 @@
 		
 		function finish(){
 			if (callback){
-				if (window.jQuery){
-					window.jQuery.parser.parseVars();
-				}
 				callback();
 			}
 			easyloader.onLoad(name);

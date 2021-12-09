@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.9.10
+ * EasyUI for jQuery 1.7.0
  * 
- * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -248,7 +248,7 @@
 			clearTimeout($.fn.draggable.timer);
 			$.fn.draggable.timer = undefined;
 		}
-		$(document)._unbind('.draggable');
+		$(document).unbind('.draggable');
 		$.fn.draggable.isDragging = false;
 		setTimeout(function(){
 			$('body').css('cursor','');
@@ -264,7 +264,7 @@
 			var opts;
 			var state = $.data(this, 'draggable');
 			if (state) {
-				state.handle._unbind('.draggable');
+				state.handle.unbind('.draggable');
 				opts = $.extend(state.options, options);
 			} else {
 				opts = $.extend({}, $.fn.draggable.defaults, $.fn.draggable.parseOptions(this), options || {});
@@ -281,7 +281,7 @@
 				return;
 			}
 			
-			handle._unbind('.draggable')._bind('mousemove.draggable', {target:this}, function(e){
+			handle.unbind('.draggable').bind('mousemove.draggable', {target:this}, function(e){
 				if ($.fn.draggable.isDragging){return}
 				var opts = $.data(e.data.target, 'draggable').options;
 				if (checkArea(e)){
@@ -289,9 +289,9 @@
 				} else {
 					$(this).css('cursor', '');
 				}
-			})._bind('mouseleave.draggable', {target:this}, function(e){
+			}).bind('mouseleave.draggable', {target:this}, function(e){
 				$(this).css('cursor', '');
-			})._bind('mousedown.draggable', {target:this}, function(e){
+			}).bind('mousedown.draggable', {target:this}, function(e){
 				if (checkArea(e) == false) return;
 				$(this).css('cursor', '');
 
@@ -317,9 +317,9 @@
 				var opts = $.data(e.data.target, 'draggable').options;
 				if (opts.onBeforeDrag.call(e.data.target, e) == false) return;
 				
-				$(document)._bind('mousedown.draggable', e.data, doDown);
-				$(document)._bind('mousemove.draggable', e.data, doMove);
-				$(document)._bind('mouseup.draggable', e.data, doUp);
+				$(document).bind('mousedown.draggable', e.data, doDown);
+				$(document).bind('mousemove.draggable', e.data, doMove);
+				$(document).bind('mouseup.draggable', e.data, doUp);
 				
 				$.fn.draggable.timer = setTimeout(function(){
 					$.fn.draggable.isDragging = true;

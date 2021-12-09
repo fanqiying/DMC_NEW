@@ -73,7 +73,9 @@ where isnull(repairstatus,0)<60 ");
             param.Add(DBFactory.Helper.FormatParameter("NewMouldId", DbType.String, entity.NewMouldId));
             param.Add(DBFactory.Helper.FormatParameter("MouldId1", DbType.String, entity.MouldId1));
             param.Add(DBFactory.Helper.FormatParameter("NewMouldId1", DbType.String, entity.NewMouldId1));
-            using (Trans t = new Trans())
+
+            
+                using (Trans t = new Trans())
             {
                 try
                 {

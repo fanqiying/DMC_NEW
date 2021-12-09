@@ -36,6 +36,29 @@ namespace DMC.DAL
 
             return Convert.ToInt32(DBFactory.Helper.ExecuteScalar(sbSql.ToString(), param.ToArray(), t));
         }
+        /// <summary>
+        /// 添加维修记录NP2,NP1直接到生产员确认
+        /// </summary>
+        /// <param name="RepairFormNO"></param>
+        /// <param name="RepairmanId"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public int NewRepairRecodNP(string RepairFormNO, string RepairmanId, Trans t)
+        {
+            StringBuilder sbSql = new StringBuilder();
+            sbSql.Append("Insert into t_RepairRecord(RepairFormNO,ApplyUserId,RepairmanId,RepairmanName,DeviceId,FaultTime,PositionId,PositionText,PhenomenaId,PhenomenaText,PositionId1,PositionText1,PhenomenaId1,PhenomenaText1,");
+            sbSql.Append("FaultStatus,FaultCode,FaultReason,RepairSTime,RepairStatus,MouldId,NewMouldId,MouldId1,NewMouldId1)");
+            sbSql.Append("SELECT RepairFormNO,ApplyUserId,@RepairmanId,(select top 1 RepairmanName from  t_Repairman where RepairmanId=@RepairmanId and RepairmanName is not null) ,DeviceId,isnull(RejectDate,FaultTime),PositionId,PositionText,PhenomenaId,PhenomenaText,PositionId1,PositionText1,PhenomenaId1,PhenomenaText1,");
+            sbSql.Append("       FaultStatus,FaultCode,FaultReason,GETDATE(),'30',MouldId,NewMouldId,MouldId1,NewMouldId1 ");
+            sbSql.Append("  FROM t_RepairForm ");
+            sbSql.Append(" WHERE RepairFormNO=@RepairFormNO;");
+            sbSql.Append(" select @@IDENTITY; ");//返回最新的自增序号
+            List<DbParameter> param = new List<DbParameter>();
+            param.Add(DBFactory.Helper.FormatParameter("RepairFormNO", DbType.String, RepairFormNO));
+            param.Add(DBFactory.Helper.FormatParameter("RepairmanId", DbType.String, RepairmanId));
+
+            return Convert.ToInt32(DBFactory.Helper.ExecuteScalar(sbSql.ToString(), param.ToArray(), t));
+        }
 
         /// <summary>
         /// 维修确认(提交生产员|提交QC)
@@ -217,6 +240,11 @@ namespace DMC.DAL
             sbSql.Append("Update t_RepairRecord ");
             sbSql.Append("  set RepairStatus=60,ConfirmUser=@ConfirmUser,ConfirmTime=GETDATE() ");
             sbSql.Append(" WHERE RepairFormNO=@RepairFormNO AND AutoId=@AutoId ");
+
+            //更新NP1,NP2,NP4 指派时间为生产确认时间
+            sbSql.Append("update t_RepairRecord set RepairSTime = GETDATE()");
+            sbSql.Append(" WHERE RepairFormNO=@RepairFormNO AND AutoId=@AutoId and PhenomenaText in('NP1','NP2','NP4') ");
+
 
             //最后一个返修单确认时，返修单状态完成
             string RepairFormNO1 = RepairFormNO.Substring(0, 13);

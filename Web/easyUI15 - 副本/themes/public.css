@@ -1,0 +1,330 @@
+﻿body {
+    font: 12px, "宋体", Arial, sans-serif, Verdana, Tahoma;
+    padding: 0;
+    margin: 0;
+}
+
+img {
+    vertical-align: middle;
+    border: 0;
+}
+/* 定义所有图片居中对齐 */
+a img {
+    border: 0;
+}
+/* 定义所有图片链接都没边框 */
+a {
+    text-decoration: none;
+    color: #333;
+}
+    /*定义默认文字链接为灰色无下滑线 */
+    a:hover {
+        color: #036;
+    }
+/*定义默认文字链接选中样式为：红色有下滑线 */
+ul, ol, li, dl, dt, dd, textarea, label, img, table, td, th, span, a {
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+}
+
+.tbStyle {
+    border-collapse: collapse;
+}
+
+    .tbStyle td {
+        border: 1px #ccc solid;
+        padding: 5px;
+        text-align: left;
+    }
+
+.addCoyTB td {
+    text-align: left;
+}
+
+.c:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+/* 清除浮动 */
+.l {
+    float: left;
+}
+/* 左浮动 */
+.r {
+    float: right;
+}
+/* 右浮动 */
+.i {
+    float: left;
+    width: 100%;
+}
+/* 解决IE6布局3像素的BUG */
+.h {
+    line-height: 20px;
+}
+/* 标准行高 */
+.tac {
+    text-align: center !important;
+}
+/* 文字居中对齐 */
+.tal {
+    text-align: left !important;
+}
+/* 文字居左对齐 */
+.tar {
+    text-align: right !important;
+}
+/* 文字居右对齐 */
+.dn {
+    display: none;
+}
+
+.ch {
+    cursor: pointer;
+}
+/* 光标为手指 */
+
+/* 單個頁面上的樣式開始*/
+.erDIV {
+    padding: 5px 0 5px 50px;
+}
+
+    .erDIV dl dd {
+        padding: 3px;
+        text-align: left;
+    }
+
+.menuDIV {
+    padding: 5px 5px 5px 180px;
+    border-bottom: 1px solid #D3D3D3;
+}
+
+    .menuDIV dl dd {
+        padding: 3px;
+        text-align: left;
+    }
+
+.bf {
+    padding: 25px;
+    width: 120px;
+    text-align: left;
+}
+
+.Search {
+    width: 100%;
+    background-color: #EBF3FD;
+    line-height: auto;
+}
+
+.leftSearch {
+    padding: 5px 0;
+    width: auto;
+    height: auto;
+}
+
+
+.pl20 {
+    padding-left: 5px;
+}
+
+.rightSearch {
+    height: auto;
+    padding: 5px 0;
+}
+
+    .rightSearch img {
+        height: 10;
+        width: 10;
+    }
+
+.bnsearch {
+    border: false;
+    height: 10px;
+    padding: 10px 10px 10px 0px;
+    font-size: 12px;
+    text-align: center;
+}
+
+    .bnsearch span {
+        float: right;
+    }
+
+.bnsave {
+    border: false;
+    line-height: 20px;
+    padding: 10px;
+    text-align: center;
+}
+
+.pages {
+    color: #999;
+}
+
+    .pages a, .pages .cpb {
+        text-decoration: none;
+        float: left;
+        padding: 0 5px;
+        border: 1px solid #ddd;
+        background: #ffff;
+        margin: 0 2px;
+        font-size: 11px;
+        color: #000;
+    }
+
+        .pages a:hover {
+            background-color: #E61636;
+            color: #fff;
+            border: 1px solid #E61636;
+            text-decoration: none;
+        }
+
+    .pages .cpb {
+        font-weight: bold;
+        color: #fff;
+        background: #E61636;
+        border: 1px solid #E61636;
+    }
+
+
+.paginator {
+    font: 11px Arial, Helvetica, sans-serif;
+    padding: 10px 20px 10px 0;
+    margin: 0px;
+}
+
+    .paginator a {
+        padding: 1px 6px;
+        border: solid 1px #ddd;
+        background: #fff;
+        text-decoration: none;
+        margin-right: 2px;
+    }
+
+        .paginator a:visited {
+            padding: 1px 6px;
+            border: solid 1px #ddd;
+            background: #fff;
+            text-decoration: none;
+        }
+
+    .paginator .cpb {
+        padding: 1px 6px;
+        font-weight: bold;
+        font-size: 13px;
+        border: none;
+    }
+
+    .paginator a:hover {
+        color: #fff;
+        background: #ffa501;
+        border-color: #ffa501;
+        text-decoration: none;
+    }
+
+
+.anpager .cpb {
+    background: #1F3A87 none repeat scroll 0 0;
+    border: 1px solid #CCCCCC;
+    color: #FFFFFF;
+    font-weight: bold;
+    margin: 5px 4px 0 0;
+    padding: 4px 5px 0;
+}
+
+.anpager a {
+    background: #FFFFFF none repeat scroll 0 0;
+    border: 1px solid #CCCCCC;
+    color: #1F3A87;
+    margin: 5px 4px 0 0;
+    padding: 4px 5px 0;
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+
+.anpager a:hover {
+    background: #1F3A87 none repeat scroll 0 0;
+    border: 1px solid #1F3A87;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.page_list {
+    height: 30px;
+    line-height: 30px;
+    text-align: right;
+    padding-top: 3px;
+    padding-right: 10px;
+}
+
+.page_list_con {
+    float: right;
+}
+
+.tbView {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .tbView td {
+        border: 1px #ccc solid;
+        padding: 3px;
+        text-align: left;
+    }
+
+    .tbView input {
+        border: 0px;
+    }
+
+.tbView2 {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .tbView2 td {
+        border: 1px #ccc solid;
+        padding: 3px;
+        text-align: left;
+        width: 110px;
+    }
+
+    .tbView2 input {
+        width: 100px;
+        border: 0px;
+    }
+
+.tbADD2 {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .tbADD2 td {
+        border: 1px #ccc solid;
+        padding: 3px;
+        text-align: left;
+        width: 110px;
+    }
+
+    .tbADD2 input {
+        width: 100px;
+    }
+
+.squery {
+    display: none;
+    padding: 5px;
+    background-color: #F5F5F5;
+}
+
+.sinquery {
+    background: #fff;
+    border: 1px solid #ccc;
+    overflow: hidden;
+    padding: 5px;
+}

@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.9.10
+ * EasyUI for jQuery 1.7.0
  * 
- * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -81,7 +81,7 @@
 		resize(e, true);
 		applySize(e);
 		$.data(e.data.target, 'resizable').options.onStopResize.call(e.data.target, e);
-		$(document)._unbind('.resizable');
+		$(document).unbind('.resizable');
 		$('body').css('cursor','');
 		return false;
 	}
@@ -129,7 +129,7 @@
 			var opts = null;
 			var state = $.data(this, 'resizable');
 			if (state) {
-				$(this)._unbind('.resizable');
+				$(this).unbind('.resizable');
 				opts = $.extend(state.options, options || {});
 			} else {
 				opts = $.extend({}, $.fn.resizable.defaults, $.fn.resizable.parseOptions(this), options || {});
@@ -141,13 +141,13 @@
 			if (opts.disabled == true) {
 				return;
 			}
-			$(this)._bind('mousemove.resizable', {target:this}, function(e){
+			$(this).bind('mousemove.resizable', {target:this}, function(e){
 				if ($.fn.resizable.isResizing){return}
 				var dir = getDirection(e);
 				$(e.data.target).css('cursor', dir ? dir+'-resize' : '');
-			})._bind('mouseleave.resizable', {target:this}, function(e){
+			}).bind('mouseleave.resizable', {target:this}, function(e){
 				$(e.data.target).css('cursor', '');
-			})._bind('mousedown.resizable', {target:this}, function(e){
+			}).bind('mousedown.resizable', {target:this}, function(e){
 				var dir = getDirection(e);
 				if (dir == ''){return;}
 				
@@ -176,9 +176,9 @@
 					deltaWidth: $(e.data.target).outerWidth() - $(e.data.target).width(),
 					deltaHeight: $(e.data.target).outerHeight() - $(e.data.target).height()
 				};
-				$(document)._bind('mousedown.resizable', data, doDown);
-				$(document)._bind('mousemove.resizable', data, doMove);
-				$(document)._bind('mouseup.resizable', data, doUp);
+				$(document).bind('mousedown.resizable', data, doDown);
+				$(document).bind('mousemove.resizable', data, doMove);
+				$(document).bind('mouseup.resizable', data, doUp);
 				$('body').css('cursor', dir+'-resize');
 			});
 		});

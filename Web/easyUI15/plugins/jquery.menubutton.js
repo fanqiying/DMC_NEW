@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.9.10
+ * EasyUI for jQuery 1.7.0
  * 
- * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -47,16 +47,16 @@ var t=btn.find("."+_11.cls.trigger);
 if(!t.length){
 t=btn;
 }
-t._unbind(".menubutton");
+t.unbind(".menubutton");
 var _12=null;
-t._bind(_11.showEvent+".menubutton",function(){
+t.bind(_11.showEvent+".menubutton",function(){
 if(!_13()){
 _12=setTimeout(function(){
 _14(_10);
 },_11.duration);
 return false;
 }
-})._bind(_11.hideEvent+".menubutton",function(){
+}).bind(_11.hideEvent+".menubutton",function(){
 if(_12){
 clearTimeout(_12);
 }

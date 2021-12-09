@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.9.10
+ * EasyUI for jQuery 1.7.0
  * 
- * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -14,16 +14,16 @@
 (function($){
 	function init(target){
 		$(target).addClass('droppable');
-		$(target)._bind('_dragenter', function(e, source){
+		$(target).bind('_dragenter', function(e, source){
 			$.data(target, 'droppable').options.onDragEnter.apply(target, [e, source]);
 		});
-		$(target)._bind('_dragleave', function(e, source){
+		$(target).bind('_dragleave', function(e, source){
 			$.data(target, 'droppable').options.onDragLeave.apply(target, [e, source]);
 		});
-		$(target)._bind('_dragover', function(e, source){
+		$(target).bind('_dragover', function(e, source){
 			$.data(target, 'droppable').options.onDragOver.apply(target, [e, source]);
 		});
-		$(target)._bind('_drop', function(e, source){
+		$(target).bind('_drop', function(e, source){
 			$.data(target, 'droppable').options.onDrop.apply(target, [e, source]);
 		});
 	}

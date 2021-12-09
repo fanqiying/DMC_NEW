@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.9.10
+ * EasyUI for jQuery 1.7.0
  * 
- * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -72,13 +72,13 @@
 			inner.addClass('l-btn-icon-'+opts.iconAlign);
 		}
 		
-		t._unbind('.linkbutton')._bind('focus.linkbutton',function(){
+		t.unbind('.linkbutton').bind('focus.linkbutton',function(){
 			if (!opts.disabled){
 				$(this).addClass('l-btn-focus');
 			}
-		})._bind('blur.linkbutton',function(){
+		}).bind('blur.linkbutton',function(){
 			$(this).removeClass('l-btn-focus');
-		})._bind('click.linkbutton',function(){
+		}).bind('click.linkbutton',function(){
 			if (!opts.disabled){
 				if (opts.toggle){
 					if (opts.selected){
@@ -91,6 +91,15 @@
 			}
 //			return false;
 		});
+//		if (opts.toggle && !opts.disabled){
+//			t.bind('click.linkbutton', function(){
+//				if (opts.selected){
+//					$(this).linkbutton('unselect');
+//				} else {
+//					$(this).linkbutton('select');
+//				}
+//			});
+//		}
 		
 		setSelected(target, opts.selected)
 		setDisabled(target, opts.disabled);
@@ -143,7 +152,6 @@
 				target.onclick = state.onclick;
 			}
 		}
-		$(target)._propAttr('disabled', disabled);
 	}
 	
 	$.fn.linkbutton = function(options, param){
@@ -162,7 +170,7 @@
 				});
 				// $(this).removeAttr('disabled');
 				$(this)._propAttr('disabled', false);
-				$(this)._bind('_resize', function(e, force){
+				$(this).bind('_resize', function(e, force){
 					if ($(this).hasClass('easyui-fluid') || force){
 						setSize(this);
 					}
